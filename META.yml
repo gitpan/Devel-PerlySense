@@ -1,0 +1,8 @@
+--- #YAML:1.0
+name: Devel-PerlySense
+version: 0.01_01
+author:
+  - Johan Lindström <johanl[ÄT]DarSerMan.com>
+abstract: IntelliSense for Perl
+license: perl
+generated_by: Module::Build version 0.261, without YAML.pm

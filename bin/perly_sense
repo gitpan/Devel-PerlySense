@@ -1,0 +1,217 @@
+#!/usr/bin/perl -w
+$|++;
+use strict;
+
+use Getopt::Long;
+use Pod::Usage;
+use File::Basename;
+use File::Path;
+use File::Find;
+use Path::Class;
+use Cache::FileCache;
+
+use lib "../lib";
+use Devel::PerlySense;
+use Time::HiRes qw/time/;
+
+
+main();
+
+
+
+sub main {
+    my ($dirOrigin, $fileOrigin, $module, $file, $row, $col, $clearCache);
+    GetOptions(
+        "module:s" => \$module,
+        "file:s" => \$file,
+        "row:i" => \$row,
+        "col:i" => \$col,
+        "file_origin:s" => \$fileOrigin,
+        "dir_origin:s" => \$dirOrigin,
+        "clear_cache" => \$clearCache,
+        );
+    my ($command) = @ARGV;
+
+    $command or syntax("Missing command");
+
+
+    my $oPs = Devel::PerlySense->new();
+
+
+    my @aDirCachePossible = grep { $_ } ($ENV{APPDATA}, $ENV{ALLUSERSPROFILE}, $ENV{USERPROFILE}, $ENV{HOME}, $ENV{TEMP}, $ENV{TMP}, "/");
+    my $oCache;
+    for my $dirHome(@aDirCachePossible) {
+        my $dir = dir($dirHome, ".PerlySense", "cache");
+        mkpath([$dir]);
+        if(-d $dir) {
+            if($clearCache) {
+                rmtree([$dir]); -d $dir and die("Could not clear cache ($dir)\n");
+                mkpath([$dir]); -d $dir or die("Could not re-create cache dir ($dir)\n");
+            }
+
+            $oCache = Cache::FileCache->new({cache_root => $dir}) or warn("Could not create cache in ($dir)\n"), next;
+            last;
+        }
+    }
+    $oCache or warn("Could not create cache dir in either of:\n", join(":", @aDirCachePossible) . "\n");
+    $oPs->oCache($oCache);
+
+
+    if($command eq "find_module_source_file") {
+        $fileOrigin and $dirOrigin = dirname($fileOrigin);
+        $dirOrigin ||= ".";
+        $module or syntax("Missing option --module");
+
+        eval {
+            my $file = $oPs->fileFindModule(nameModule => $module, dirOrigin => $dirOrigin) || "";
+            print $file;
+        };
+        $@ and warn("Internal error: $@\n");
+
+    } elsif($command eq "display_module_pod") {
+        $fileOrigin and $dirOrigin = dirname($fileOrigin);
+        $dirOrigin ||= ".";
+        $module or syntax("Missing option --module");
+
+        eval {
+            if(my $file = $oPs->fileFindModule(nameModule => $module, dirOrigin => $dirOrigin)) {
+                my $pod = $oPs->podFromFile(file => $file) || "";
+                print $pod;
+            } else {
+                warn("Module ($module) not found\n");
+            }
+        };
+        $@ and warn("Internal error: $@\n");
+
+    } elsif($command eq "display_file_pod") {
+        $file or syntax("Missing option --file");
+
+        eval {
+            my $pod = $oPs->podFromFile(file => $file) || "";
+            print $pod;
+        };
+        $@ and warn("Internal error: $@\n");
+
+    } elsif($command eq "smart_go_to") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
+#my $tt = Devel::TimeThis->new("Entire goto");
+
+        eval {
+            if(my $oLocation = $oPs->oLocationSmartGoTo(file => $file, row => $row, col => $col)) {
+                print join("\t", $oLocation->file, $oLocation->row, $oLocation->col);
+            }
+        };
+        $@ and warn("Error: $@\n");
+
+    } elsif($command eq "smart_doc") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
+
+        eval {
+            if(my $oLocation = $oPs->oLocationSmartDoc(file => $file, row => $row, col => $col)) {
+                print join("\t",  map { $_ => $oLocation->rhProperty->{$_} } qw/ found name docType / ) . "\n";
+                print $oLocation->rhProperty->{text} || "";
+            }
+        };
+        $@ and warn("Error: $@\n");
+
+    } elsif($command eq "process_inc") {
+        my @aFile;
+        find({ wanted => sub {
+                   m|/Perl/| && /\.pm$/
+#                           && @aFile < 5
+                                   and push(@aFile, file($_)->absolute . "");
+               },
+               no_chdir => 1,
+           }, @INC);
+
+        my %hFileTime;
+        for my $file (@aFile) {
+            print "((($file)))\n";
+            my $timeStart = time();
+            eval {
+                use Devel::TimeThis;
+                my $t = Devel::TimeThis->new("parse");
+                $oPs->oDocumentParseFile($file);
+            };
+            $@ and warn($@);
+            my $timeDuration = time() - $timeStart;
+            $hFileTime{$file} = $timeDuration;
+            printf("  %0.6f\n", $timeDuration);
+        }
+
+        print "REPORT\n";
+        for my $file (
+            sort { $hFileTime{$a} <=> $hFileTime{$b} }
+                    keys %hFileTime) {
+            printf("%0.6f : $file\n", $hFileTime{$file});
+        }
+        
+    } else {
+        syntax("Invalid command ($command)");
+    }
+    
+    return(1);
+}
+
+
+
+sub syntax {
+    my ($message) = @_;
+    print "Error: $message\n\n";    #pod2usage -msg doesn't do this for me... :(
+    pod2usage(-verbose => 2);
+}
+
+
+
+__END__
+
+=head1 NAME - perly_sense
+
+IntelliSense like editor support for Perl
+
+
+
+=head1 OPTIONS
+
+perly_sense COMMAND OPTIONS
+
+=head2 smart_go_to --file, --row, --col
+
+Look in --file at --row, --col and print a location for the origin of
+the source at that location,
+
+
+=head2 smart_doc --file, --row, --col
+
+Look in --file at --row, --col and print a smart doc text for the
+source at that location
+
+
+=head2 process_inc
+
+Process and cache all modules found in @INC
+
+
+
+
+=head1 SYNOPSIS
+
+perly_sense smart_doc --file=perly_sense --row=102 --col=42
+
+perly_sense smart_go_to --file=Foo/Bar.pm --row=32 --col=3
+
+perly_sense smart_doc --file=Foo/Bar.pm --row=32 --col=3
+
+perly_sense process_inc
+
+
+
+=head1 EDITOR INTEGRATION
+
+If you want to use this from within an editor/IDE you need to be able to shell
+out to call this program and to do something useful with the result using the
+editor's macro/programming facilities.
