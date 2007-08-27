@@ -2,20 +2,27 @@
 bin/perly_sense
 Build.PL
 Changes
+dist.sh
 editors/emacs/perly-sense.el
 lib/Devel/PerlySense.pm
+lib/Devel/PerlySense/Class.pm
 lib/Devel/PerlySense/Document.pm
 lib/Devel/PerlySense/Document/Api.pm
 lib/Devel/PerlySense/Document/Location.pm
 lib/Devel/PerlySense/Document/Meta.pm
+lib/Devel/PerlySense/Editor/Emacs.pm
 lib/Devel/PerlySense/Util.pm
 lib/Devel/TimeThis.pm
+Makefile
 Makefile.PL
 MANIFEST
+MANIFEST.SKIP
 META.yml			# Will be created by "make dist"
 README
+reinstall.sh
 t/00-load.t
 t/data/inc-lib/Game/Event/Timed.pm
+t/data/inc-lib/SubClass.pm
 t/data/project-lib/Game/Application.pm
 t/data/project-lib/Game/Controller.pm
 t/data/project-lib/Game/Direction.pm
@@ -36,6 +43,7 @@ t/data/simple-lib/lib/Win32/Word/Writer.pm
 t/data/simple-lib/lib/Win32/Word/Writer/Table.pm
 t/PerlySense-cache-methods.t
 t/PerlySense-cache.t
+t/PerlySense-Class-new.t
 t/PerlySense-Document-Api-consists-supported.t
 t/PerlySense-Document-api-likely.t
 t/PerlySense-Document-api-match.t
@@ -60,6 +68,7 @@ t/PerlySense-Document-package.t
 t/PerlySense-Document-self-method-call.t
 t/PerlySense-Document-sub.t
 t/PerlySense-Document-use.t
+t/PerlySense-Editor-Emacs-class-hierarchy.t
 t/PerlySense-find-file-inc.t
 t/PerlySense-find-file-up-down.t
 t/PerlySense-find-module-interface.t

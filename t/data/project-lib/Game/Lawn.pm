@@ -13,8 +13,8 @@ Nah...
 
 
 package Game::Lawn;
-
-
+#MI with common base class from Game::Object::Worm
+use base qw( Game::Object );
 
 
 

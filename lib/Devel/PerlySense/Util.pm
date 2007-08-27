@@ -7,6 +7,12 @@ Devel::PerlySense::Util - Utility routines
 
 
 package Devel::PerlySense::Util;
+use base "Exporter";
+
+our @EXPORT = (
+    qw/
+       debug
+       /);
 
 our $VERSION = '0.01';
 
@@ -18,6 +24,8 @@ use strict;
 use warnings;
 use Carp;
 use Data::Dumper;
+use File::Basename;
+use Path::Class;
 
 
 
@@ -44,6 +52,27 @@ sub aNamedArg {
     }
 
     return(@aResult);
+}
+
+
+
+
+
+=head2 debug($message)
+
+Log debug $message.
+
+Return 1.
+
+=cut
+my $fileDebug = "./debug.log";  ###TODO: Change to be bound to project root
+sub debug {
+	my ($message) = @_;
+
+    open(my $fh, ">>", $fileDebug) or return warn("Could not open ($fileDebug) for append\n");
+    $fh->print(localtime() . ": $message\n");
+    
+    return(1);
 }
 
 

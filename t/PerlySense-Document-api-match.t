@@ -30,6 +30,7 @@ my $rexFile = qr/.Game.Lawn.pm$/;
 
 
 my @aAll = qw/
+              END
               width
               height
               rhGrid
@@ -55,6 +56,13 @@ my @aAll = qw/
               placeObjectBodyPartAt
               removeObjectBodyPartAt
               wormHasCrashed
+              oLocation
+              oLawn
+              raBodyLocation
+              raBodyChar
+              isBlocking
+              color
+              buildBodyRight
               /;
 
 print "\n* No inheritance\n";
@@ -74,14 +82,14 @@ cmp_ok($oDocument->scoreInterfaceMatch(
     nameModule => $nameModule,
     raMethodRequired => [qw/ isAnythingAt /],
     raMethodNice => [qw/ /]),
-   '==', 84.00, " Correct scoreInterfaceMatch for one present required");
+   '==', 83.84, " Correct scoreInterfaceMatch for one present required");
 
 
 cmp_ok($oDocument->scoreInterfaceMatch(
     nameModule => $nameModule,
     raMethodRequired => [qw/ isAnythingAt wormHasCrashed /],
     raMethodNice => [qw/ /]),
-   '==', 84.67, " Correct scoreInterfaceMatch for two present required");
+   '==', 84.34, " Correct scoreInterfaceMatch for two present required");
 
 cmp_ok(int($oDocument->scoreInterfaceMatch(
     nameModule => $nameModule,

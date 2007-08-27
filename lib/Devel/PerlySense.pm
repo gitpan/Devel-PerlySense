@@ -27,7 +27,8 @@ method/sub declaration for the symbol (module/method/sub) at point. If
 no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
 
-C-p m f -- Perl Module open File -- Open the source file of the
+C-p m f -- Perl Module open File -- Open the source file of the module
+at point.
 
 As you can see, PerlySense duplicates some of the functionality in
 cperl-mode, and does more in certain areas.
@@ -36,15 +37,12 @@ cperl-mode, and does more in certain areas.
 
 =head2 From the command line
 
-This is not very convenient unless you let your editor do it.
+This is not very convenient unless you let your editor do it. See the
+L<bin/perly_sense> script on how to do this.
 
-perly_sense find_module_source_file --module=Foo::Bar --file_origin=/usr/home/source/lib/Foo.pm
+There is one useful command though; cache all the modules in @INC:
 
-perly_sense display_module_pod --module=Your::Foo::Bar --dir_origin=/usr/home/source
-perly_sense display_module_pod --module=Data::Dumper
-
-perly_sense display_file_pod --file=Foo/Bar.pm
-
+    perl perly_sense process_inc
 
 
 =head2 From other editors
@@ -58,7 +56,7 @@ if not by the users.
 
 =head2 From Perl
 
-See the bin/perly_sense script, or the t directory.
+See the source of the L<bin/perly_sense> script, or the t directory.
 
 
 
@@ -71,7 +69,7 @@ Install required modules from CPAN.
 Copy the file editors/emacs/perly-sense.el to your Emacs script dir
 (which should be in the load-path), and add this to the end of your .emacs config file:
 
-  ; PerlySense 
+  ; PerlySense
   (load "perly-sense")
   (global-unset-key "\C-p")
   (global-set-key (kbd "\C-p \C-d") 'perly-sense-smart-docs-at-point)
@@ -135,7 +133,7 @@ autoloaded subs etc), the POD documentation for the sub.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_01';
+our $VERSION = '0.01_02';
 
 
 
@@ -155,12 +153,15 @@ use Cache::Cache;
 use Storable qw/freeze thaw/;
 
 use Devel::PerlySense::Util;
+use Devel::PerlySense::Class;
 use Devel::PerlySense::Document;
 use Devel::PerlySense::Document::Location;
 
 
 
 
+
+=head1 *** THE FOLLOWING IS DEVELOPER DOCUMENTATION ***
 
 =head1 PROPERTIES
 
@@ -181,7 +182,7 @@ field "oCache" => undef;
 
 =head2 new()
 
-Create new PearlySense object.
+Create new PerlySense object.
 
 =cut
 sub new() {
@@ -248,13 +249,15 @@ Devel::PerlySense::Document::Location object.
 
 Currently supported:
 
-  $self->method, look in current file. If no sub can be found, look
-  for POD.
+  $self->method, look in current file and base classes. If no sub can
+  be found, look for POD.
 
-  $object->method, look in current file. If no sub can be found, look
-  for POD.
+  $object->method, look in current file and used modules. If no sub
+  can be found, look for POD.
 
   Module::Name (bareword)
+
+  Module::Name (as the only contents of a string literal)
 
 If there's nothing at $row/col, or if the source can't be found,
 return undef.
@@ -264,6 +267,7 @@ Die if $file doesn't exist, or on other errors.
 =cut
 sub oLocationSmartGoTo {
     my ($file, $row, $col) = Devel::PerlySense::Util::aNamedArg(["file", "row", "col"], @_);
+    debug("oLocationSmartGoTo file($file) row($row) col($col)");
 
     my $oDocument = $self->oDocumentParseFile($file);
 
@@ -285,11 +289,24 @@ sub oLocationSmartGoTo {
 
     my ($oObject, $oMethod, $oLocationSub) = $oDocument->aObjectMethodCallAt(row => $row, col => $col);
     if($oObject && $oMethod && $oLocationSub) {
-        my @aMethodCall = $oDocument->aMethodCallOf(nameObject => "$oObject", oLocationWithin => $oLocationSub);
-        my @aNameModuleUse = $oDocument->aNameModuleUse();
-        my @aDocumentDest = $self->aDocumentFindModuleWithInterface(raNameModule => \@aNameModuleUse, raMethodRequired => [ "$oMethod" ] , raMethodNice => \@aMethodCall, dirOrigin => dirname($file));
+        debug("Looking for $oObject->$oMethod");
+        my @aMethodCall = $oDocument->aMethodCallOf(
+            nameObject => "$oObject",
+            oLocationWithin => $oLocationSub,
+        );
+        my @aNameModuleUse = $oDocument->aNameModuleUse();  #Add all known modules, not just the ones explicitly stated
+        my @aDocumentDest = $self->aDocumentFindModuleWithInterface(
+            raNameModule => \@aNameModuleUse,
+            raMethodRequired => [ "$oMethod" ] ,
+            raMethodNice => \@aMethodCall,
+            dirOrigin => dirname($file),
+        );
         if(@aDocumentDest) {
-            my $oLocation = $aDocumentDest[0]->oLocationSubDefinition(row => $row, name => "$oMethod");
+            debug("Possible matching modules:\n" . join("\n", map { "  * $_" } map { @{$_->oMeta->raPackage} } @aDocumentDest));
+            my $oLocation = $aDocumentDest[0]->oLocationSubDefinition(
+                row => $row,
+                name => "$oMethod",
+            );
             $oLocation and return($oLocation);
         }
     }
@@ -324,12 +341,7 @@ return a Document::Location object with the following rhProperty keys set:
 
 Currently supported:
 
-  $self->method, look for POD.
-
-  $object->method, look in current file. If no sub can be found, look
-  for POD.
-
-  Module::Name (bareword)
+  Same as for oLocationSmartGoTo
 
 If there's nothing at $row/col, use the current document.
 
@@ -393,6 +405,55 @@ sub oLocationSmartDoc {
     }
 
     return(undef);
+}
+
+
+
+
+
+=head2 classNameAt(file => $fileOrigin, row => $row, col => $row)
+
+Look in $file at location $row/$col and determine what class name that is. 
+
+Return the class name or "" if it's package main.
+
+Die if $file doesn't exist, or on other errors.
+
+=cut
+sub classNameAt {
+    my ($file, $row, $col) = Devel::PerlySense::Util::aNamedArg(["file", "row", "col"], @_);
+
+    my $oDocument = $self->oDocumentParseFile($file);
+    
+    my $package = $oDocument->packageAt(row => $row);
+
+    $package eq "main" and return "";
+    return($package);
+}
+
+
+
+
+
+=head2 classAt(file => $fileOrigin, row => $row, col => $row)
+
+Look in $file at location $row/$col and determine what
+PerlySelse::Class that is.
+
+Return the Class object or undef if it's package main.
+
+Die if $file doesn't exist, or on other errors.
+
+=cut
+sub classAt {
+    my ($file, $row, $col) = Devel::PerlySense::Util::aNamedArg(["file", "row", "col"], @_);
+
+    return(Devel::PerlySense::Class->newFromFileAt(
+        oPerlySense => $self,
+        file => $file,
+        row => $row,
+        col => $col,
+    ));
 }
 
 
@@ -589,11 +650,11 @@ sub oLocationRenderPodToText {
 
 =head2 aDocumentFindModuleWithInterface(raNameModule => $raNameModule, raMethodRequired => $raMethodRequired, raMethodNice => $raMethodNice, dirOrigin => $dirOrigin)
 
-Return an array with Devel::PerlySense::Document objects that support
+Return a list with Devel::PerlySense::Document objects that support
 all of the methods in $raMethodRequired and possibly the methods in
 $raMethodNice. Look in modules in $raNameModule.
 
-The array is sorted with the best match first.
+The list is sorted with the best match first.
 
 If the document APIs have one or more base classes, look in the @ISA
 (depth-first, just like Perl (see perldoc perltoot)).
@@ -604,7 +665,7 @@ Warn on some failures to find the location. Die on errors.
 sub aDocumentFindModuleWithInterface {
     my ($raNameModule, $raMethodRequired, $raMethodNice, $dirOrigin) = Devel::PerlySense::Util::aNamedArg(["raNameModule", "raMethodRequired", "raMethodNice", "dirOrigin"], @_);
 #my $tt = Devel::TimeThis->new("aDocumentFindModuleWithInterface");
-    
+
     my @aDocument;
     for my $nameModule (@$raNameModule) {
 #print "module: $nameModule\n";
@@ -627,13 +688,41 @@ sub aDocumentFindModuleWithInterface {
 
 
 
+=head2 aApiOfClass(file => $fileOrigin, row => $row, col => $row)
+
+Look in $file at location $row/$col and determine what package is
+there.
+
+Return a two item array with (Package name,
+Devel::PerlySense::Document::Api object with the likely API of that
+class), or () if none was found.
+
+Die if $file doesn't exist, or on other errors.
+
+=cut
+sub aApiOfClass {
+    my ($file, $row, $col) = Devel::PerlySense::Util::aNamedArg(["file", "row", "col"], @_);
+
+    my $oDocument = $self->oDocumentParseFile($file);
+    my $packageName = $oDocument->packageAt(row => $row) or return(undef);
+
+    $oDocument->determineLikelyApi(nameModule => $packageName) or return(undef);
+
+    return($packageName, $oDocument->rhPackageApiLikely->{$packageName});
+}
+
+
+
+
+
 =head1 CACHE METHODS
 
 
 =head2 cacheSet(file => $file, key => $key, value => $valuex)
 
 If the oCache isn't undef, store the $value in the cache under the
-total key of ($file, $file's timestamp, $key).
+total key of ($file, $file's timestamp, $key, and the PerlySense
+VERSION).
 
 $value should be a scalar or reference which can be freezed.
 
@@ -674,7 +763,7 @@ sub cacheGet {
     my $keyTotal = $self->cacheKeyTotal($file, $key) or
 #            warn("Could not get key for ($file) ($key)\n"),
                     return(undef);
-    
+
     my $data = $self->oCache->get($keyTotal) or
 #            warn("?\n"),
                     return(undef);
@@ -692,7 +781,8 @@ sub cacheGet {
 
 If oCache is undef, return undef.
 
-Otherwise, return the total key of ($file, $file's timestamp, $key).
+Otherwise, return the total key of ($file, $file's timestamp, $key,
+and the PerlySense VERSION).
 
 $file must be an existing file.
 
@@ -704,7 +794,7 @@ sub cacheKeyTotal {
     $self->oCache or return(undef);
 
     my $timestamp = (stat($file))[9] or die("Could not read timestamp for file ($file)\n");
-    my $keyTotal = join("\t", $file, $timestamp, $key);
+    my $keyTotal = join("\t", $file, $timestamp, $key, $self->VERSION);
 
     return($keyTotal);
 }
@@ -731,7 +821,8 @@ source is impossible. But not unusable.
 
 Because of this PerlySense is not about exact rules, but about
 heuristics and a 90% solution that isn't perfect, but good-enough. If
-it works for you, use it to be more productive.
+it works for you, use it to be more productive. If not, well... let me
+know.
 
 PerlySense tries to take advantage of the fact that Perl code is more
 than the plain source. The source lives in a context of POD and a
@@ -739,6 +830,8 @@ directory structure and... oher source code.
 
 
 =head1 SEE ALSO
+
+L<sepia> - similar effort
 
 L<PPI> - excellent for parsing Perl
 
@@ -753,13 +846,22 @@ browser/IDE. Earlier (a lot) work by me.
 
 Johan Lindström, C<< <johanl[ÄT]DarSerMan.com> >>
 
-=head1 BUGS
+=head1 BUGS AND CAVEATS
+
+=head2 BUG REPORTS
 
 Please report any bugs or feature requests to
 C<bug-devel-perlysense@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Devel-PerlySense>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
+
+
+=head2 CAVEATS
+
+Tab/space isn't supported by PPI yet, but it's supposed to be. So
+using Tab instead of spaces won't work properly.
+
 
 
 =head2 KNOWN BUGS

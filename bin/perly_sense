@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 $|++;
+BEGIN { unshift(@INC,  q|F:\Dokument\Projekt\Dev\CPAN\Devel-PerlySense\trunk\source\lib|); }
 use strict;
 
 use Getopt::Long;
@@ -9,10 +10,14 @@ use File::Path;
 use File::Find;
 use Path::Class;
 use Cache::FileCache;
+use List::Util qw/ max /;
 
 use lib "../lib";
 use Devel::PerlySense;
+use Devel::PerlySense::Editor::Emacs;
 use Time::HiRes qw/time/;
+
+use Data::Dumper;
 
 
 main();
@@ -56,6 +61,9 @@ sub main {
     $oCache or warn("Could not create cache dir in either of:\n", join(":", @aDirCachePossible) . "\n");
     $oPs->oCache($oCache);
 
+
+    my $oEditor = Devel::PerlySense::Editor::Emacs->new(oPerlySense => $oPs);
+    
 
     if($command eq "find_module_source_file") {
         $fileOrigin and $dirOrigin = dirname($fileOrigin);
@@ -114,6 +122,45 @@ sub main {
             if(my $oLocation = $oPs->oLocationSmartDoc(file => $file, row => $row, col => $col)) {
                 print join("\t",  map { $_ => $oLocation->rhProperty->{$_} } qw/ found name docType / ) . "\n";
                 print $oLocation->rhProperty->{text} || "";
+            }
+        };
+        $@ and warn("Error: $@\n");
+
+    } elsif($command eq "class_hierarchy") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
+
+        eval {
+            if(my $oClass = $oPs->classAt(
+                file => $file,
+                row => $row,
+                col => $col,
+            )) {
+                print $oEditor->classHierarchy(oClass => $oClass);
+            }
+        };
+        $@ and warn("Error: $@\n");
+
+    } elsif($command eq "class_api") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
+
+        eval {
+            my ($package, $oApi) = $oPs->aApiOfClass(file => $file, row => $row, col => $col);
+            if($oApi) {
+                my $rhSub = $oApi->rhSub;
+                print "$package\n" . join("\n",
+                           map {
+                               sprintf("%s:%d %s", $_->{file}, $_->{row}, $_->rhProperty->{sub});
+                           } sort {
+                               $a->{file} cmp $b->{file}
+                                       or
+                               $a->{row} <=> $b->{row}
+                           }
+                           values %$rhSub
+                       );
             }
         };
         $@ and warn("Error: $@\n");
@@ -189,6 +236,12 @@ the source at that location,
 
 Look in --file at --row, --col and print a smart doc text for the
 source at that location
+
+
+=head2 class_hierarchy --file, --row, --col
+
+Look in --file at --row, --col and print the class hirerarchy for the
+package at that location
 
 
 =head2 process_inc

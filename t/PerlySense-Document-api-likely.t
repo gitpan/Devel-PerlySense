@@ -40,9 +40,18 @@ BEGIN { -d "t" and chdir("t"); }
     ok($oDocument->determineLikelyApi(nameModule => $nameModule), " determineLikelyApi ok");
     is(scalar(keys %{$oDocument->rhPackageApiLikely}), 1, " rhPackageApiLikely key count ok");
     ok($oApi = $oDocument->rhPackageApiLikely->{"Game::Lawn"}, " Got Game::Lawn API");
+#warn(Dumper($oApi->rhSub));
     is_deeply([sort keys %{$oApi->rhSub}],
               [sort qw/
+                       END
                        width
+                       buildBodyRight
+                       color
+                       oLocation
+                       oLawn
+                       raBodyLocation
+                       raBodyChar
+                       isBlocking
                        height
                        rhGrid
                        oUI

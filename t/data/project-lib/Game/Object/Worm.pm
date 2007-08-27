@@ -153,10 +153,10 @@ sub new { my $pkg = shift;
     $self->oDirection(Game::Direction->new($direction));
     $self->score(0);
     $self->lengthIdeal($length);
-    
-
+    my $class = "Carp";          #Core, can be used for testing
+    $class = "File::Spec";       #Core, can be used for testing
     #Build worm body
-    my $char = "O";
+    my $char = "L";
     if($direction eq "left") {
         $self->buildBodyRight($length, $self->oLocation, sub { my $ret = $char; $char = "o"; $ret; });
 #        for my $i (0..$length - 1) {
@@ -168,7 +168,7 @@ sub new { my $pkg = shift;
     else {
         die;
         }
-
+    $class = "None::Exsistent::Module";  #Missing from the system
     return($self);
 }
 

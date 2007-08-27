@@ -56,6 +56,8 @@ my $rhNameInfo = {};
 
 Create new TimeThis object.
 
+Invocations with the same $name will be reported together.
+
 =cut
 sub new() {
     my $self = bless {}, shift;
@@ -89,6 +91,12 @@ sub DESTROY {
 
 
 
+
+=head2 END
+
+Print timing data
+
+=cut
 sub END {
     keys %$rhNameInfo and print qq{
 
@@ -127,19 +135,6 @@ C<bug-devel-perlysense@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Devel-PerlySense>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
-
-
-=head2 KNOWN BUGS
-
-PPI is kinda slow for large documents. Lots of objects being created etc.
-
-There are certainly edge cases. Bug reports with failing tests
-appreciated :)
-
-
-=head1 ACKNOWLEDGEMENTS
-
-Peter Liljenberg for his elisp fu.
 
 
 =head1 COPYRIGHT & LICENSE

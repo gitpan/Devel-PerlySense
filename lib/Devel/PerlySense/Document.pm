@@ -154,6 +154,32 @@ sub new {
 
 
 
+=head2 fileFindModule(nameModule => $nameModule)
+
+Find the file containing the $nameModule given the file property of
+the document.
+
+Return the absolute file name, or undef if none could be found. Die on
+errors.
+
+=cut
+sub fileFindModule {
+    my ($nameModule) = Devel::PerlySense::Util::aNamedArg(["nameModule"], @_);
+
+    my $file = $self->file or return(undef);
+
+    return(
+        $self->oPerlySense->fileFindModule(
+            nameModule => $nameModule,
+            dirOrigin => dirname($self->file)
+        )
+    );
+}
+
+
+
+
+
 =head2 parse(file => $file)
 
 Parse the $file and store the metadata.
@@ -184,7 +210,7 @@ sub parse {
     } else {
         $oMeta = Devel::PerlySense::Document::Meta->new();
         $oMeta->parse($self);
-        $self->oMeta($oMeta);    
+        $self->oMeta($oMeta);
 #$file =~ /Game/ and print "((($file))) WRITE CACHE:" . Dumper($oMeta);
         $self->cacheSet($keyCache, $file, $self->oMeta);
     }
@@ -228,8 +254,10 @@ Dir on errors.
 =cut
 sub aNameBase {
 
-    my %hStop = map { $_ => 1 } qw(Exporter DynaLoader);    #TODO: Should be centralized in PerlySense and made configurable
-    my @aBase = grep { (! $hStop{$_}) && $_ =~ /[A-Z]/ } @{$self->oMeta->raNameModuleBase};   
+    #TODO: Should be centralized in PerlySense and made configurable
+    my %hStop = map { $_ => 1 } qw(Exporter DynaLoader);
+
+    my @aBase = grep { (! $hStop{$_}) && $_ =~ /[A-Z]/ } @{$self->oMeta->raNameModuleBase};
 
     return(@aBase);
 }
@@ -254,7 +282,7 @@ sub aNameModuleUse {
 
     my %hStop = map { $_ => 1 } qw(Exporter DynaLoader);    #TODO: Should be centralized in PerlySense and made configurable
     my @aModule = grep { (! $hStop{$_}) } @{$self->oMeta->raNameModuleUse};
-    
+
     return(@aModule);
 }
 
@@ -274,8 +302,8 @@ sub packageAt {
 
     my @aPackage =
             grep { $_->namespace && $_->location->[0] <= $row }
-                    @{$self->oMeta->raPackage}
-                            or return("main");
+            @{$self->oMeta->raPackage}
+                    or return("main");
 
     my $oPackage = $aPackage[-1];
     return($oPackage->namespace);
@@ -355,7 +383,7 @@ sub methodCallAt {
 
     my $rhMethod = $self->oMeta->rhMethodAt(row => $row, col => $col) or return;
     my ($oMethod, $oObject) = ($rhMethod->{oNode}, $rhMethod->{oNodeObject});
-    
+
     wantarray and return($oObject, $oMethod);
     return((defined($oObject) ? $oObject : "") . "->$oMethod");
 }
@@ -456,10 +484,11 @@ sub oLocationSub {
     for my $oLocation (@{$self->oMeta->raLocationSub}) {
         if($oLocation->rhProperty->{nameSub} eq $name &&
                    $oLocation->rhProperty->{namePackage} eq $package) {
+            debug("Document->oLocation found ($name) in ($oLocation)");
             return($oLocation);
         }
     }
-    
+
     return(undef);
 }
 
@@ -495,6 +524,7 @@ sub oLocationSubDefinition {
             $package = "main";
         }
     }
+    debug("Document->oLocationSubDefinition name($name) package($package)");
 
     #Look for the sub definition
     my $oLocation = $self->oLocationSub(name => $name, package => $package);
@@ -558,11 +588,11 @@ sub oLocationPod {
             $oLocation->rhProperty->{docType} = "hint";
             $oLocation->rhProperty->{name} = "$name";
             $oLocation->rhProperty->{pod} = $oLocation->rhProperty->{podSection} . $oLocation->rhProperty->{pod};
-            
+
             return($oLocation);
-        }        
+        }
     }
-    
+
 
     #Fail to base classes
     for my $moduleBase ($self->aNameBase) {
@@ -887,7 +917,7 @@ sub oLocationEnclosingSub {
             return($oLocation);
         }
     }
-    
+
 
     return(undef);
 }

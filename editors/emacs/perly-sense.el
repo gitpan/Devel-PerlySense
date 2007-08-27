@@ -67,7 +67,14 @@
 
 
 
-; Split result into first line and the rest and return those two
+
+                                        
+; Split result into first line and the rest and return the first line
+(defun perly-sense-result-status (result)
+  (car (split-string result "[\n]"))
+)
+
+; Split result into first line and the rest and return the rest
 (defun perly-sense-result-text (result)
   (mapconcat 'identity (cdr (split-string result "[\n]")) "\n")
 )
@@ -81,8 +88,8 @@
 
 
 
-(defun perly-sense-display-text-in-buffer (name text)
-  (let ((buffer-name (format "*POD %s*" name)))
+(defun perly-sense-display-text-in-buffer (type name text)
+  (let ((buffer-name (format "*%s %s*" type name)))
     (with-current-buffer (get-buffer-create buffer-name)
       (erase-buffer)
       (insert text)
@@ -95,9 +102,10 @@
 
 
 (defun perly-sense-display-doc-message-or-buffer (doc-type name text)
-  (cond ((string= doc-type "hint") (message "%s" text))
+  (cond ((string= doc-type "hint")
+         (message "%s" text))
         ((string= doc-type "document")
-         (perly-sense-display-text-in-buffer name text)
+         (perly-sense-display-text-in-buffer "POD" name text)
          (message nil)
          )
         )
@@ -163,6 +171,7 @@
 
 (defun perly-sense-find-file-location (file row col)
   "Find the file and go to the row col location"
+  (set-mark-command nil)
   (find-file file)
   (goto-line row)
   (beginning-of-line)
@@ -174,7 +183,7 @@
 
 
 
-(defun perly-sense-smart-go-to (word)
+(Defun perly-sense-smart-go-to (word)
   "Go to the original symbol for word."
   (if word
       (perly-sense-find-source-for-module word)
@@ -194,12 +203,64 @@
         )
     (if (string-match "[\t]" result)
         (let ((value (split-string result "[\t]")))
-          (perly-sense-find-file-location (pop value) (string-to-number (pop value)) (string-to-number (pop value)))
+          (let ((file (pop value)))
+            (perly-sense-find-file-location file (string-to-number (pop value)) (string-to-number (pop value)))
+            (message "Went to: %s" file)
+            )
           )
+      (message nil)
       )
     )
-  (message nil)
   )
+
+
+
+
+(defun perly-sense-class-hierarchy-for-class-at-point ()
+  "Display the class hierarchy for the current class"
+  (interactive)
+  (message "Class Hierarchy...")
+  (let ((result (shell-command-to-string
+                 (format "perly_sense class_hierarchy --file=%s --row=%s --col=%s"
+                         (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
+                         )
+                 ))
+        )
+    (message "%s" result)
+    )
+  )
+
+
+
+
+
+
+
+
+
+
+(defun perly-sense-display-api-for-class-at-point ()
+  "Display the likely API of the class at point."
+  (interactive)
+  (message "Class API...")
+  (let* ((text (shell-command-to-string
+               (format "perly_sense class_api --file=%s --row=%s --col=%s"
+                       (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
+                       )
+               ))
+         (package (perly-sense-result-status text))
+         (package-doc (perly-sense-result-text text))
+         )
+                                        ; TODO: if package eq ""
+    (perly-sense-display-text-in-buffer "API" package package-doc)
+    (other-window 1)
+    (compilation-mode)
+    (goto-line 2)
+    )
+  )
+
+
+
 
 
 
@@ -213,5 +274,6 @@
 
 (global-set-key (kbd "\C-p \C-d") 'perly-sense-smart-docs-at-point)
 (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
+(global-set-key (kbd "\C-p \C-c") 'perly-sense-display-api-for-class-at-point)
 
 

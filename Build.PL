@@ -18,7 +18,11 @@ my $builder = Module::Build->new(
         'Getopt::Long' => 0,
         'Pod::Usage' => 0,
         'File::Basename' => 0,
-        'PPI' => 1.003
+        'Test::Exception' => 0,
+        'PPI' => 1.003,
+        'File::Slurp' => 0,
+        'Cache::Cache' => 0,
+        'Graph::Easy' => 0.57,
     },
     script_files => [
         "bin/perly_sense",

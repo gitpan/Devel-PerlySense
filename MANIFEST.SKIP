@@ -1,0 +1,13 @@
+^_build
+^Build$
+^blib
+~$
+\.bak$
+\.bat$
+\.log$
+\.tmp$
+\.out
+\.old$
+CVS  
+\.svn
+

@@ -9,4 +9,4 @@ BEGIN {
     use_ok( 'Devel::PerlySense::Util' );
 }
 
-diag( "Testing Devel::PerlySense $Devel::PerlySense::VERSION, Perl 5.008006" );
+diag( "Testing Devel::PerlySense $Devel::PerlySense::VERSION" );

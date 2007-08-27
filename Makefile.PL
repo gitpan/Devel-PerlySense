@@ -12,14 +12,18 @@ WriteMakefile
           'PREREQ_PM' => {
                            'PPI' => '1.003',
                            'Getopt::Long' => 0,
+                           'Test::Exception' => 0,
                            'Pod::Usage' => 0,
                            'Spiffy' => '0.2',
                            'File::Spec' => '0.87',
                            'Data::Dumper' => 0,
                            'Carp' => 0,
+                           'Cache::Cache' => 0,
                            'Test::More' => 0,
                            'Path::Class' => '0.11',
-                           'File::Basename' => 0
+                           'Graph::Easy' => '0.57',
+                           'File::Basename' => 0,
+                           'File::Slurp' => 0
                          }
         )
 ;

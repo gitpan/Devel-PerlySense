@@ -9,7 +9,8 @@ Devel::PerlySense::Document::Location - A file name + cursor position
 
 =head1 DESCRIPTION
 
-The document contains a PPI parsed document, etc.
+A location describes a cursor position (optional) in a file, and
+optional properties.
 
 =cut
 

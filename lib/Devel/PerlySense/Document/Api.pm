@@ -1,7 +1,7 @@
 =head1 NAME
 
-Devel::PerlySense::Document::Api - The methods and their locations of
-a package
+Devel::PerlySense::Document::Api - The methods (and their locations)
+of a package
 
 =head1 DESCRIPTION
 
@@ -42,6 +42,9 @@ Hash ref with (keys: method/sub name; values: Document::Location objects).
 
 Default: {}
 
+The Location objects have a C<sub> property which is the name of the
+sub.
+
 =cut
 field "rhSub" => {};
 
@@ -67,10 +70,10 @@ sub new(@) {
 
 
 
-=head2 parsePackageSetSub(raNodeSub => $oNodeSub, source => $source, oDocument => $oDocument)
+=head2 parsePackageSetSub(raNodeSub => $raNodeSub, source => $source, oDocument => $oDocument)
 
 Parse the entire package data, both $source and found method
-nodes. Add subs to the rhSub property.
+nodes. Add both found subs and $raNodeSub to the rhSub property.
 
 Return 1 or die on errors.
 
@@ -136,7 +139,7 @@ sub parseSourceSetSub {
 
 =head2 oLocationSetSub(nameSub => $nameSub, oDocument => $oDocument, [oNode => $oNode])
 
-Set the key in $rhSub for $nameSub to a new Document::Location with
+Set the $self->rhSub->{$nameSub} to a new Document::Location with
 $oDocument and possibly a row/col for $oNode. Set the rhProperty for:
 
   sub

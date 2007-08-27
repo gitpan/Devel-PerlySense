@@ -1,6 +1,7 @@
 =head1 NAME
 
-Devel::PerlySense::Document::Meta - information generated during a parse
+Devel::PerlySense::Document::Meta - Document information generated
+during a parse
 
 =cut
 
@@ -20,8 +21,10 @@ use strict;
 use warnings;
 use Spiffy -Base;
 use Carp;
+use File::Basename;
 use Data::Dumper;
 use PPI::Document;
+use PPI::Dumper;
 
 
 
@@ -76,7 +79,10 @@ Module names.
 
 Hash ref with (keys: row, values:
   hash ref with (keys: col, values:
-    cloned PPI::Node objects
+    hash with keys:
+      oNode => cloned PPI::Node objects
+      module => module name string
+    )
   )
 )
 
@@ -181,6 +187,17 @@ appropriate data structures.
 Return 1 or die on errors.
 
 =cut
+sub _setRowColNodeModule(%$$$) {
+    my ($rhRowCol, $row, $col, $oNode, $module) = @_;
+    
+    $rhRowCol->{$row}->{$col} = {
+        oNode => $oNode,
+        module => $module,
+    };
+    
+    return;
+}
+
 sub parse {
     my ($oDocument) = @_;
 
@@ -229,7 +246,6 @@ sub parse {
 
 
 
-
                 #use
                 if($pkgNode eq "PPI::Statement::Include") {
                     $hNameModuleUse{$1}++ if($oNode =~ /^ use \s+ ( [A-Z][\w:]* ) /xs);
@@ -242,9 +258,12 @@ sub parse {
 
                 # use base
                 if($pkgNode eq "PPI::Statement::Include") {
-                    if($oNode =~ /^ use \s+ base \s+ qw?\s* (.+);$/xs) {
+                    if($oNode =~ /^ use \s+ base \s+ (?:qw)? \s* (.+);$/xs) {
                         my $modules = $1;
-                        $hNameModuleBase{$_}++ for($modules =~ /([\w:]+)/gs);
+                        for my $module (grep { $_ ne "qw" } $modules =~ /([\w:]+)/gs) {
+                            $hNameModuleBase{$module}++ ;
+                        }
+                        
                     }
                 }
 
@@ -254,7 +273,9 @@ sub parse {
                     my $oStatement = $oNode->statement;
                     if($oStatement =~ /\@ISA \s* = \s* (.+);$/xs) {
                         my $modules = $1;
-                        $hNameModuleBase{$_}++ for($modules =~ /([\w:]+)/gs);
+                        for my $module (grep { $_ ne "qw" } $modules =~ /([\w:]+)/gs) {
+                            $hNameModuleBase{$module}++ ;
+                        }
                     }
                 }
 
@@ -276,16 +297,31 @@ sub parse {
 
 
                 #module
-                if($pkgNode eq "PPI::Token::Word" &&
+                if(
+                    $pkgNode eq "PPI::Token::Word" &&
                             $oNode =~ /^[A-Z][\w:]*$/ #Word chars and ::, Starts with uppercase, is pragma or number
                         ) {
                     if( ! ($aToken[-2]->isa("PPI::Token::Operator") && $aToken[-2] eq "->") ) {
-                        $hRowColModule{$row}->{$col} = {
-                            oNode => $oNode,
-                        };
+                        _setRowColNodeModule(\%hRowColModule, $row, $col, $oNode, "$oNode");
                     }
                 }
-
+                elsif(
+                    $pkgNode =~ /^PPI::Token::Quote::/
+#                            || $pkgNode =~ /^PPI::Token::QuoteLike/   ##TODO: enable when PPI gets "string" method on these classes
+                ) {
+                    my $module = $oNode->string;
+                    if($module =~ /^ [A-Z]\w* (?: :: [A-Z]\w* )+ $/x) {
+                        #Well formed, likely module, i.e. at least one :: separator
+                        _setRowColNodeModule(\%hRowColModule, $row, $col, $oNode, $module);
+                    }
+                    elsif($module =~ /^[A-Z][\w]*$/) {
+                        #Check whether there is a file anywhere matching the name (because only the string contents is a weak indicator of module-ness).
+                        if($oDocument->fileFindModule(nameModule => $module)) {
+                            _setRowColNodeModule(\%hRowColModule, $row, $col, $oNode, $module);
+                        }
+                    }
+                }
+                
 
 
 
@@ -325,7 +361,7 @@ sub parse {
                     $oLocation->rhProperty->{nameSub} = $nameSub;
                     $oLocation->rhProperty->{source} = "$oNode";
                     $oLocation->rhProperty->{namePackage} = $packageCurrent;
-                    
+
 
                     my $countNewline =()= $oNode =~ /\n/g;
                     my ($rowEnd, $colEnd) = ($oNode->location->[0] + $countNewline, 1);
@@ -359,7 +395,7 @@ sub parse {
     $self->rhRowColModule(\%hRowColModule);
     $self->rhRowColMethod(\%hRowColMethod);
     $self->raLocationPod(\@aLocationPod);
-
+    
     return(1);
 }
 
@@ -378,7 +414,7 @@ found.
 sub moduleAt {
     my ($row, $col) = Devel::PerlySense::Util::aNamedArg(["row", "col"], @_);
     my $rhToken = $self->rhTokenOfAt($self->rhRowColModule, $row, $col) or return(undef);
-    return("$rhToken->{oNode}");
+    return( $rhToken->{module} );
 }
 
 

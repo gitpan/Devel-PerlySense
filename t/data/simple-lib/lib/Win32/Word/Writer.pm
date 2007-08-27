@@ -153,7 +153,7 @@ use Win32::OLE;
 use Win32::OLE::Const;
 use File::Temp;
 use Data::Dumper;
-
+my $class = "Win32::Word::Writer::Table";
 use Win32::Word::Writer::Table;
 
 

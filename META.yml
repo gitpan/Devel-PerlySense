@@ -1,8 +1,57 @@
---- #YAML:1.0
+---
 name: Devel-PerlySense
-version: 0.01_01
+version: 0.01_02
 author:
-  - Johan Lindström <johanl[ÄT]DarSerMan.com>
+  - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
 license: perl
-generated_by: Module::Build version 0.261, without YAML.pm
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  Cache::Cache: 0
+  Carp: 0
+  Data::Dumper: 0
+  File::Basename: 0
+  File::Slurp: 0
+  File::Spec: 0.87
+  Getopt::Long: 0
+  Graph::Easy: 0.57
+  PPI: 1.003
+  Path::Class: 0.11
+  Pod::Usage: 0
+  Spiffy: 0.2
+  Test::Exception: 0
+  Test::More: 0
+  perl: 5.6.0
+provides:
+  Devel::PerlySense:
+    file: lib/Devel/PerlySense.pm
+    version: 0.01_02
+  Devel::PerlySense::Class:
+    file: lib/Devel/PerlySense/Class.pm
+    version: 0.01
+  Devel::PerlySense::Document:
+    file: lib/Devel/PerlySense/Document.pm
+    version: 0.01
+  Devel::PerlySense::Document::Api:
+    file: lib/Devel/PerlySense/Document/Api.pm
+    version: 0.01
+  Devel::PerlySense::Document::Location:
+    file: lib/Devel/PerlySense/Document/Location.pm
+    version: 0.01
+  Devel::PerlySense::Document::Meta:
+    file: lib/Devel/PerlySense/Document/Meta.pm
+    version: 0.01
+  Devel::PerlySense::Editor::Emacs:
+    file: lib/Devel/PerlySense/Editor/Emacs.pm
+    version: 0.01
+  Devel::PerlySense::Util:
+    file: lib/Devel/PerlySense/Util.pm
+    version: 0.01
+  Devel::TimeThis:
+    file: lib/Devel/TimeThis.pm
+    version: 0.01
+generated_by: Module::Build version 0.2806
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2

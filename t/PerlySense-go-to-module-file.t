@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 12;
+use Test::More tests => 16;
 use Test::Exception;
 
 use Data::Dumper;
@@ -37,6 +37,12 @@ is($oLocation->col, 1, " col ok");
 
 ok($oLocation = $oPs->oLocationSmartGoTo(file => $fileOrigin, row => 321, col => 20), "Found source ok, on module in class method call");
 like($oLocation->file, qr/File.Spec\.pm$/, " file ok");
+is($oLocation->row, 1, " row ok");
+is($oLocation->col, 1, " col ok");
+
+
+ok($oLocation = $oPs->oLocationSmartGoTo(file => $fileOrigin, row => 156, col => 15), "Found source ok, class in string");
+like($oLocation->file, qr/Writer.Table\.pm/, " file same");
 is($oLocation->row, 1, " row ok");
 is($oLocation->col, 1, " col ok");
 
