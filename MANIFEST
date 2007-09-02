@@ -13,13 +13,13 @@ lib/Devel/PerlySense/Document/Meta.pm
 lib/Devel/PerlySense/Editor/Emacs.pm
 lib/Devel/PerlySense/Util.pm
 lib/Devel/TimeThis.pm
-Makefile
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 META.yml			# Will be created by "make dist"
 README
 reinstall.sh
+release.pl
 t/00-load.t
 t/data/inc-lib/Game/Event/Timed.pm
 t/data/inc-lib/SubClass.pm
@@ -68,7 +68,7 @@ t/PerlySense-Document-package.t
 t/PerlySense-Document-self-method-call.t
 t/PerlySense-Document-sub.t
 t/PerlySense-Document-use.t
-t/PerlySense-Editor-Emacs-class-hierarchy.t
+t/PerlySense-Editor-Emacs-class-overview.t
 t/PerlySense-find-file-inc.t
 t/PerlySense-find-file-up-down.t
 t/PerlySense-find-module-interface.t

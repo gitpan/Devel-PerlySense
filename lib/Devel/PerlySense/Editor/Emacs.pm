@@ -57,10 +57,10 @@ Create new Emcacs object.
 =cut
 sub new {
     my ($oPerlySense) = Devel::PerlySense::Util::aNamedArg(["oPerlySense"], @_);
-    
+
     $self = bless {}, $self;    #Create the object. It looks weird because of Spiffy
     $self->oPerlySense($oPerlySense);
-    
+
     return($self);
 }
 
@@ -68,12 +68,12 @@ sub new {
 
 
 
-=head2 classHierarchy(oClass)
+=head2 classOverview(oClass)
 
 Return string representing the class hierarchy of $oClass.
 
 =cut
-sub classHierarchy {
+sub classOverview {
     my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
 
     my $oGraph = Graph::Easy->new();
@@ -109,9 +109,9 @@ sub classHierarchy {
 
     #Remove vertical-lines-only lines
     @aLine = grep { /[^ |^]/ } @aLine;
-    
+
     $text = join("\n", @aLine);
-    return "* INHERITANCE *\n$text";
+    return "* Inheritance *\n$text";
 }
 
 
@@ -122,7 +122,7 @@ sub addClassNameToGraph {
     ###TODO: protect against infinite loops
     for my $oClassBase (values %{$oClass->rhClassBase}) {
         $rhSeenEdge->{$oClass->name . "->" .$oClassBase->name}++ and next;
-        
+
         $oGraph->add_edge($oClass->name, $oClassBase->name);
         $self->addClassNameToGraph(
             oGraph => $oGraph,
@@ -130,10 +130,65 @@ sub addClassNameToGraph {
             rhSeenEdge => $rhSeenEdge,
         );
     }
-    
+
     return 1;
 }
 
+
+
+=head2 formatOutputDataStructure(rhData)
+
+Return stringification of $rhData suited for the Editor.
+
+=cut
+sub formatOutputDataStructure {
+    my ($rhData) = Devel::PerlySense::Util::aNamedArg(["rhData"], @_);
+
+#    return q|'(("class-overview" . "Hej baberiba\n [ Class::Accessor ]") ("class-name" . "Class::Accessor") ("message" . "Whatever2"))|;
+
+
+    my $keysValues = join(
+        " ",
+        map {
+            my $key = $_;
+            my $value = $rhData->{$_};
+
+            $key = $self->renameIdentifier($key);
+            $key = $self->escapeValue($key);
+
+            $value = $self->escapeValue($value);
+
+            qq|("$key"| . " . " . qq|"$value")|;
+        }
+        sort keys %$rhData
+    );
+
+    return qq|'($keysValues)|;
+}
+
+
+=head2 renameIdentifier($identifier)
+
+Return $identifier with _ replaced with - to make them more Lispish.
+
+=cut
+sub renameIdentifier {
+    my ($identifier) = (@_);
+
+    $identifier =~ s/_/-/g;
+
+    return $identifier;
+}
+
+
+
+###TODO: escape " and \ and fix newlines
+sub escapeValue {
+    my ($value) = (@_);
+
+
+    return $value;
+}
 
 
 

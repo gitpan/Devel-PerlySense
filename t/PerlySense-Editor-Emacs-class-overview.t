@@ -58,11 +58,11 @@ ok(
 
 
 ok(
-    my $textShai = $oEditor->classHierarchy(oClass => $oClassOjectWormShai),
-    " render classHierarchy ok",
+    my $textShai = $oEditor->classOverview(oClass => $oClassOjectWormShai),
+    " render classOverview ok",
 );
 #warn("-----\n$textShai\n-----\n");
-my $textExpected = q{* INHERITANCE *
+my $textExpected = q{* Inheritance *
 [ Game::Object                  ] <-----+
 [ Game::Object::Worm            ]       |
 [ Game::Object::Worm::ShaiHulud ] --> [ Game::Lawn ]};

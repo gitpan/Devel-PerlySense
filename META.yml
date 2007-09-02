@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.01_02
+version: 0.01_06
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
@@ -26,7 +26,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.01_02
+    version: 0.01_06
   Devel::PerlySense::Class:
     file: lib/Devel/PerlySense/Class.pm
     version: 0.01

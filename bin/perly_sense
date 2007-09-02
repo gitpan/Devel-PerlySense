@@ -126,7 +126,7 @@ sub main {
         };
         $@ and warn("Error: $@\n");
 
-    } elsif($command eq "class_hierarchy") {
+    } elsif($command eq "class_overview") {
         $file or syntax("Missing option --file");
         $row or syntax("Missing option --row");
         $col or syntax("Missing option --col");
@@ -137,7 +137,19 @@ sub main {
                 row => $row,
                 col => $col,
             )) {
-                print $oEditor->classHierarchy(oClass => $oClass);
+                print $oEditor->formatOutputDataStructure(
+                    rhData => {
+                        class_name => $oClass->name,
+                        class_overview => $oEditor->classOverview(oClass => $oClass),
+                        message => "Class Overview for (" . $oClass->name . ")",
+                    },      
+                );
+            } else {
+                print $oEditor->formatOutputDataStructure(
+                    rhData => {
+                        message => "No class found",
+                    },
+                );
             }
         };
         $@ and warn("Error: $@\n");
@@ -238,10 +250,16 @@ Look in --file at --row, --col and print a smart doc text for the
 source at that location
 
 
-=head2 class_hierarchy --file, --row, --col
+=head2 class_overview --file, --row, --col
 
-Look in --file at --row, --col and print the class hirerarchy for the
-package at that location
+Look in --file at --row, --col and find the class overview for the
+package at that location. Return keys:
+
+If a class was found: class_overview, class_name, message.
+
+If a class was not found: message.
+
+On error: error.
 
 
 =head2 process_inc

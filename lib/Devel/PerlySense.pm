@@ -17,6 +17,9 @@ project and Perl installation.
 
 =head2 From Emacs
 
+C-p C-c -- Class Overview -- Show information about the Class at point
+or the current Class.
+
 C-p C-d -- Smart docs -- Show docs (POD/signature/etc) for the symbol
 (module/method/sub) at point. A doc hint is displayed in the message
 area (for methods and subs), or a new POD buffer is created (for
@@ -42,7 +45,7 @@ L<bin/perly_sense> script on how to do this.
 
 There is one useful command though; cache all the modules in @INC:
 
-    perl perly_sense process_inc
+    perly_sense process_inc
 
 
 =head2 From other editors
@@ -76,9 +79,12 @@ Copy the file editors/emacs/perly-sense.el to your Emacs script dir
   (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
 
 Adjust according to preference: the key mappings will replace the C-p
-command which may be really annoying for you if you don't use the
-arrow keys to move around. Suggestions welcome for other default key
-mappings.
+command which obviously be fantastically annoying for you if you don't
+use the arrow keys to move around. This is just how I use Emacs, and I
+expect this will make you go *&&*%!
+
+Calm down. The default key bindings will be changed before the first
+real release. Suggestions welcome.
 
 
 
@@ -87,10 +93,31 @@ mappings.
 Open one of your Perl source files.
 
 
+=head2 Class Overview
+
+Pressing C-p C-c will bring up the Class Overview of the Class name at
+point, or otherwise the current Class (the active Package).
+
+When in the Class Overview buffer:
+
+g -- Go to the thing at point. RET does the same.
+
+d -- Documentation for the thing at point.
+
+H -- Move point to the Hierarchy heading in the buffer.
+
+I -- Move point to the Interface heading in the buffer.
+
+N -- Move point to the 'new' method in the buffer (if any).
+
+q -- Quit the Class Overview buffer.
+
+
+
 =head2 Smart docs
 
 C-p C-d is the "Smart docs" command. It brings up documentation for
-what's at the point.
+what's at point.
 
 Put the cursor on the "method" word of a $self->method call and press
 C-p C-d and wait until a documentation hint for the method call is
@@ -118,12 +145,92 @@ the current file.
 
 C-p C-g is the "Smart go to" command. It's similar to Smart Docs, but
 instead of bringing the docs to you, it brings you to the definition
-of what's at the point.
+of what's at point.
 
 The definition can be either the sub declaration, or if the
 declaration can't be found (like for auto-generated getters/setters,
 autoloaded subs etc), the POD documentation for the sub.
 
+Before you go anywhere the mark is set. Go back to earlier marks
+globally with C-x C-SPC, or locally with C-u C-SPC.
+
+
+
+
+=head1 ON PARSING PERL
+
+Oh, that old topic again...
+
+Well, since Perl is so dynamic, a perfect static analysis of the
+source is impossible. But not unusably so. Well, hopefully.
+
+Because of this PerlySense is not about exact rules, but about
+heuristics and a 90% solution that isn't perfect, but
+good-enough. Sometimes when PerlySense can't make a decision, you're
+expected to chip in and tell it what you meant.
+
+If it works for you, brilliant, use it to be more productive.
+
+PerlySense tries to take advantage of the fact that Perl code is more
+than the plain source. The source lives in a context of POD and a
+directory structure and... well, oher source code.
+
+
+
+=head1 SEE ALSO
+
+L<sepia> - similar effort
+
+L<PPI> - excellent for parsing Perl
+
+L<CPANXR> - also uses PPI for cross referencing the CPAN
+
+L<http://www.DarSerMan.com/Perl/Oasis/> - Win32 class
+browser/IDE. Earlier (a lot) work by me.
+
+
+
+=head1 AUTHOR
+
+Johan Lindström, C<< <johanl[ÄT]DarSerMan.com> >>
+
+=head1 BUGS AND CAVEATS
+
+=head2 BUG REPORTS
+
+Please report any bugs or feature requests to
+C<bug-devel-perlysense@rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Devel-PerlySense>.
+I will be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.
+
+
+=head2 CAVEATS
+
+Tab/space isn't supported by PPI yet, but it's supposed to be. So
+using Tab instead of spaces won't work properly.
+
+
+
+=head2 KNOWN BUGS
+
+PPI is kinda slow for large documents. Lots of objects being created etc.
+
+There are certainly edge cases. Bug reports with failing tests
+appreciated :)
+
+
+=head1 ACKNOWLEDGEMENTS
+
+Peter Liljenberg for his elisp fu.
+
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2007 Johan Lindström, All Rights Reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
 
@@ -133,7 +240,7 @@ autoloaded subs etc), the POD documentation for the sub.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_02';
+our $VERSION = '0.01_06';
 
 
 
@@ -810,78 +917,3 @@ sub cacheKeyTotal {
 
 
 __END__
-
-
-=head1 ON PARSING PERL
-
-Oh, that old topic again...
-
-Well, since Perl is so dynamic, a perfect static analysis of the
-source is impossible. But not unusable.
-
-Because of this PerlySense is not about exact rules, but about
-heuristics and a 90% solution that isn't perfect, but good-enough. If
-it works for you, use it to be more productive. If not, well... let me
-know.
-
-PerlySense tries to take advantage of the fact that Perl code is more
-than the plain source. The source lives in a context of POD and a
-directory structure and... oher source code.
-
-
-=head1 SEE ALSO
-
-L<sepia> - similar effort
-
-L<PPI> - excellent for parsing Perl
-
-L<CPANXR> - also uses PPI for cross referencing the CPAN
-
-L<http://www.DarSerMan.com/Perl/Oasis/> - Win32 class
-browser/IDE. Earlier (a lot) work by me.
-
-
-
-=head1 AUTHOR
-
-Johan Lindström, C<< <johanl[ÄT]DarSerMan.com> >>
-
-=head1 BUGS AND CAVEATS
-
-=head2 BUG REPORTS
-
-Please report any bugs or feature requests to
-C<bug-devel-perlysense@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Devel-PerlySense>.
-I will be notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
-
-
-=head2 CAVEATS
-
-Tab/space isn't supported by PPI yet, but it's supposed to be. So
-using Tab instead of spaces won't work properly.
-
-
-
-=head2 KNOWN BUGS
-
-PPI is kinda slow for large documents. Lots of objects being created etc.
-
-There are certainly edge cases. Bug reports with failing tests
-appreciated :)
-
-
-=head1 ACKNOWLEDGEMENTS
-
-Peter Liljenberg for his elisp fu.
-
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2005 Johan Lindström, All Rights Reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-=cut
