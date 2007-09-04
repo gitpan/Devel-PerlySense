@@ -8,7 +8,7 @@ WriteMakefile
           'EXE_FILES' => [
                            'bin/perly_sense'
                          ],
-          'VERSION_FROM' => 'lib\\Devel\\PerlySense.pm',
+          'VERSION_FROM' => 'lib/Devel/PerlySense.pm',
           'PREREQ_PM' => {
                            'PPI' => '1.003',
                            'Getopt::Long' => 0,

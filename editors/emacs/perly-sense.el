@@ -288,7 +288,7 @@
       (insert overview-text)
       (perly-sense-class-mode)
       (perly-sense-fontify-class-overview-buffer buffer-name)
-      (perly-sense-search-class-name class-name)
+      (perly-sense-search-current-class-name class-name)
       (switch-to-buffer (current-buffer))  ;; before: display-buffer
       (toggle-read-only t)
       )
@@ -309,21 +309,37 @@
 
 
 
+;; Set point where class-name is mentioned in current [< xxx >]
+(defun perly-sense-search-current-class-name (class-name)
+  (let ((class-name-box (format "[<%s" class-name)))
+    (goto-char (point-min))
+    (search-forward class-name-box nil t)
+    (search-backward "[<" nil t)
+    (forward-char-nomark)
+    )
+  )
+
+
+
 (defun perly-sense-fontify-class-overview-buffer (buffer-name)
   "Mark up a buffer with Class Overview text."
   (interactive)
   (save-excursion
     (set-buffer buffer-name)
+
     (goto-char (point-min))
     (while (search-forward-regexp "\\[ \\w+ +\\]" nil t)
       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-array-face)) ;'(:background "Gray80"))   ;;TODO: Move to config variable
-    )
+    
+    (goto-char (point-min))
+    (while (search-forward-regexp "\\[<\\w+ *>\\]" nil t)
+      (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face)) ;'(:background "Gray80"))   ;;TODO: Move to config variable
 
 ;;     (goto-char (point-min))
 ;;     (while (search-forward-regexp "\\* \\w+ +\\*" nil t)
 ;;       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face))
 ;;     )
-
+    )
   )
 
 
@@ -365,6 +381,23 @@
            )
          )
   )
+
+
+;;;; Reinstate when there is support to do Class Overview for named class
+;; (defun perly-sense-class-class-overview-at-point ()
+;;   "Display Class Overview for the class/method at point"
+;;   (interactive)
+;;   (message "Class Overview at point")
+;;   (let* ((class-name (perly-sense-find-class-name-at-point)))
+;;          (if class-name
+;;              (progn
+;;                (message (format "Class Overview for class (%s)" class-name))
+;; ;               (perly-sense-display-pod-for-module class-name)
+;;                )
+;;            (message "No Class at point")
+;;            )
+;;          )
+;;   )
 
 
 (defun perly-sense-class-quit ()
@@ -414,6 +447,7 @@
 (define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-hierarchy)
 (define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-interface)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
+;;(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
 (define-key perly-sense-class-mode-map [return] 'perly-sense-class-goto-at-point)
 

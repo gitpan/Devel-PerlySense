@@ -27,6 +27,7 @@ use File::Basename;
 use Graph::Easy;
 
 use Devel::PerlySense;
+use Devel::PerlySense::Class;
 use Devel::PerlySense::Util;
 
 
@@ -82,13 +83,77 @@ sub classOverview {
 
     $oGraph->add_node($oClass->name);
     my $rhSeenEdge = { };
-    $self->addClassNameToGraph(
+    $self->addBaseClassNameToGraph(
         oGraph => $oGraph,
         oClass => $oClass,
         rhSeenEdge => $rhSeenEdge,
     );
 
-    my $text = $oGraph->as_ascii();
+#     $self->addSubClassNameToGraph(
+#         oGraph => $oGraph,
+#         oClass => $oClass,
+#         rhSeenEdge => $rhSeenEdge,
+#     );
+    
+    my $text = $self->textCompactGraph(text => $oGraph->as_ascii());
+
+    #Highlight the current class
+    my $leftBracket = "[[]";
+    my $space = "[ ]";
+    my $name = $oClass->name;
+    $text =~ s| $leftBracket \s+ ( $name \s*? ) $space ] |[<$1>]|x;
+
+    return "* Inheritance *\n$text";
+}
+
+
+
+sub addBaseClassNameToGraph {
+    my ($oClass, $oGraph, $rhSeenEdge) = Devel::PerlySense::Util::aNamedArg(["oClass", "oGraph", "rhSeenEdge"], @_);
+
+    for my $oClassBase (values %{$oClass->rhClassBase}) {
+        $rhSeenEdge->{$oClass->name . "->" .$oClassBase->name}++ and next;
+        $oGraph->add_edge($oClass->name, $oClassBase->name);
+        
+        $self->addBaseClassNameToGraph(
+            oGraph => $oGraph,
+            oClass => $oClassBase,
+            rhSeenEdge => $rhSeenEdge,
+        );
+    }
+
+    return 1;
+}
+
+
+
+sub addSubClassNameToGraph {
+    my ($oClass, $oGraph, $rhSeenEdge) = Devel::PerlySense::Util::aNamedArg(["oClass", "oGraph", "rhSeenEdge"], @_);
+
+    for my $oClassSub (values %{$oClass->rhClassSub}) {
+        $rhSeenEdge->{$oClassSub->name . "->" .$oClass->name}++ and next;        
+        $oGraph->add_edge($oClassSub->name, $oClass->name);
+        
+        $self->addSubClassNameToGraph(
+            oGraph => $oGraph,
+            oClass => $oClassSub,
+            rhSeenEdge => $rhSeenEdge,
+        );
+    }
+    
+    return 1;
+}
+
+
+
+=head2 textCompactGraph(text)
+
+Return compact version of $text.
+
+=cut
+sub textCompactGraph {
+    my ($text) = Devel::PerlySense::Util::aNamedArg(["text"], @_);
+
     debug($text);
 #    warn($text);
     my @aLine = split(/\n/, $text);
@@ -111,29 +176,9 @@ sub classOverview {
     @aLine = grep { /[^ |^]/ } @aLine;
 
     $text = join("\n", @aLine);
-    return "* Inheritance *\n$text";
+
+    return $text;
 }
-
-
-
-sub addClassNameToGraph {
-    my ($oClass, $oGraph, $rhSeenEdge) = Devel::PerlySense::Util::aNamedArg(["oClass", "oGraph", "rhSeenEdge"], @_);
-
-    ###TODO: protect against infinite loops
-    for my $oClassBase (values %{$oClass->rhClassBase}) {
-        $rhSeenEdge->{$oClass->name . "->" .$oClassBase->name}++ and next;
-
-        $oGraph->add_edge($oClass->name, $oClassBase->name);
-        $self->addClassNameToGraph(
-            oGraph => $oGraph,
-            oClass => $oClassBase,
-            rhSeenEdge => $rhSeenEdge,
-        );
-    }
-
-    return 1;
-}
-
 
 
 =head2 formatOutputDataStructure(rhData)
@@ -186,6 +231,7 @@ sub renameIdentifier {
 sub escapeValue {
     my ($value) = (@_);
 
+    $value =~ s| ([\\"]) |\\$1|gsmx;
 
     return $value;
 }

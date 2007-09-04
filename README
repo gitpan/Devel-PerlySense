@@ -80,6 +80,8 @@ GETTING STARTED WITH EMACS
 
     d -- Documentation for the thing at point.
 
+    c -- Class Overview for the thing at point.
+
     H -- Move point to the Hierarchy heading in the buffer.
 
     I -- Move point to the Interface heading in the buffer.

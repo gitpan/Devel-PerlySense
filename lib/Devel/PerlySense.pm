@@ -104,6 +104,8 @@ g -- Go to the thing at point. RET does the same.
 
 d -- Documentation for the thing at point.
 
+c -- Class Overview for the thing at point.
+
 H -- Move point to the Hierarchy heading in the buffer.
 
 I -- Move point to the Interface heading in the buffer.
@@ -240,7 +242,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_06';
+our $VERSION = '0.01_07';
 
 
 

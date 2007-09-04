@@ -65,7 +65,7 @@ ok(
 my $textExpected = q{* Inheritance *
 [ Game::Object                  ] <-----+
 [ Game::Object::Worm            ]       |
-[ Game::Object::Worm::ShaiHulud ] --> [ Game::Lawn ]};
+[<Game::Object::Worm::ShaiHulud>] --> [ Game::Lawn ]};
 
 is($textShai, $textExpected, "  And got correct output");
 

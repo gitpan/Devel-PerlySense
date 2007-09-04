@@ -92,6 +92,9 @@ PerlySense::Class objects).
 Default: {}
 
 =cut
+###TODO: Make this lazy, populate on first request, so we don't have
+###to go all the way up all the time! There are enough objects in
+###memory as it is.
 field "rhClassBase" => {};
 
 
