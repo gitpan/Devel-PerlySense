@@ -12,6 +12,7 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
         'Spiffy' => 0.20,
         'File::Spec' => 0.87,
+        'File::Find::Rule' => 0,
         'Path::Class' => 0.11,
         'Data::Dumper' => 0,
         'Carp' => 0,
@@ -23,6 +24,7 @@ my $builder = Module::Build->new(
         'File::Slurp' => 0,
         'Cache::Cache' => 0,
         'Graph::Easy' => 0.57,
+        'List::MoreUtils' => 0,
     },
     script_files => [
         "bin/perly_sense",

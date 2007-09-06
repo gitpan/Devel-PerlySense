@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.01_07
+version: 0.01_08
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
@@ -12,10 +12,12 @@ requires:
   Carp: 0
   Data::Dumper: 0
   File::Basename: 0
+  File::Find::Rule: 0
   File::Slurp: 0
   File::Spec: 0.87
   Getopt::Long: 0
   Graph::Easy: 0.57
+  List::MoreUtils: 0
   PPI: 1.003
   Path::Class: 0.11
   Pod::Usage: 0
@@ -26,7 +28,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.01_07
+    version: 0.01_08
   Devel::PerlySense::Class:
     file: lib/Devel/PerlySense/Class.pm
     version: 0.01

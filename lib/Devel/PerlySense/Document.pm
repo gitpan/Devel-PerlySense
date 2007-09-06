@@ -44,6 +44,7 @@ use Data::Dumper;
 use PPI;
 use File::Slurp;
 use File::Basename;
+use List::MoreUtils qw/ uniq /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
@@ -189,6 +190,8 @@ Return 1 on success, else die.
 Cached on the usual.
 
 =cut
+###TODO: Rearrange these so they are write cached here, but read
+###cached on first access instead.
 sub parse {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
 
@@ -205,13 +208,13 @@ sub parse {
 
     $keyCache = "document-meta";
     if(my $oMeta = $self->cacheGet($keyCache, $file)) {
-#$file =~ /Game/ and print "((($file))) READ CACHE:" . Dumper($oMeta);
         $self->oMeta($oMeta);
     } else {
         $oMeta = Devel::PerlySense::Document::Meta->new();
+        
         $oMeta->parse($self);
+        
         $self->oMeta($oMeta);
-#$file =~ /Game/ and print "((($file))) WRITE CACHE:" . Dumper($oMeta);
         $self->cacheSet($keyCache, $file, $self->oMeta);
     }
 
@@ -244,6 +247,19 @@ sub parse0 {
 
 
 
+=head2 aNamePackage()
+
+Return list of package names in this document.
+
+=cut
+sub aNamePackage {
+    return( sort uniq map { $_->namespace } @{$self->oMeta->raPackage} );
+}
+
+
+
+
+
 =head2 aNameBase()
 
 Return list of names of modules that are base classes, according to
@@ -260,6 +276,23 @@ sub aNameBase {
     my @aBase = grep { (! $hStop{$_}) && $_ =~ /[A-Z]/ } @{$self->oMeta->raNameModuleBase};
 
     return(@aBase);
+}
+
+
+
+
+
+
+=head2 hasBaseClass($nameClass)
+
+Return true if $nameClass is an immediate base class to this one, else
+false.
+
+=cut
+sub hasBaseClass {
+    my ($nameClass) = @_;
+
+    return( (grep { $_ eq $nameClass  } @{$self->oMeta->raNameModuleBase}) > 0 );
 }
 
 

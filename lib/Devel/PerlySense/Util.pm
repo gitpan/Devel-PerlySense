@@ -68,7 +68,8 @@ Return 1.
 my $fileDebug = "./debug.log";  ###TODO: Change to be bound to project root
 sub debug {
 	my ($message) = @_;
-
+    return 1;  ##Temporarily disabled until the logs aren't spread out
+               ##all over the file system
     open(my $fh, ">>", $fileDebug) or return warn("Could not open ($fileDebug) for append\n");
     $fh->print(localtime() . ": $message\n");
     

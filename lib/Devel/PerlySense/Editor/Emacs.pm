@@ -89,11 +89,11 @@ sub classOverview {
         rhSeenEdge => $rhSeenEdge,
     );
 
-#     $self->addSubClassNameToGraph(
-#         oGraph => $oGraph,
-#         oClass => $oClass,
-#         rhSeenEdge => $rhSeenEdge,
-#     );
+    $self->addSubClassNameToGraph(
+        oGraph => $oGraph,
+        oClass => $oClass,
+        rhSeenEdge => $rhSeenEdge,
+    );
     
     my $text = $self->textCompactGraph(text => $oGraph->as_ascii());
 

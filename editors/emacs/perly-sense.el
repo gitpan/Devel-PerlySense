@@ -281,7 +281,7 @@
 
 
 (defun perly-sense-display-class-overview (class-name overview-text)
-  (let ((buffer-name "* Class Overview *"))
+  (let ((buffer-name "*Class Overview*"))
     (with-current-buffer (get-buffer-create buffer-name)
       (toggle-read-only t)(toggle-read-only)  ; No better way?
       (erase-buffer)
@@ -345,7 +345,7 @@
 
 
 ;;;;
-;;(perly-sense-display-class-overview "CatalystX::FeedMe::View::Atom" "* Hierarchy *\n    [ Class::Accessor               ]\n +> [ Class::Accessor::Fast         ] <-----+\n |  [ Catalyst::AttrContainer       ] ------+---------------------------+\n |    |                                     |                           v\n +- [ Catalyst::Base                ] --> [ Catalyst::Component ] --> [ Class::Data::Inheritable ]\n    [ Catalyst::View::Atom::XML     ]\n    [ CatalystX::FeedMe::View::Atom ]\n")
+;;(perly-sense-display-class-overview "CatalystX::FeedMe::View::Atom" "* Inheritance *\n    [ Class::Accessor               ]\n +> [ Class::Accessor::Fast         ] <-----+\n |  [ Catalyst::AttrContainer       ] ------+---------------------------+\n |    |                                     |                           v\n +- [ Catalyst::Base                ] --> [ Catalyst::Component ] --> [ Class::Data::Inheritable ]\n    [ Catalyst::View::Atom::XML     ]\n    [ CatalystX::FeedMe::View::Atom ]\n")
 
 
 
@@ -409,12 +409,12 @@
 
 
 
-(defun perly-sense-class-find-hierarchy ()
-  "Navigate to the * Hierarchy * in the Class Overview"
+(defun perly-sense-class-find-inheritance ()
+  "Navigate to the * Inheritance * in the Class Overview"
   (interactive)
   (goto-char (point-min))
-  (search-forward "* Hierarchy *" nil t)
-  (search-forward "[" nil t)
+  (search-forward "* Inheritance *" nil t)
+  (search-forward "[<" nil t)
   )
 
 
@@ -444,8 +444,8 @@
     ()
   (setq perly-sense-class-mode-map (make-sparse-keymap)))
 (define-key perly-sense-class-mode-map "q" 'perly-sense-class-quit)
-(define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-hierarchy)
-(define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-interface)
+(define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-inheritance)
+;;(define-key perly-sense-class-mode-map "M" 'perly-sense-class-find-methods)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
 ;;(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
@@ -509,7 +509,7 @@
 
 
 ;; Key bindings
-
+;;;; TODO: move to cperl-mode local bindings
 
 ; #(global-unset-key "\C-p")
 
@@ -521,5 +521,4 @@
 (global-set-key (kbd "\C-p \C-c") 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (kbd "\C-p \C-c") 'perly-sense-display-api-for-class-at-point)
 
-(global-set-key (kbd "\C-p \C-m") 'perly-sense-class-mode)
 

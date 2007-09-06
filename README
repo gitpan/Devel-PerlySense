@@ -335,6 +335,12 @@ IMPLEMENTATION METHODS
 
     Die if $file doesn't exist, or on other errors.
 
+  aDocumentGrepInDir(dir => $dir, rsGrepFile => $rsGrepFile)
+    Return a list with Devel::PerlySense::Document objects found under the
+    $dir, and that return true for the grep sub $rsGrepFile.
+
+    If any found file couldn't be parsed, skip it silently from the list.
+
 CACHE METHODS
   cacheSet(file => $file, key => $key, value => $valuex)
     If the oCache isn't undef, store the $value in the cache under the total

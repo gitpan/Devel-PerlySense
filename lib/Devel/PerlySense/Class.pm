@@ -30,6 +30,7 @@ use Spiffy -Base;
 use Carp;
 use Data::Dumper;
 use File::Basename;
+use Path::Class qw/dir file/;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
@@ -94,7 +95,8 @@ Default: {}
 =cut
 ###TODO: Make this lazy, populate on first request, so we don't have
 ###to go all the way up all the time! There are enough objects in
-###memory as it is.
+###memory as it is (this makes all subclasses eagerly find all ther
+###base classes...)
 field "rhClassBase" => {};
 
 
@@ -123,7 +125,7 @@ sub new {
 
     $rhClassSeen ||= { $name => $self };
     $self->findBaseClasses(rhClassSeen => $rhClassSeen);
-    
+
     return($self);
 }
 
@@ -143,10 +145,10 @@ doesn't exist.
 sub newFromFileAt {
     my ($oPerlySense, $file, $row, $col) = Devel::PerlySense::Util::aNamedArg(["oPerlySense", "file", "row", "col"], @_);
 
-    my $oDocument = $oPerlySense->oDocumentParseFile($file);    
+    my $oDocument = $oPerlySense->oDocumentParseFile($file);
     my $package = $oDocument->packageAt(row => $row);
     $package eq "main" and return undef;
-    
+
     my $class = Devel::PerlySense::Class->new(
         oPerlySense => $oPerlySense,
         name => $package,
@@ -176,7 +178,7 @@ sub newFromName {
         nameModule => $name,
         dirOrigin => $dirOrigin,
     ) or return undef;
-    
+
     my $class = Devel::PerlySense::Class->new(
         rhClassSeen => $rhClassSeen,
         oPerlySense => $oPerlySense,
@@ -207,7 +209,8 @@ sub findBaseClasses {
     my $rhClassBase = {};
 
     debug("Checking class (" . $self->name . ") for inheritance\n");
-    
+
+    ###TODO: protect against infinite inheritance loops
     for my $oDocument (@{$self->raDocument}) {
         for my $classNameBase ($oDocument->aNameBase) {
             debug("  Base for (" . $self->name . ") is ($classNameBase)\n");
@@ -218,17 +221,77 @@ sub findBaseClasses {
                         rhClassSeen => $rhClassSeen,
                         name => $classNameBase,
                         dirOrigin => dirname($oDocument->file),
-                    ) or warn("Could not find parent ($classNameBase)\n"), next;  #Don't stop if we can't find the base class. Maybe warn?
-            
+                    ) or debug("WARN: Could not find parent ($classNameBase)\n"), next;  #Don't stop if we can't find the base class. Maybe warn?
+
             $rhClassSeen->{$classNameBase} = $classBase;
 
             $rhClassBase->{$classNameBase} = $classBase;
         }
     }
-    
+
     $self->rhClassBase($rhClassBase);
 
     return 1;
+}
+
+
+
+
+
+=head2 rhClassSub()
+
+Find the sub classes of this class and return a hash ref with (keys:
+Class names; values: Class objects).
+
+Look for subclasses in the directory of this Class, and below.
+
+(In the future, look in all of the current project.)
+
+(this is a horribly inefficient way of finding subclasses. When there
+is Project with metadata, use that instead of looking everywhere).
+
+=cut
+sub rhClassSub {
+
+    my $oDocument = $self->raDocument->[0] or return {};
+    my $fileClass = $oDocument->file;
+    my $dirClass = dir( dirname($fileClass) )->absolute;
+
+    my $nameClass = $self->name;
+    my @aDocumentCandidate =
+            grep { $_->hasBaseClass($nameClass) }
+            $self->oPerlySense->aDocumentGrepInDir(
+                dir => $dirClass,
+                rsGrepFile => sub {
+                    my $fileFound = shift;
+                    $fileFound ne $fileClass;
+                },
+            ) or return {};
+
+    ###TODO: can any of this be pushed down into the document/meta
+    ###class?
+    my $rhPackageDocument = {};
+    for my $oDocumentCandidate (@aDocumentCandidate) {
+        for my $package ($oDocumentCandidate->aNamePackage) {
+            $rhPackageDocument->{$package} ||= [];
+            push(@{$rhPackageDocument->{$package}}, $oDocumentCandidate);
+        }
+    }
+    
+    my $rhClassSub = {
+        map {
+            my $namePackage = $_;
+            
+            $_ => ref($self)->new(
+                oPerlySense => $self->oPerlySense,
+                name => $namePackage,
+                raDocument => $rhPackageDocument->{$namePackage},
+            );
+        }
+        keys %$rhPackageDocument
+    };
+
+    return $rhClassSub;
 }
 
 

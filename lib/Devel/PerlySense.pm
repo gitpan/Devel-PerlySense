@@ -242,7 +242,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_07';
+our $VERSION = '0.01_08';
 
 
 
@@ -255,6 +255,7 @@ use Carp;
 use Data::Dumper;
 use File::Basename;
 use File::Path;
+use File::Find::Rule;
 use Path::Class qw/dir file/;
 use Pod::Text;
 use IO::String;
@@ -818,6 +819,33 @@ sub aApiOfClass {
     $oDocument->determineLikelyApi(nameModule => $packageName) or return(undef);
 
     return($packageName, $oDocument->rhPackageApiLikely->{$packageName});
+}
+
+
+
+
+
+=head2 aDocumentGrepInDir(dir => $dir, rsGrepFile => $rsGrepFile)
+
+Return a list with Devel::PerlySense::Document objects found under the
+$dir, and that return true for the grep sub $rsGrepFile.
+
+If any found file couldn't be parsed, skip it silently from the list.
+
+=cut
+sub aDocumentGrepInDir {
+    my ($dir, $rsGrepFile) = Devel::PerlySense::Util::aNamedArg(["dir", "rsGrepFile"], @_);
+
+    my @aDocument =
+             map {
+                 my $oDocument = Devel::PerlySense::Document->new(oPerlySense => $self);
+                 eval { $oDocument->parse(file => $_) };
+                 $@ ? () : $oDocument;
+             }
+            grep { $rsGrepFile->($_) }
+            File::Find::Rule->file->name("*.pm")->in($dir);
+
+    return(@aDocument);
 }
 
 
