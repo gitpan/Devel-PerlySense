@@ -415,6 +415,7 @@
   (goto-char (point-min))
   (search-forward "* Inheritance *" nil t)
   (search-forward "[<" nil t)
+  (backward-char-nomark)
   )
 
 

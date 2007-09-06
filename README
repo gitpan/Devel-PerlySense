@@ -335,9 +335,10 @@ IMPLEMENTATION METHODS
 
     Die if $file doesn't exist, or on other errors.
 
-  aDocumentGrepInDir(dir => $dir, rsGrepFile => $rsGrepFile)
+  aDocumentGrepInDir(dir => $dir, rsGrepFile => $rsGrepFile, rsGrepDocument => $rsGrepDocument)
     Return a list with Devel::PerlySense::Document objects found under the
-    $dir, and that return true for the grep sub $rsGrepFile.
+    $dir, and that return true for the grep sub $rsGrepFile and
+    $rsGrepDocument.
 
     If any found file couldn't be parsed, skip it silently from the list.
 

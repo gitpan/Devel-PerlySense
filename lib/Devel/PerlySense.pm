@@ -242,7 +242,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_08';
+our $VERSION = '0.01_09';
 
 
 
@@ -825,23 +825,27 @@ sub aApiOfClass {
 
 
 
-=head2 aDocumentGrepInDir(dir => $dir, rsGrepFile => $rsGrepFile)
+=head2 aDocumentGrepInDir(dir => $dir, rsGrepFile => $rsGrepFile, rsGrepDocument => $rsGrepDocument)
 
 Return a list with Devel::PerlySense::Document objects found under the
-$dir, and that return true for the grep sub $rsGrepFile.
+$dir, and that return true for the grep sub $rsGrepFile and $rsGrepDocument.
 
 If any found file couldn't be parsed, skip it silently from the list.
 
 =cut
 sub aDocumentGrepInDir {
-    my ($dir, $rsGrepFile) = Devel::PerlySense::Util::aNamedArg(["dir", "rsGrepFile"], @_);
+    my ($dir, $rsGrepFile, $rsGrepDocument) = Devel::PerlySense::Util::aNamedArg(["dir", "rsGrepFile", "rsGrepDocument"], @_);
 
     my @aDocument =
-             map {
-                 my $oDocument = Devel::PerlySense::Document->new(oPerlySense => $self);
-                 eval { $oDocument->parse(file => $_) };
-                 $@ ? () : $oDocument;
-             }
+            map {
+                my $oDocument = Devel::PerlySense::Document->new(oPerlySense => $self);
+                eval { $oDocument->parse(file => $_) };
+                $@ ?
+                    () :
+                    $rsGrepDocument->($oDocument) ?
+                        $oDocument :
+                        ();
+            }
             grep { $rsGrepFile->($_) }
             File::Find::Rule->file->name("*.pm")->in($dir);
 

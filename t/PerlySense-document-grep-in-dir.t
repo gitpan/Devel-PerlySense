@@ -24,6 +24,7 @@ my $dirOrigin = "$dirData/Game";
 my @aDocument = $oPs->aDocumentGrepInDir(
     dir => $dirOrigin,
     rsGrepFile => sub { 1; },
+    rsGrepDocument => sub { 1 },
 );
 #warn Dumper([ sort map { $_->namespace } map { @{$_->oMeta->raPackage} } @aDocument ]);
 is_deeply(
@@ -53,6 +54,7 @@ is_deeply(
 @aDocument = $oPs->aDocumentGrepInDir(
     dir => $dirOrigin,
     rsGrepFile => sub { $_ =~ /none/i },
+    rsGrepDocument => sub { 1 },
 );
 is_deeply(
     [ sort map { $_->namespace } map { @{$_->oMeta->raPackage} } @aDocument ],

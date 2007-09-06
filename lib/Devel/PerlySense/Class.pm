@@ -259,15 +259,12 @@ sub rhClassSub {
 
     my $nameClass = $self->name;
     my @aDocumentCandidate =
-            grep { $_->hasBaseClass($nameClass) }
             $self->oPerlySense->aDocumentGrepInDir(
                 dir => $dirClass,
-                rsGrepFile => sub {
-                    my $fileFound = shift;
-                    $fileFound ne $fileClass;
-                },
+                rsGrepFile => sub { shift ne $fileClass },
+                rsGrepDocument => sub { shift->hasBaseClass($nameClass) },
             ) or return {};
-
+    
     ###TODO: can any of this be pushed down into the document/meta
     ###class?
     my $rhPackageDocument = {};
