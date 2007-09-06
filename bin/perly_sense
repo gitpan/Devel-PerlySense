@@ -180,9 +180,9 @@ sub main {
     } elsif($command eq "process_inc") {
         my @aFile;
         find({ wanted => sub {
-                   m|/Perl/| && /\.pm$/
-#                           && @aFile < 5
-                                   and push(@aFile, file($_)->absolute . "");
+                   /\.pm$/
+#                  && @aFile < 5
+                           and push(@aFile, file($_)->absolute . "");
                },
                no_chdir => 1,
            }, @INC);

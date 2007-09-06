@@ -31,12 +31,14 @@ use Carp;
 use Data::Dumper;
 use File::Basename;
 use Path::Class qw/dir file/;
+use List::MoreUtils qw/ uniq /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
-use Devel::PerlySense::Document::Location;
+use Devel::PerlySense::Document;
 use Devel::PerlySense::Document::Api;
 use Devel::PerlySense::Document::Meta;
+use Devel::PerlySense::Document::Location;
 
 use Devel::TimeThis;
 
@@ -138,6 +140,10 @@ sub new {
 Create new PerlySense::Class object given the class found at $row,
 $col in $file.
 
+If there was no package started yet at $row, $col, but there is one
+later in the file, use the first one instead (this is when you're at
+the top of the file and the package statement didn't happen yet).
+
 Return new object, or undef if no class was found, or die if the file
 doesn't exist.
 
@@ -147,7 +153,10 @@ sub newFromFileAt {
 
     my $oDocument = $oPerlySense->oDocumentParseFile($file);
     my $package = $oDocument->packageAt(row => $row);
-    $package eq "main" and return undef;
+
+    if($package eq "main") {
+        $package = ($oDocument->aNamePackage)[0] or return undef;
+    } 
 
     my $class = Devel::PerlySense::Class->new(
         oPerlySense => $oPerlySense,
@@ -264,7 +273,7 @@ sub rhClassSub {
                 rsGrepFile => sub { shift ne $fileClass },
                 rsGrepDocument => sub { shift->hasBaseClass($nameClass) },
             ) or return {};
-    
+
     ###TODO: can any of this be pushed down into the document/meta
     ###class?
     my $rhPackageDocument = {};
@@ -274,11 +283,11 @@ sub rhClassSub {
             push(@{$rhPackageDocument->{$package}}, $oDocumentCandidate);
         }
     }
-    
+
     my $rhClassSub = {
         map {
             my $namePackage = $_;
-            
+
             $_ => ref($self)->new(
                 oPerlySense => $self->oPerlySense,
                 name => $namePackage,
@@ -289,6 +298,65 @@ sub rhClassSub {
     };
 
     return $rhClassSub;
+}
+
+
+
+
+
+=head2 rhDirNameClassInNeighbourhood()
+
+Find the classes in the neighbourhood of this class and return a hash
+ref with (keys: up, current, down; values: array refs with (Package names).
+
+=cut
+sub raClassInDirs {
+    my ($raDir) = @_;
+    
+    my @aNameClass;
+    for my $dir (@$raDir) {
+        push(@aNameClass, $self->aNameClassInDir(dir => $dir));
+    }
+    
+    return [ sort( uniq(@aNameClass) ) ];
+}
+sub rhDirNameClassInNeighbourhood {
+
+    my $dir = dir(dirname( $self->raDocument->[0]->file ));
+    my $raDir = [ $dir ];
+    my $raDirUp = [ $dir->parent ];
+    my $raDirDown = [ grep { -d } glob("$dir/*") ];
+
+    return({
+        up      => $self->raClassInDirs($raDirUp),
+        current => $self->raClassInDirs($raDir),
+        down    => $self->raClassInDirs($raDirDown),
+    });
+}
+
+
+
+
+
+=head2 aNameClassInDir(dir => $dir)
+
+Find the classes names in the .pm files in $dir and return a list of
+Class names.
+
+=cut
+sub aNameClassInDir {
+    my ($dir) = Devel::PerlySense::Util::aNamedArg(["dir"], @_);
+
+    my @aNameClass = 
+            map {
+                my $oDocument = Devel::PerlySense::Document->new(
+                    oPerlySense => $self->oPerlySense,
+                );
+                $oDocument->parse(file => $_) ? $oDocument->aNamePackage : ();
+            }
+            glob("$dir/*.pm");
+                
+    return sort( uniq( @aNameClass ) );
 }
 
 

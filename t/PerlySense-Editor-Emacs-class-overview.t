@@ -3,6 +3,7 @@ use strict;
 
 use Test::More tests => 10;
 use Test::Exception;
+#use Test::Differences;
 
 use Data::Dumper;
 
@@ -62,11 +63,21 @@ ok(
     " render classOverview ok",
 );
 #warn("-----\n$textShai\n-----\n");
-my $textExpected = q{* Inheritance *
+my $s = " ";
+my $sNone = "       ";
+my $textExpected = qq{* Inheritance *
 [ Game::Object                  ] <-----+
 [ Game::Object::Worm            ]       |
-[<Game::Object::Worm::ShaiHulud>] --> [ Game::Lawn ]};
+[<Game::Object::Worm::ShaiHulud>] --> [ Game::Lawn ]
 
+* NeighbourHood *
+[ Game::Object::Prize ] [ Game::Object::Worm::Bot       ] -none-
+[ Game::Object::Wall  ] [<Game::Object::Worm::ShaiHulud>]$sNone
+[ Game::Object::Worm  ] [ Game::Object::Worm::Shaitan   ]$sNone
+
+};
+
+#eq_or_diff
 is($textShai, $textExpected, "  And got correct output");
 
 
@@ -112,4 +123,4 @@ __END__
 :...............................:     :............:
 
 
-        
+

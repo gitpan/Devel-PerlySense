@@ -10,6 +10,7 @@ WriteMakefile
                          ],
           'VERSION_FROM' => 'lib/Devel/PerlySense.pm',
           'PREREQ_PM' => {
+                           'Text::Table' => '1.107',
                            'PPI' => '1.003',
                            'Pod::Usage' => 0,
                            'File::Spec' => '0.87',

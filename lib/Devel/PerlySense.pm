@@ -38,14 +38,12 @@ cperl-mode, and does more in certain areas.
 
 
 
-=head2 From the command line
+=head2 From Vim
 
-This is not very convenient unless you let your editor do it. See the
-L<bin/perly_sense> script on how to do this.
+There is no integraton with Vim available. Well, yet.
 
-There is one useful command though; cache all the modules in @INC:
+Someone may want to write it.
 
-    perly_sense process_inc
 
 
 =head2 From other editors
@@ -54,6 +52,17 @@ Any editor that is programmable and that can call a shell script could
 take advantage of PerlySense to implement something similar to the
 Emacs functionality. And most editors are programmable by the authors,
 if not by the users.
+
+
+
+=head2 From the command line
+
+This is not very convenient unless you let your editor do it. See the
+L<bin/perly_sense> script on how to do this.
+
+There is one useful command though; cache all the modules in @INC:
+
+    perly_sense process_inc
 
 
 
@@ -106,9 +115,9 @@ d -- Documentation for the thing at point.
 
 c -- Class Overview for the thing at point.
 
-H -- Move point to the Hierarchy heading in the buffer.
+I -- Move point to the Inheritance heading in the buffer.
 
-I -- Move point to the Interface heading in the buffer.
+M -- Move point to the Methods heading in the buffer.
 
 N -- Move point to the 'new' method in the buffer (if any).
 
@@ -242,7 +251,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_09';
+our $VERSION = '0.01_10';
 
 
 

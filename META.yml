@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.01_09
+version: 0.01_10
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
@@ -24,11 +24,12 @@ requires:
   Spiffy: 0.2
   Test::Exception: 0
   Test::More: 0
+  Text::Table: 1.107
   perl: 5.6.0
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.01_09
+    version: 0.01_10
   Devel::PerlySense::Class:
     file: lib/Devel/PerlySense/Class.pm
     version: 0.01

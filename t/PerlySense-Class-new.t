@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 30;
+use Test::More tests => 31;
 use Test::Exception;
 
 use Data::Dumper;
@@ -57,16 +57,16 @@ my $dirData = "data/project-lib";
 my $fileOrigin = "$dirData/Game/Object/Worm/ShaiHulud.pm";
 
 
-is(
-    Devel::PerlySense::Class->newFromFileAt(
+ok(
+    my $oClassDefault = Devel::PerlySense::Class->newFromFileAt(
         oPerlySense => Devel::PerlySense->new(),
         file => $fileOrigin,
         row => 1,
         col => 1,
     ),
-    undef,
-    "newFromFileAt at main returns undef ok",
+    "newFromFileAt at main finds default package ok",
 );
+is($oClassDefault->name, "Game::Object::Worm::ShaiHulud", "  with correct class name");
           
 
 ok(

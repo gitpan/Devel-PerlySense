@@ -25,6 +25,8 @@ use Spiffy -Base;
 use Data::Dumper;
 use File::Basename;
 use Graph::Easy;
+use Text::Table;
+use List::Util qw/ max /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Class;
@@ -71,10 +73,47 @@ sub new {
 
 =head2 classOverview(oClass)
 
-Return string representing the class hierarchy of $oClass.
+Return string representing the Class Overview of $oClass.
 
 =cut
 sub classOverview {
+    my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
+
+    my $textInheritance =
+            "* Inheritance *\n" .
+            $self->textClassInheritance(oClass => $oClass) .
+            "\n";
+
+    my $textNeighbourhood =
+            "* NeighbourHood *\n" .
+            $self->textClassNeighbourhood(oClass => $oClass) .
+            "\n";
+
+    
+
+    my $textOverview = join(
+        "\n",
+        $textInheritance,
+        $textNeighbourhood,
+    );
+    
+    #Highlight the current class
+    my $leftBracket = "[[]";
+    my $space = "[ ]";
+    my $name = $oClass->name;
+    $textOverview =~ s| $leftBracket \s+ ( $name \s*? ) $space ] |[<$1>]|xg;
+
+    return $textOverview;
+}
+
+
+
+=head2 textClassInheritance(oClass)
+
+Return string representing the class hierarchy of $oClass.
+
+=cut
+sub textClassInheritance {
     my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
 
     my $oGraph = Graph::Easy->new();
@@ -89,21 +128,19 @@ sub classOverview {
         rhSeenEdge => $rhSeenEdge,
     );
 
-    $self->addSubClassNameToGraph(
-        oGraph => $oGraph,
-        oClass => $oClass,
-        rhSeenEdge => $rhSeenEdge,
-    );
     
-    my $text = $self->textCompactGraph(text => $oGraph->as_ascii());
+    # Disable the subclass view until it either becomes faster and/or
+    # is better rendered. The Neighbourhood view may be quite enough.
+    
+#     $self->addSubClassNameToGraph(
+#         oGraph => $oGraph,
+#         oClass => $oClass,
+#         rhSeenEdge => $rhSeenEdge,
+#     );
+    
+    my $textInheritance = $self->textCompactGraph(text => $oGraph->as_ascii());
 
-    #Highlight the current class
-    my $leftBracket = "[[]";
-    my $space = "[ ]";
-    my $name = $oClass->name;
-    $text =~ s| $leftBracket \s+ ( $name \s*? ) $space ] |[<$1>]|x;
-
-    return "* Inheritance *\n$text";
+    return $textInheritance;
 }
 
 
@@ -127,6 +164,8 @@ sub addBaseClassNameToGraph {
 
 
 
+
+
 sub addSubClassNameToGraph {
     my ($oClass, $oGraph, $rhSeenEdge) = Devel::PerlySense::Util::aNamedArg(["oClass", "oGraph", "rhSeenEdge"], @_);
 
@@ -143,6 +182,40 @@ sub addSubClassNameToGraph {
     
     return 1;
 }
+
+
+
+
+
+=head2 textClassNeighbourhood(oClass)
+
+Return string representing the neighbourhood of $oClass.
+
+=cut
+sub textClassNeighbourhood {
+    my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
+
+    my $rhDirClass = $oClass->rhDirNameClassInNeighbourhood();
+
+    my @aColText;
+    for my $raNameClass (map { $rhDirClass->{$_} } qw/ up current down /) {
+        my $lenMax = max( map { length } @$raNameClass );
+        
+        my $text = join(
+            "\n",
+            map { sprintf("[ %-*s ]", $lenMax, $_) } @$raNameClass,
+        ) || "-none-";
+        
+        push(@aColText, $text);
+    }
+
+    my $oTable = Text::Table->new();
+    $oTable->load([ @aColText ]);
+
+    return "$oTable";
+}
+
+
 
 
 
@@ -181,6 +254,9 @@ sub textCompactGraph {
 }
 
 
+
+
+
 =head2 formatOutputDataStructure(rhData)
 
 Return stringification of $rhData suited for the Editor.
@@ -212,6 +288,9 @@ sub formatOutputDataStructure {
 }
 
 
+
+
+
 =head2 renameIdentifier($identifier)
 
 Return $identifier with _ replaced with - to make them more Lispish.
@@ -227,6 +306,8 @@ sub renameIdentifier {
 
 
 
+
+
 ###TODO: escape " and \ and fix newlines
 sub escapeValue {
     my ($value) = (@_);
@@ -235,6 +316,8 @@ sub escapeValue {
 
     return $value;
 }
+
+
 
 
 

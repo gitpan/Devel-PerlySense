@@ -28,6 +28,17 @@ SYNOPSIS
     As you can see, PerlySense duplicates some of the functionality in
     cperl-mode, and does more in certain areas.
 
+  From Vim
+    There is no integraton with Vim available. Well, yet.
+
+    Someone may want to write it.
+
+  From other editors
+    Any editor that is programmable and that can call a shell script could
+    take advantage of PerlySense to implement something similar to the Emacs
+    functionality. And most editors are programmable by the authors, if not
+    by the users.
+
   From the command line
     This is not very convenient unless you let your editor do it. See the
     "perly_sense" in bin script on how to do this.
@@ -35,12 +46,6 @@ SYNOPSIS
     There is one useful command though; cache all the modules in @INC:
 
         perly_sense process_inc
-
-  From other editors
-    Any editor that is programmable and that can call a shell script could
-    take advantage of PerlySense to implement something similar to the Emacs
-    functionality. And most editors are programmable by the authors, if not
-    by the users.
 
   From Perl
     See the source of the "perly_sense" in bin script, or the t directory.
@@ -82,9 +87,9 @@ GETTING STARTED WITH EMACS
 
     c -- Class Overview for the thing at point.
 
-    H -- Move point to the Hierarchy heading in the buffer.
+    I -- Move point to the Inheritance heading in the buffer.
 
-    I -- Move point to the Interface heading in the buffer.
+    M -- Move point to the Methods heading in the buffer.
 
     N -- Move point to the 'new' method in the buffer (if any).
 

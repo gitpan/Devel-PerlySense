@@ -420,6 +420,17 @@
 
 
 
+(defun perly-sense-class-find-neighbourhood ()
+  "Navigate to the * NeighbourHood * in the Class Overview"
+  (interactive)
+  (goto-char (point-min))
+  (search-forward "* NeighbourHood *" nil t)
+  (search-forward "[<" nil t)
+  (backward-char-nomark)
+  )
+
+
+
 (defun perly-sense-find-class-name-at-point ()
   "Return the class name at point, or nil if none was found"
   (save-excursion
@@ -446,6 +457,7 @@
   (setq perly-sense-class-mode-map (make-sparse-keymap)))
 (define-key perly-sense-class-mode-map "q" 'perly-sense-class-quit)
 (define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-inheritance)
+(define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-neighbourhood)
 ;;(define-key perly-sense-class-mode-map "M" 'perly-sense-class-find-methods)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
 ;;(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
