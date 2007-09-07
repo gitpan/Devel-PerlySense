@@ -107,6 +107,12 @@ Open one of your Perl source files.
 Pressing C-p C-c will bring up the Class Overview of the Class name at
 point, or otherwise the current Class (the active Package).
 
+The Inheritance section shows all Base classes of the Class.
+
+The NeighbourHood section shows three columns (1: parent dir, 2:
+current dir, 3: subdirectories) with Classes located nearby.
+
+
 When in the Class Overview buffer:
 
 g -- Go to the thing at point. RET does the same.
@@ -117,7 +123,9 @@ c -- Class Overview for the thing at point.
 
 I -- Move point to the Inheritance heading in the buffer.
 
-M -- Move point to the Methods heading in the buffer.
+H -- Move point to the NeighbourHood (mnemonic: 'Hood) heading.
+
+M -- Move point to the Methods heading.
 
 N -- Move point to the 'new' method in the buffer (if any).
 
@@ -251,7 +259,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_10';
+our $VERSION = '0.01_11';
 
 
 
@@ -579,6 +587,34 @@ sub classAt {
 
 
 
+=head2 classByName(name => $name, dirOrigin => $dirOrigin)
+
+Find the file that contains the Class $name, starting at $dirOrigin.
+
+Return the Class object or undef if it couldn't be found.
+
+Die on errors.
+
+=cut
+sub classByName {
+    my ($name, $dirOrigin) = Devel::PerlySense::Util::aNamedArg(["name", "dirOrigin"], @_);
+
+    my $oDocument = $self->oDocumentFindModule(
+        nameModule => $name,
+        dirOrigin => $dirOrigin,
+    ) or return undef;
+    
+    return( Devel::PerlySense::Class->new(
+        oPerlySense => $self,
+        name => $name,
+        raDocument => [ $oDocument ],
+    ) );
+}
+
+
+
+
+
 =head2 fileFindModule(nameModule => $nameModule, dirOrigin => $dirOrigin)
 
 Find the file containing the $nameModule given the $dirOrigin.
@@ -615,7 +651,11 @@ found. Die on errors.
 sub oDocumentFindModule {
     my ($nameModule, $dirOrigin) = Devel::PerlySense::Util::aNamedArg(["nameModule", "dirOrigin"], @_);
 
-    my $fileModule = $self->fileFindModule(nameModule => $nameModule, dirOrigin => $dirOrigin) or return(undef);
+    my $fileModule = $self->fileFindModule(
+        nameModule => $nameModule,
+        dirOrigin => $dirOrigin,
+    ) or return(undef);
+    
     my $oDocument = $self->oDocumentParseFile($fileModule) or return(undef);
 
     return($oDocument);

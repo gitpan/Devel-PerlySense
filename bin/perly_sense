@@ -25,7 +25,7 @@ main();
 
 
 sub main {
-    my ($dirOrigin, $fileOrigin, $module, $file, $row, $col, $clearCache);
+    my ($dirOrigin, $fileOrigin, $module, $file, $row, $col, $nameClass, $clearCache);
     GetOptions(
         "module:s" => \$module,
         "file:s" => \$file,
@@ -33,6 +33,7 @@ sub main {
         "col:i" => \$col,
         "file_origin:s" => \$fileOrigin,
         "dir_origin:s" => \$dirOrigin,
+        "class_name:s" => \$nameClass,
         "clear_cache" => \$clearCache,
         );
     my ($command) = @ARGV;
@@ -127,16 +128,31 @@ sub main {
         $@ and warn("Error: $@\n");
 
     } elsif($command eq "class_overview") {
-        $file or syntax("Missing option --file");
-        $row or syntax("Missing option --row");
-        $col or syntax("Missing option --col");
-
+        $file || $nameClass or syntax("Missing option --file or --class_name");
+        
         eval {
-            if(my $oClass = $oPs->classAt(
-                file => $file,
-                row => $row,
-                col => $col,
-            )) {
+
+            my $oClass;
+            if($file) {
+                $row or syntax("Missing option --row");
+                $col or syntax("Missing option --col");
+
+                $oClass = $oClass = $oPs->classAt(
+                    file => $file,
+                    row => $row,
+                    col => $col,
+                );
+            }
+            else {
+                $dirOrigin or syntax("Missing option --dir_origin");
+
+                $oClass = $oClass = $oPs->classByName(
+                    name => $nameClass,
+                    dirOrigin => $dirOrigin,
+                );
+            }
+                    
+            if($oClass) {
                 print $oEditor->formatOutputDataStructure(
                     rhData => {
                         class_name => $oClass->name,

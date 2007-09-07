@@ -79,6 +79,11 @@ GETTING STARTED WITH EMACS
     Pressing C-p C-c will bring up the Class Overview of the Class name at
     point, or otherwise the current Class (the active Package).
 
+    The Inheritance section shows all Base classes of the Class.
+
+    The NeighbourHood section shows three columns (1: parent dir, 2: current
+    dir, 3: subdirectories) with Classes located nearby.
+
     When in the Class Overview buffer:
 
     g -- Go to the thing at point. RET does the same.
@@ -89,7 +94,9 @@ GETTING STARTED WITH EMACS
 
     I -- Move point to the Inheritance heading in the buffer.
 
-    M -- Move point to the Methods heading in the buffer.
+    H -- Move point to the NeighbourHood (mnemonic: 'Hood) heading.
+
+    M -- Move point to the Methods heading.
 
     N -- Move point to the 'new' method in the buffer (if any).
 
@@ -268,6 +275,13 @@ API METHODS
     Return the Class object or undef if it's package main.
 
     Die if $file doesn't exist, or on other errors.
+
+  classByName(name => $name, dirOrigin => $dirOrigin)
+    Find the file that contains the Class $name, starting at $dirOrigin.
+
+    Return the Class object or undef if it couldn't be found.
+
+    Die on errors.
 
   fileFindModule(nameModule => $nameModule, dirOrigin => $dirOrigin)
     Find the file containing the $nameModule given the $dirOrigin.

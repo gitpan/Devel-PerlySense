@@ -212,13 +212,19 @@
 (defun perly-sense-class-overview-for-class-at-point ()
   "Display the Class Overview for the current class"
   (interactive)
+  (perly-sense-class-overview-with-argstring
+   (format
+    "perly_sense class_overview --file=%s --row=%s --col=%s"
+    (buffer-file-name)
+    (perly-sense-current-line)
+    (+ 1 (current-column)))))
+
+
+(defun perly-sense-class-overview-with-argstring (argstring)
+  "Call perly_sense class_overview with argstring and display Class Overview with the response"
+  (interactive)
   (message "Class Overview...")
-  (let ((result (shell-command-to-string
-                 (format "perly_sense class_overview --file=%s --row=%s --col=%s"
-                         (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
-                         )
-                 ))
-        )
+  (let ((result (shell-command-to-string (format "perly_sense class_overview %s" argstring) )))
     (let* (
            (result-hash (perly-sense-parse-sexp result))
            (class-name (cdr (assoc "class-name" result-hash)))
@@ -234,6 +240,7 @@
       )
     )
   )
+
 
 
 
@@ -383,21 +390,22 @@
   )
 
 
-;;;; Reinstate when there is support to do Class Overview for named class
-;; (defun perly-sense-class-class-overview-at-point ()
-;;   "Display Class Overview for the class/method at point"
-;;   (interactive)
-;;   (message "Class Overview at point")
-;;   (let* ((class-name (perly-sense-find-class-name-at-point)))
-;;          (if class-name
-;;              (progn
-;;                (message (format "Class Overview for class (%s)" class-name))
-;; ;               (perly-sense-display-pod-for-module class-name)
-;;                )
-;;            (message "No Class at point")
-;;            )
-;;          )
-;;   )
+;; Reinstate when there is support to do Class Overview for named class
+(defun perly-sense-class-class-overview-at-point ()
+  "Display Class Overview for the class/method at point"
+  (interactive)
+  (message "Class Overview at point")
+  (let* ((class-name (perly-sense-find-class-name-at-point)))
+    (if class-name
+        (progn
+          (message (format "Class Overview for class (%s)" class-name))
+          (perly-sense-class-overview-with-argstring
+           (format "--class_name=%s --dir_origin=." class-name)))
+      (message "No Class at point")
+      )
+    )
+  )
+
 
 
 (defun perly-sense-class-quit ()
@@ -460,9 +468,9 @@
 (define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-neighbourhood)
 ;;(define-key perly-sense-class-mode-map "M" 'perly-sense-class-find-methods)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
-;;(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
-(define-key perly-sense-class-mode-map [return] 'perly-sense-class-goto-at-point)
+(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
+(define-key perly-sense-class-mode-map [return] 'perly-sense-class-class-overview-at-point)
 
 
 
