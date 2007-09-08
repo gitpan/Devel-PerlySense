@@ -310,7 +310,7 @@
     (goto-char (point-min))
     (search-forward class-name-box)
     (search-backward "[ ")
-    (forward-char-nomark)
+    (forward-char)
     )
   )
 
@@ -322,7 +322,7 @@
     (goto-char (point-min))
     (search-forward class-name-box nil t)
     (search-backward "[<" nil t)
-    (forward-char-nomark)
+    (forward-char)
     )
   )
 
@@ -423,7 +423,7 @@
   (goto-char (point-min))
   (search-forward "* Inheritance *" nil t)
   (search-forward "[<" nil t)
-  (backward-char-nomark)
+  (backward-char)
   )
 
 
@@ -434,7 +434,7 @@
   (goto-char (point-min))
   (search-forward "* NeighbourHood *" nil t)
   (search-forward "[<" nil t)
-  (backward-char-nomark)
+  (backward-char)
   )
 
 
@@ -443,7 +443,7 @@
   "Return the class name at point, or nil if none was found"
   (save-excursion
     (if (looking-at "[\\[]")
-        (forward-char-nomark) ;; So we can search backwards without fear of missing the current char
+        (forward-char) ;; So we can search backwards without fear of missing the current char
       )
     (if (search-backward-regexp "[][]" nil t)
         (if (looking-at "[\\[]")
