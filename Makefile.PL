@@ -14,6 +14,7 @@ WriteMakefile
                            'PPI' => '1.003',
                            'Pod::Usage' => 0,
                            'File::Spec' => '0.87',
+                           'App::Ack' => 0,
                            'Cache::Cache' => 0,
                            'Graph::Easy' => '0.57',
                            'List::MoreUtils' => 0,
@@ -25,6 +26,7 @@ WriteMakefile
                            'Data::Dumper' => 0,
                            'Carp' => 0,
                            'Test::More' => 0,
+                           'Test::Differences' => 0,
                            'Path::Class' => '0.11',
                            'File::Basename' => 0
                          }

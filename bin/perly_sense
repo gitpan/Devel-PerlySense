@@ -25,7 +25,7 @@ main();
 
 
 sub main {
-    my ($dirOrigin, $fileOrigin, $module, $file, $row, $col, $nameClass, $clearCache);
+    my ($dirOrigin, $fileOrigin, $module, $file, $row, $col, $nameClass, $clearCache, $widthDisplay);
     GetOptions(
         "module:s" => \$module,
         "file:s" => \$file,
@@ -35,6 +35,7 @@ sub main {
         "dir_origin:s" => \$dirOrigin,
         "class_name:s" => \$nameClass,
         "clear_cache" => \$clearCache,
+        "width_display:s" => \$widthDisplay,
         );
     my ($command) = @ARGV;
 
@@ -63,7 +64,10 @@ sub main {
     $oPs->oCache($oCache);
 
 
-    my $oEditor = Devel::PerlySense::Editor::Emacs->new(oPerlySense => $oPs);
+    my $oEditor = Devel::PerlySense::Editor::Emacs->new(
+        oPerlySense => $oPs,
+        widthDisplay => $widthDisplay,
+    );
     
 
     if($command eq "find_module_source_file") {
@@ -283,6 +287,15 @@ On error: error.
 Process and cache all modules found in @INC
 
 
+=head2 --clear_cache
+
+Clears the cache before doing anything else
+
+=head2 --width_display=COLUMNS
+
+Sets the display width COLUMNS wide. Default can be configured per
+Project
+.
 
 
 =head1 SYNOPSIS

@@ -73,6 +73,7 @@ t/PerlySense-Document-self-method-call.t
 t/PerlySense-Document-sub.t
 t/PerlySense-Document-use.t
 t/PerlySense-Editor-Emacs-class-overview.t
+t/PerlySense-Editor-Emacs-item-in-groups.t
 t/PerlySense-find-file-inc.t
 t/PerlySense-find-file-up-down.t
 t/PerlySense-find-module-interface.t

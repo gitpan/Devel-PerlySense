@@ -224,7 +224,10 @@
   "Call perly_sense class_overview with argstring and display Class Overview with the response"
   (interactive)
   (message "Class Overview...")
-  (let ((result (shell-command-to-string (format "perly_sense class_overview %s" argstring) )))
+  (let ((result (shell-command-to-string
+                 (format
+                  "perly_sense class_overview %s --width_display=%s"
+                  argstring (- (window-width) 1) ))))
     (let* (
            (result-hash (perly-sense-parse-sexp result))
            (class-name (cdr (assoc "class-name" result-hash)))
@@ -245,7 +248,6 @@
 
 
 (defun perly-sense-parse-sexp (result)
-  (message result)
   (eval (car (read-from-string result)))
   )
 
@@ -439,6 +441,17 @@
 
 
 
+(defun perly-sense-class-find-used ()
+  "Navigate to the * Uses * in the Class Overview"
+  (interactive)
+  (goto-char (point-min))
+  (search-forward "* Uses *" nil t)
+  (beginning-of-line 2)
+  (forward-char)
+  )
+
+
+
 (defun perly-sense-find-class-name-at-point ()
   "Return the class name at point, or nil if none was found"
   (save-excursion
@@ -466,6 +479,7 @@
 (define-key perly-sense-class-mode-map "q" 'perly-sense-class-quit)
 (define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-inheritance)
 (define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-neighbourhood)
+(define-key perly-sense-class-mode-map "U" 'perly-sense-class-find-used)
 ;;(define-key perly-sense-class-mode-map "M" 'perly-sense-class-find-methods)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)

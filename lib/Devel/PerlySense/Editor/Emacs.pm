@@ -27,6 +27,7 @@ use File::Basename;
 use Graph::Easy;
 use Text::Table;
 use List::Util qw/ max /;
+use POSIX qw/ ceil /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Class;
@@ -51,18 +52,32 @@ field "oPerlySense" => undef;
 
 
 
+=head2 widthDisplay
+
+The width of the display in columns, or undef if N/A.
+
+Default: undef
+
+=cut
+field "widthDisplay" => undef;
+
+
+
+
+
 =head1 API METHODS
 
-=head2 new(oPerlySense)
+=head2 new(oPerlySense, widthDisplay = undef)
 
 Create new Emcacs object.
 
 =cut
 sub new {
-    my ($oPerlySense) = Devel::PerlySense::Util::aNamedArg(["oPerlySense"], @_);
+    my ($oPerlySense, $widthDisplay) = Devel::PerlySense::Util::aNamedArg(["oPerlySense", "widthDisplay"], @_);
 
     $self = bless {}, $self;    #Create the object. It looks weird because of Spiffy
     $self->oPerlySense($oPerlySense);
+    $self->widthDisplay($widthDisplay);
 
     return($self);
 }
@@ -84,6 +99,10 @@ sub classOverview {
             $self->textClassInheritance(oClass => $oClass) .
             "\n";
 
+    my $textUses =
+            "* Uses *\n" .
+            $self->textClassUses(oClass => $oClass);
+
     my $textNeighbourhood =
             "* NeighbourHood *\n" .
             $self->textClassNeighbourhood(oClass => $oClass) .
@@ -94,6 +113,7 @@ sub classOverview {
     my $textOverview = join(
         "\n",
         $textInheritance,
+        $textUses,
         $textNeighbourhood,
     );
     
@@ -213,6 +233,82 @@ sub textClassNeighbourhood {
     $oTable->load([ @aColText ]);
 
     return "$oTable";
+}
+
+
+
+
+
+=head2 textClassUses(oClass)
+
+Return string representing the modules used by $oClass. Use the least
+number of columns to display this.
+
+=cut
+sub textClassUses {
+    my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
+
+    my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
+    
+    my @aNameModule = $oClass->aNameModuleUse();
+
+
+    my $text = "";
+    for my $columns (reverse 1 .. @aNameModule) {
+        my @aColText;
+
+        for my $raItem ( @{$self->raItemInNGroups(\@aNameModule, $columns)} ) {
+            my $lenMax = max( map { length } @$raItem );
+            
+            my $text = join(
+                "\n",
+                map { sprintf("[ %-*s ]", $lenMax, $_) } @$raItem,
+            );
+            
+            push(@aColText, $text);
+        }
+        
+        my $oTable = Text::Table->new();
+        $oTable->load([ @aColText ]);
+        $text = "$oTable";
+
+        length( (split(/\n/, $text))[0] ) <= $columnsToFitWithin and last;
+    }
+    
+
+    return $text;
+}
+
+
+
+
+
+=head2 raItemInNGroups($raItem, $countGroup)
+
+Split up the items in $raItem so that they form at most $countGroup
+array refs.
+
+The items are evenly distributed between the group with the same numer
+of items in each, except for the last one which may contain fewer
+items.
+
+Return array ref with $countGroup items, each of which is an array ref
+with the elements in $raItem.
+
+=cut
+sub raItemInNGroups {
+    my ($raItem, $countGroup) = @_;
+    
+    my @aItem = @$raItem;
+    my $countItemPerGroup = ceil(@aItem / $countGroup) or return( [ ] );
+
+    my @aGroupItem;
+    while(scalar @aItem) {
+        push(@aGroupItem, [ splice(@aItem, 0, $countItemPerGroup) ]);
+    }
+    @aItem and push(@aGroupItem, [ @aItem ]);
+    
+    return [ @aGroupItem ];
 }
 
 

@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 10;
+use Test::More tests => 13;
 use Test::Exception;
-#use Test::Differences;
+use Test::Differences;
 
 use Data::Dumper;
 
@@ -28,6 +28,7 @@ throws_ok(
 lives_ok(
     sub { Devel::PerlySense::Editor::Emacs->new(
         oPerlySense => Devel::PerlySense->new(),
+        widthDisplay => undef,
     ) },
     "new ok with name",
 );
@@ -39,36 +40,44 @@ lives_ok(
 ok(my $oPerlySense = Devel::PerlySense->new(), "Created PerlySense object ok");
 ok(
     my $oEditor = Devel::PerlySense::Editor::Emacs->new(
-        oPerlySense => $oPerlySense
+        oPerlySense => $oPerlySense,
+        widthDisplay => 80,
     ),
     "Created Editor ok",
 );
 
-my $dirData = "data/project-lib";
-my $fileOrigin = "$dirData/Game/Object/Worm/ShaiHulud.pm";
 
-ok(
-    my $oClassOjectWormShai = Devel::PerlySense::Class->newFromFileAt(
-        oPerlySense => $oPerlySense,
-        file => $fileOrigin,
-        row => 20,
-        col => 1,
-    ),
-    "newFromFileAt at proper package location ok",
-);
-
-
-ok(
-    my $textShai = $oEditor->classOverview(oClass => $oClassOjectWormShai),
-    " render classOverview ok",
-);
-#warn("-----\n$textShai\n-----\n");
 my $s = " ";
 my $sNone = "       ";
-my $textExpected = qq{* Inheritance *
+
+
+{
+    my $dirData = "data/project-lib";
+    my $fileOrigin = "$dirData/Game/Object/Worm/ShaiHulud.pm";
+
+    ok(
+        my $oClassOjectWormShai = Devel::PerlySense::Class->newFromFileAt(
+            oPerlySense => $oPerlySense,
+            file => $fileOrigin,
+            row => 20,
+            col => 1,
+        ),
+        "newFromFileAt at proper package location ok",
+    );
+
+
+    ok(
+        my $textShai = $oEditor->classOverview(oClass => $oClassOjectWormShai),
+        " render classOverview ok",
+    );
+    #warn("-----\n$textShai\n-----\n");
+    my $textExpected = qq{* Inheritance *
 [ Game::Object                  ] <-----+
 [ Game::Object::Worm            ]       |
 [<Game::Object::Worm::ShaiHulud>] --> [ Game::Lawn ]
+
+* Uses *
+[ Carp ] [ Class::MethodMaker ] [ Data::Dumper ]
 
 * NeighbourHood *
 [ Game::Object::Prize ] [ Game::Object::Worm::Bot       ] -none-
@@ -77,9 +86,57 @@ my $textExpected = qq{* Inheritance *
 
 };
 
-#eq_or_diff
-is($textShai, $textExpected, "  And got correct output");
+    eq_or_diff($textShai, $textExpected, "  And got correct output");
 
+}
+
+
+
+{
+    my $dirData = "data/project-lib";
+    my $fileOrigin = "$dirData/Game/Object.pm";
+
+    ok(
+        my $oClassOject = Devel::PerlySense::Class->newFromFileAt(
+            oPerlySense => $oPerlySense,
+            file => $fileOrigin,
+            row => 1,
+            col => 1,
+        ),
+        "newFromFileAt at proper package location ok",
+    );
+
+
+    ok(
+        my $textShai = $oEditor->classOverview(oClass => $oClassOject),
+        " render classOverview ok",
+    );
+    #warn("-----\n$textShai\n-----\n");
+
+    my $textGameObjectSpace = "                       ";
+    my $textExpected = qq{* Inheritance *
+[<Game::Object>]
+
+* Uses *
+[ Class::MethodMaker ] [ Game::Event::Timed ]
+[ Data::Dumper       ] [ Game::Location     ]
+
+* NeighbourHood *
+-none- [ Game::Application ] [ Game::Object::Prize ]
+       [ Game::Controller  ] [ Game::Object::Wall  ]
+       [ Game::Direction   ] [ Game::Object::Worm  ]
+       [ Game::Lawn        ] $textGameObjectSpace
+       [ Game::Location    ] $textGameObjectSpace
+       [<Game::Object     >] $textGameObjectSpace
+       [ Game::UI          ] $textGameObjectSpace
+
+};
+
+    eq_or_diff
+    #is
+    ($textShai, $textExpected, "  And got correct output");
+
+}
 
 
 

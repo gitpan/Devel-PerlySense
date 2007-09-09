@@ -81,6 +81,8 @@ GETTING STARTED WITH EMACS
 
     The Inheritance section shows all Base classes of the Class.
 
+    The Uses section shows all used modules in the Class.
+
     The NeighbourHood section shows three columns (1: parent dir, 2: current
     dir, 3: subdirectories) with Classes located nearby.
 
@@ -93,6 +95,8 @@ GETTING STARTED WITH EMACS
     c -- Class Overview for the thing at point.
 
     I -- Move point to the Inheritance heading in the buffer.
+
+    U -- Move point to the Uses heading in the buffer.
 
     H -- Move point to the NeighbourHood (mnemonic: 'Hood) heading.
 

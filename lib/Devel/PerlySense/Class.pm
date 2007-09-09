@@ -325,7 +325,9 @@ sub rhDirNameClassInNeighbourhood {
     my $dir = dir(dirname( $self->raDocument->[0]->file ));
     my $raDir = [ $dir ];
     my $raDirUp = [ $dir->parent ];
-    my $raDirDown = [ grep { -d } glob("$dir/*") ];
+
+    my $nameClassLast = (split(/::/, $self->name))[-1];
+    my $raDirDown = [ dir($dir, $nameClassLast) ];
 
     return({
         up      => $self->raClassInDirs($raDirUp),
@@ -357,6 +359,19 @@ sub aNameClassInDir {
             glob("$dir/*.pm");
                 
     return sort( uniq( @aNameClass ) );
+}
+
+
+
+
+
+=head2 aNameModuleUse()
+
+Return array with the names of the "use MODULE" modules in the Class.
+
+=cut
+sub aNameModuleUse {
+    return sort( uniq( map { $_->aNameModuleUse } @{$self->raDocument} ) );
 }
 
 

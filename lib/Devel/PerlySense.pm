@@ -109,6 +109,8 @@ point, or otherwise the current Class (the active Package).
 
 The Inheritance section shows all Base classes of the Class.
 
+The Uses section shows all used modules in the Class.
+
 The NeighbourHood section shows three columns (1: parent dir, 2:
 current dir, 3: subdirectories) with Classes located nearby.
 
@@ -122,6 +124,8 @@ d -- Documentation for the thing at point.
 c -- Class Overview for the thing at point.
 
 I -- Move point to the Inheritance heading in the buffer.
+
+U -- Move point to the Uses heading in the buffer.
 
 H -- Move point to the NeighbourHood (mnemonic: 'Hood) heading.
 
@@ -259,7 +263,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_12';
+our $VERSION = '0.01_13';
 
 
 
