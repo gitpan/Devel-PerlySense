@@ -43,7 +43,7 @@ sub main {
     sys(qq{svn co $svn_root/$release_branch $release_branch});
 
     say("Uploading to CPAN...");
-    sys("cpan-upload-http ../release/$release_tar_file");    
+    sys("cpan-upload-http trunk/release/$release_tar_file");    
 }
 
 
