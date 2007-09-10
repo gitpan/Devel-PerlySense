@@ -14,21 +14,21 @@ sub main {
             die("The version ($version) seems to be released already\n");
 
     -f "Build" and system("perl Build realclean");
-    sys("perl Build.PL") and die;
-    sys("perl Build distcheck") and die;
-    sys("perl Build manifest") and die;
-    sys("perl Build disttest") and die;
-    sys("perl Build dist") and die;
+    sys("perl Build.PL");
+    sys("perl Build distcheck");
+    sys("perl Build manifest");
+    sys("perl Build disttest");
+    sys("perl Build dist");
 
     my $release_tar_file = "Devel-PerlySense-$version.tar.gz";
     rename($release_tar_file, "../release/$release_tar_file");
 
-    sys("perl Build realclean") and die;
+    sys("perl Build realclean");
 
     say("Adding file");
-    sys("svn add ../release/$release_tar_file") and die;
+    sys("svn add ../release/$release_tar_file");
     say("Committing file");
-    sys(qq{svn commit -m "Tarball for release ($version)" ../release/$release_tar_file}) and die;
+    sys(qq{svn commit -m "Tarball for release ($version)" ../release/$release_tar_file});
 
     chdir("../..");  # above trunk
 
@@ -40,11 +40,10 @@ sub main {
     my $release_branch = "branches/release-$version";
 
     sys(qq{svn cp -m "Branched for release ($version)" $svn_root/trunk $svn_root/$release_branch});
-#    sys(qq{svn ci  $svn_root/trunk $svn_root/$release_branch});
-
     sys(qq{svn co $svn_root/$release_branch $release_branch});
 
-    
+    say("Uploading to CPAN...");
+    sys("cpan-upload-http ../release/$release_tar_file");    
 }
 
 

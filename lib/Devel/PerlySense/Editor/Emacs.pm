@@ -96,8 +96,7 @@ sub classOverview {
 
     my $textInheritance =
             "* Inheritance *\n" .
-            $self->textClassInheritance(oClass => $oClass) .
-            "\n";
+            $self->textClassInheritance(oClass => $oClass);
 
     my $textUses =
             "* Uses *\n" .
@@ -105,18 +104,21 @@ sub classOverview {
 
     my $textNeighbourhood =
             "* NeighbourHood *\n" .
-            $self->textClassNeighbourhood(oClass => $oClass) .
-            "\n";
+            $self->textClassNeighbourhood(oClass => $oClass);
 
-    
+    my $textStructure =
+            "* Structure *\n" .
+            $self->textClassStructure(oClass => $oClass);
+
 
     my $textOverview = join(
         "\n",
         $textInheritance,
         $textUses,
         $textNeighbourhood,
+        $textStructure,
     );
-    
+
     #Highlight the current class
     my $leftBracket = "[[]";
     my $space = "[ ]";
@@ -148,17 +150,17 @@ sub textClassInheritance {
         rhSeenEdge => $rhSeenEdge,
     );
 
-    
+
     # Disable the subclass view until it either becomes faster and/or
     # is better rendered. The Neighbourhood view may be quite enough.
-    
+
 #     $self->addSubClassNameToGraph(
 #         oGraph => $oGraph,
 #         oClass => $oClass,
 #         rhSeenEdge => $rhSeenEdge,
 #     );
-    
-    my $textInheritance = $self->textCompactGraph(text => $oGraph->as_ascii());
+
+    my $textInheritance = $self->textCompactGraph(text => $oGraph->as_ascii()) . "\n";
 
     return $textInheritance;
 }
@@ -171,7 +173,7 @@ sub addBaseClassNameToGraph {
     for my $oClassBase (values %{$oClass->rhClassBase}) {
         $rhSeenEdge->{$oClass->name . "->" .$oClassBase->name}++ and next;
         $oGraph->add_edge($oClass->name, $oClassBase->name);
-        
+
         $self->addBaseClassNameToGraph(
             oGraph => $oGraph,
             oClass => $oClassBase,
@@ -190,16 +192,16 @@ sub addSubClassNameToGraph {
     my ($oClass, $oGraph, $rhSeenEdge) = Devel::PerlySense::Util::aNamedArg(["oClass", "oGraph", "rhSeenEdge"], @_);
 
     for my $oClassSub (values %{$oClass->rhClassSub}) {
-        $rhSeenEdge->{$oClassSub->name . "->" .$oClass->name}++ and next;        
+        $rhSeenEdge->{$oClassSub->name . "->" .$oClass->name}++ and next;
         $oGraph->add_edge($oClassSub->name, $oClass->name);
-        
+
         $self->addSubClassNameToGraph(
             oGraph => $oGraph,
             oClass => $oClassSub,
             rhSeenEdge => $rhSeenEdge,
         );
     }
-    
+
     return 1;
 }
 
@@ -220,12 +222,12 @@ sub textClassNeighbourhood {
     my @aColText;
     for my $raNameClass (map { $rhDirClass->{$_} } qw/ up current down /) {
         my $lenMax = max( map { length } @$raNameClass );
-        
+
         my $text = join(
             "\n",
             map { sprintf("[ %-*s ]", $lenMax, $_) } @$raNameClass,
         ) || "-none-";
-        
+
         push(@aColText, $text);
     }
 
@@ -249,7 +251,7 @@ sub textClassUses {
     my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
 
     my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
-    
+
     my @aNameModule = $oClass->aNameModuleUse();
 
 
@@ -259,24 +261,69 @@ sub textClassUses {
 
         for my $raItem ( @{$self->raItemInNGroups(\@aNameModule, $columns)} ) {
             my $lenMax = max( map { length } @$raItem );
-            
+
             my $text = join(
                 "\n",
                 map { sprintf("[ %-*s ]", $lenMax, $_) } @$raItem,
             );
-            
+
             push(@aColText, $text);
         }
-        
+
         my $oTable = Text::Table->new();
         $oTable->load([ @aColText ]);
         $text = "$oTable";
 
         length( (split(/\n/, $text))[0] ) <= $columnsToFitWithin and last;
     }
-    
+
 
     return $text;
+}
+
+
+
+
+
+=head2 textClassStructure(oClass)
+
+Return string representing the structure of $oClass.
+
+This includes a Signature Survey string.
+
+=cut
+sub textClassStructure {
+    my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
+
+    my $textSignature = $self->textLineWrapped(
+        join(
+            "",
+            map { $_->stringSignatureSurvey } @{$oClass->raDocument},
+        ),
+    );
+
+    return "$textSignature\n";
+}
+
+
+
+
+
+=head2 textLineWrapped($text)
+
+Return $text wrapped hard at the available number of columns.
+
+=cut
+sub textLineWrapped {
+    my ($text) = @_;
+
+    my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
+    my $textWrapped = join(
+        "\n",
+        grep { defined } $text =~ m| (.{$columnsToFitWithin})* (.*)? |x,
+    );
+
+    return $textWrapped;
 }
 
 
@@ -298,7 +345,7 @@ with the elements in $raItem.
 =cut
 sub raItemInNGroups {
     my ($raItem, $countGroup) = @_;
-    
+
     my @aItem = @$raItem;
     my $countItemPerGroup = ceil(@aItem / $countGroup) or return( [ ] );
 
@@ -307,7 +354,7 @@ sub raItemInNGroups {
         push(@aGroupItem, [ splice(@aItem, 0, $countItemPerGroup) ]);
     }
     @aItem and push(@aGroupItem, [ @aItem ]);
-    
+
     return [ @aGroupItem ];
 }
 

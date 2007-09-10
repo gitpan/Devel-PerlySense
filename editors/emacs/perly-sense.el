@@ -248,6 +248,7 @@
 
 
 (defun perly-sense-parse-sexp (result)
+  (message result)
   (eval (car (read-from-string result)))
   )
 
@@ -452,6 +453,16 @@
 
 
 
+(defun perly-sense-class-find-structure ()
+  "Navigate to the * Structure * in the Class Overview"
+  (interactive)
+  (goto-char (point-min))
+  (search-forward "* Structure *" nil t)
+  (beginning-of-line 2)
+  )
+
+
+
 (defun perly-sense-find-class-name-at-point ()
   "Return the class name at point, or nil if none was found"
   (save-excursion
@@ -480,6 +491,7 @@
 (define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-inheritance)
 (define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-neighbourhood)
 (define-key perly-sense-class-mode-map "U" 'perly-sense-class-find-used)
+(define-key perly-sense-class-mode-map "S" 'perly-sense-class-find-structure)
 ;;(define-key perly-sense-class-mode-map "M" 'perly-sense-class-find-methods)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)

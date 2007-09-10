@@ -211,9 +211,9 @@ sub parse {
         $self->oMeta($oMeta);
     } else {
         $oMeta = Devel::PerlySense::Document::Meta->new();
-        
+
         $oMeta->parse($self);
-        
+
         $self->oMeta($oMeta);
         $self->cacheSet($keyCache, $file, $self->oMeta);
     }
@@ -277,7 +277,6 @@ sub aNameBase {
 
     return(@aBase);
 }
-
 
 
 
@@ -856,6 +855,47 @@ sub scoreInterfaceMatch {
     my $percentScore = sprintf("%.02f", ($score / ($supportedMultiplier + 1))) + 0;
 
     return($percentScore);
+}
+
+
+
+
+
+=head2 stringSignatureSurvey()
+
+Calculate a Signature Survey string for the source in the document,
+based on the idea in http://c2.com/doc/SignatureSurvey/ .
+
+Return the string. Die on errors.
+
+=cut
+my $matchReplace = {
+    q/{/ => q/{/,
+    q/}/ => q/}/,
+    q/"/ => q/"/,
+    q/'/ => q/'/,
+    q/;/ => q/;/,
+    q/sub\s+\w+\s+{/ => q/SPECIAL/,
+};
+my $rexMatch = join("|", keys %$matchReplace );
+sub _stringReplace {
+    my ($match) = @_;
+
+    index($match, "sub") > -1 and return "S{";
+    
+    return $matchReplace->{$match};
+}
+sub stringSignatureSurvey {
+    
+    my $source = read_file($self->file);
+
+    my $signature = "";
+    $source =~ s/($rexMatch)/ $signature .= $self->_stringReplace($1); 1; /gsme;
+    
+    #Remove closing " and ', they just clutter things up
+    $signature =~ s/(["'])\1/$1/gsm;
+
+    return($signature);
 }
 
 

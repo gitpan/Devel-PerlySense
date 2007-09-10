@@ -263,7 +263,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_13';
+our $VERSION = '0.01_14';
 
 
 

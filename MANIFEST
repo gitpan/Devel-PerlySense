@@ -70,6 +70,7 @@ t/PerlySense-Document-module.t
 t/PerlySense-Document-object-method-call.t
 t/PerlySense-Document-package.t
 t/PerlySense-Document-self-method-call.t
+t/PerlySense-Document-signature-survey.t
 t/PerlySense-Document-sub.t
 t/PerlySense-Document-use.t
 t/PerlySense-Editor-Emacs-class-overview.t

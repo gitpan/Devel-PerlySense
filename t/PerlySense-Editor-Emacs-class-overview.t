@@ -41,7 +41,7 @@ ok(my $oPerlySense = Devel::PerlySense->new(), "Created PerlySense object ok");
 ok(
     my $oEditor = Devel::PerlySense::Editor::Emacs->new(
         oPerlySense => $oPerlySense,
-        widthDisplay => 80,
+        widthDisplay => 59,
     ),
     "Created Editor ok",
 );
@@ -71,7 +71,7 @@ my $sNone = "       ";
         " render classOverview ok",
     );
     #warn("-----\n$textShai\n-----\n");
-    my $textExpected = qq{* Inheritance *
+    my $textExpected = qq/* Inheritance *
 [ Game::Object                  ] <-----+
 [ Game::Object::Worm            ]       |
 [<Game::Object::Worm::ShaiHulud>] --> [ Game::Lawn ]
@@ -84,9 +84,14 @@ my $sNone = "       ";
 [ Game::Object::Wall  ] [<Game::Object::Worm::ShaiHulud>]$sNone
 [ Game::Object::Worm  ] [ Game::Object::Worm::Shaitan   ]$sNone
 
-};
+* Structure *
+;"";;;;'";"""""S{;;;;";;;;}"""S{;{;'{;;";};}";}"""S{;{";";"
+;;'{;;";};}";};
+/;
 
-    eq_or_diff($textShai, $textExpected, "  And got correct output");
+    eq_or_diff
+#    is
+            ($textShai, $textExpected, "  And got correct output");
 
 }
 
@@ -114,7 +119,7 @@ my $sNone = "       ";
     #warn("-----\n$textShai\n-----\n");
 
     my $textGameObjectSpace = "                       ";
-    my $textExpected = qq{* Inheritance *
+    my $textExpected = qq/* Inheritance *
 [<Game::Object>]
 
 * Uses *
@@ -130,10 +135,12 @@ my $sNone = "       ";
        [<Game::Object     >] $textGameObjectSpace
        [ Game::UI          ] $textGameObjectSpace
 
-};
+* Structure *
+;;;;;";";";";";"";S{;;{};;";;;;;;;}S{;;{{};{};}";;};
+/;
 
-    eq_or_diff
-    #is
+    #eq_or_diff
+    is
     ($textShai, $textExpected, "  And got correct output");
 
 }
@@ -178,6 +185,8 @@ __END__
 .................................     ..............
 : Game::Object::Worm::ShaiHulud : --> : Game::Lawn :
 :...............................:     :............:
+
+
 
 
 
