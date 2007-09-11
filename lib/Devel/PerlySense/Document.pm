@@ -42,7 +42,6 @@ use Spiffy -Base;
 use Carp;
 use Data::Dumper;
 use PPI;
-use File::Slurp;
 use File::Basename;
 use List::MoreUtils qw/ uniq /;
 
@@ -861,12 +860,30 @@ sub scoreInterfaceMatch {
 
 
 
-=head2 stringSignatureSurvey()
+=head2 stringSignatureSurveyFromFile()
 
-Calculate a Signature Survey string for the source in the document,
-based on the idea in http://c2.com/doc/SignatureSurvey/ .
+Calculate a Signature Survey string for the source in the document.
 
 Return the string. Die on errors.
+
+=cut
+sub stringSignatureSurveyFromFile {
+    return $self->stringSignatureSurveyFromSource( slurp($self->file) );
+}
+
+
+
+
+
+=head2 stringSignatureSurveyFromSource($stringSource)
+
+Calculate a Signature Survey string for the $stringSource, based on
+the idea in http://c2.com/doc/SignatureSurvey/ .
+
+The idea is not to get an exact representation of the source but a
+good feel for what it contains.
+
+Return the survey string. Die on errors.
 
 =cut
 my $matchReplace = {
@@ -875,25 +892,36 @@ my $matchReplace = {
     q/"/ => q/"/,
     q/'/ => q/'/,
     q/;/ => q/;/,
-    q/sub\s+\w+\s+{/ => q/SPECIAL/,
+    q/sub\s+\w+\s*{/ => q/SPECIAL/,
+    q/^=(?:head|item|for|pod)/ => q/SPECIAL/,
 };
 my $rexMatch = join("|", keys %$matchReplace );
 sub _stringReplace {
     my ($match) = @_;
 
     index($match, "sub") > -1 and return "S{";
+    index($match, "=") > -1 and return "=";
     
     return $matchReplace->{$match};
 }
-sub stringSignatureSurvey {
-    
-    my $source = read_file($self->file);
+sub stringSignatureSurveyFromSource {
+    my ($source) = @_;
 
-    my $signature = "";
-    $source =~ s/($rexMatch)/ $signature .= $self->_stringReplace($1); 1; /gsme;
+    my @aToken = $source =~ /($rexMatch)/gm;
+#    print Dumper(\@aToken);
+    my $signature = join(
+        "", 
+        map { $self->_stringReplace($_) } @aToken,
+    );
     
     #Remove closing " and ', they just clutter things up
     $signature =~ s/(["'])\1/$1/gsm;
+
+    #Remove empty {}, they most often indicate hash accesses or derefs
+    $signature =~ s/{}//gsm;
+    
+    #Remove =['"]+ that's a sign of quotes inside POD text
+    $signature =~ s/=['"]+/=/gsm;
 
     return($signature);
 }

@@ -294,11 +294,11 @@ This includes a Signature Survey string.
 =cut
 sub textClassStructure {
     my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
-
+    
     my $textSignature = $self->textLineWrapped(
         join(
             "",
-            map { $_->stringSignatureSurvey } @{$oClass->raDocument},
+            map { $_->stringSignatureSurveyFromFile } @{$oClass->raDocument},
         ),
     );
 
@@ -316,12 +316,15 @@ Return $text wrapped hard at the available number of columns.
 =cut
 sub textLineWrapped {
     my ($text) = @_;
-
+    
     my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
-    my $textWrapped = join(
-        "\n",
-        grep { defined } $text =~ m| (.{$columnsToFitWithin})* (.*)? |x,
-    );
+    
+    my @aLine;
+    while (length($text)) {
+        push(@aLine, substr($text, 0, $columnsToFitWithin, ""));
+    }
+
+    my $textWrapped = join("\n", @aLine);
 
     return $textWrapped;
 }

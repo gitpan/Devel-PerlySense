@@ -12,6 +12,7 @@ use base "Exporter";
 our @EXPORT = (
     qw/
        debug
+       slurp
        /);
 
 our $VERSION = '0.01';
@@ -74,6 +75,23 @@ sub debug {
     $fh->print(localtime() . ": $message\n");
     
     return(1);
+}
+
+
+
+
+
+=head2 slurp($file)
+
+Read the contents of $file and return it, or undef if the file
+couldn't be opened.
+
+=cut
+sub slurp {
+	my ($file) = @_;
+    open(my $fh, "<", $file) or return undef;
+    local $/;
+    return <$fh>;
 }
 
 

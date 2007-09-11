@@ -102,41 +102,6 @@ real release. Suggestions welcome.
 Open one of your Perl source files.
 
 
-=head2 Class Overview
-
-Pressing C-p C-c will bring up the Class Overview of the Class name at
-point, or otherwise the current Class (the active Package).
-
-The Inheritance section shows all Base classes of the Class.
-
-The Uses section shows all used modules in the Class.
-
-The NeighbourHood section shows three columns (1: parent dir, 2:
-current dir, 3: subdirectories) with Classes located nearby.
-
-
-When in the Class Overview buffer:
-
-g -- Go to the thing at point. RET does the same.
-
-d -- Documentation for the thing at point.
-
-c -- Class Overview for the thing at point.
-
-I -- Move point to the Inheritance heading in the buffer.
-
-U -- Move point to the Uses heading in the buffer.
-
-H -- Move point to the NeighbourHood (mnemonic: 'Hood) heading.
-
-M -- Move point to the Methods heading.
-
-N -- Move point to the 'new' method in the buffer (if any).
-
-q -- Quit the Class Overview buffer.
-
-
-
 =head2 Smart docs
 
 C-p C-d is the "Smart docs" command. It brings up documentation for
@@ -178,25 +143,101 @@ Before you go anywhere the mark is set. Go back to earlier marks
 globally with C-x C-SPC, or locally with C-u C-SPC.
 
 
+=head2 Go to Class
+
+C-p m f -- Go to Class (will be changed to C-p g c) at point.
+
+
+=head2 Class Overview
+
+Pressing C-p C-c will bring up the Class Overview of the Class name at
+point, or otherwise the current Class (the active Package).
+
+Example class CatalystX::FeedMe::Controller::Feed
+
+  * Inheritance *
+       [ Class::Accessor                     ]
+    +> [ Class::Accessor::Fast               ] <-----+
+    |  [ Catalyst::AttrContainer             ] ------+---------------------------+
+    |    |                                           |                           v
+    +- [ Catalyst::Base                      ] --> [ Catalyst::Component ] --> [ Class::Data::Inheritable ]
+       [ Catalyst::Controller                ]
+       [<CatalystX::FeedMe::Controller::Feed>]
+
+  * Uses *
+  [ Data::Dumper      ] [ XML::Atom::Syndication::Content ] [ XML::Atom::Syndication::Feed ]
+  [ Template::Filters ] [ XML::Atom::Syndication::Entry   ] [ XML::Atom::Syndication::Link ]
+
+  * NeighbourHood *
+  [ CatalystX::FeedMe::DBIC ] [<CatalystX::FeedMe::Controller::Feed    >] -none-
+                              [ CatalystX::FeedMe::Controller::FeedItem ]       
+                              [ CatalystX::FeedMe::Controller::Homepage ]       
+                              [ CatalystX::FeedMe::Controller::Root     ]       
+
+  * Structure *
+  ;;;';;;;;;;{;";}{;;;;{}"";{}"";";}{;;;';';";;;{;'";;';;;};';}S{;";"";;}S{;'{}{"};;;}S{;;;;";"
+  ;;};
+
+
+The B<Inheritance> section shows all Base classes of the
+Class. Inheriting from something like Catalyst is hopefully the
+hairiest you'll see.
+
+The B<Uses> section shows all used modules in the Class.
+
+The B<NeighbourHood> section shows three columns (1: parent dir, 2:
+current dir, 3: subdir for the current class) with Classes located
+nearby.
+
+The B<Structure> section shows a Signature Survey of the file, showing
+an extreme abbreviation of the source. The intent is to convey an
+ambient feel for what the source contains. It's not clear this is a
+useful thing.
+
+
+When in the Class Overview buffer:
+
+g -- Go to the file of the thing at point.
+
+d -- Documentation for the thing at point.
+
+c -- Class Overview for the thing at point. RET does the same.
+
+I -- Move point to the Inheritance heading in the buffer.
+
+U -- Move point to the Uses heading in the buffer.
+
+H -- Move point to the NeighbourHood (mnemonic: 'Hood) heading.
+
+M -- Move point to the Methods heading.
+
+N -- Move point to the 'new' method in the buffer (if any).
+
+q -- Quit the Class Overview buffer.
+
 
 
 =head1 ON PARSING PERL
 
-Oh, that old topic again...
-
-Well, since Perl is so dynamic, a perfect static analysis of the
-source is impossible. But not unusably so. Well, hopefully.
+Since Perl is so dynamic, a perfect static analysis of the source is
+impossible. But not unusably so. Well, hopefully. Most of the time.
 
 Because of this PerlySense is not about exact rules, but about
-heuristics and a 90% solution that isn't perfect, but
-good-enough. Sometimes when PerlySense can't make a decision, you're
-expected to chip in and tell it what you meant.
-
-If it works for you, brilliant, use it to be more productive.
+heuristics and a 90% solution that isn't perfect, but good-enough.
 
 PerlySense tries to take advantage of the fact that Perl code is more
-than the plain source. The source lives in a context of POD and a
+than the plain source file. The source lives in a context of POD and a
 directory structure and... well, oher source code.
+
+Sometimes when PerlySense can't make a decision, you're expected to
+chip in and tell it what you meant.
+
+Sometimes it won't work at all. 
+
+Such is the way of dynamic languages.
+
+If it works for you, brilliant, use it to be more productive. If
+not...  there's always Java >:)
 
 
 
@@ -211,6 +252,9 @@ L<CPANXR> - also uses PPI for cross referencing the CPAN
 L<http://www.DarSerMan.com/Perl/Oasis/> - Win32 class
 browser/IDE. Earlier (a lot) work by me.
 
+L<http://c2.com/doc/SignatureSurvey/> - The idea behind Signature
+Surveys. Introduced in this article about Software Archeology
+(L<http://www.pragmaticprogrammer.com/articles/mar_02_archeology.pdf>).
 
 
 =head1 AUTHOR
@@ -263,7 +307,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_15';
+our $VERSION = '0.01_16';
 
 
 
@@ -742,8 +786,7 @@ sub fileFromModule {
 
 =head2 fileFoundInDir($dir, $fileModuleBase)
 
-Look if $fileModuleBase is located in $dir. If it is, return the file
-name relative to $dirOrigin.
+Check if $fileModuleBase is located in $dir.
 
 Return the absolute file name, or "" if not found at $dir.
 

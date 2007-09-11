@@ -227,7 +227,7 @@
   (let ((result (shell-command-to-string
                  (format
                   "perly_sense class_overview %s --width_display=%s"
-                  argstring (- (window-width) 1) ))))
+                  argstring (- (window-width) 2) ))))
     (let* (
            (result-hash (perly-sense-parse-sexp result))
            (class-name (cdr (assoc "class-name" result-hash)))
