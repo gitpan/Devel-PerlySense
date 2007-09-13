@@ -217,6 +217,18 @@ q -- Quit the Class Overview buffer.
 
 
 
+=head2 Go to Error line
+
+C-p g e -- If point is located on an error line from a syntax error,
+or a stack trace from the debugger or similar, go to that file+line.
+
+If no file name can be found, prompt for a piece of text that contains
+the file+line spec. The kill ring or clipboard text is used as default
+if available (so it's easy to copy the error line from the shell).
+
+
+
+
 =head1 ON PARSING PERL
 
 Since Perl is so dynamic, a perfect static analysis of the source is
@@ -307,7 +319,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_16';
+our $VERSION = '0.01_17';
 
 
 

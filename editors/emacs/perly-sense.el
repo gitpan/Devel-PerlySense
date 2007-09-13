@@ -354,10 +354,64 @@
 
 
 
-;;;;
-;;(perly-sense-display-class-overview "CatalystX::FeedMe::View::Atom" "* Inheritance *\n    [ Class::Accessor               ]\n +> [ Class::Accessor::Fast         ] <-----+\n |  [ Catalyst::AttrContainer       ] ------+---------------------------+\n |    |                                     |                           v\n +- [ Catalyst::Base                ] --> [ Catalyst::Component ] --> [ Class::Data::Inheritable ]\n    [ Catalyst::View::Atom::XML     ]\n    [ CatalystX::FeedMe::View::Atom ]\n")
+
+(defun perly-sense-compile-goto-error-file-line ()
+  "Go to the file + line specified on the row at point, or ask for a
+text to parse for a file + line."
+  (interactive)
+  (let* ((file_row (perly-sense-compile-get-file-line-from-buffer) )
+         (file (nth 0 file_row))
+         (row (nth 1 file_row)))
+    (if file
+        (perly-sense-find-file-location file (string-to-number row) 1)
+      (let* ((file_row (perly-sense-compile-get-file-line-from-user-input) )
+             (file (nth 0 file_row))
+             (row (nth 1 file_row)))
+        (if file
+            (perly-sense-find-file-location file (string-to-number row) 1)
+          (message "No 'FILE line N' found")
+          )
+        )
+      )
+    )
+  )
 
 
+(defun perly-sense-compile-get-file-line-from-user-input ()
+  "Ask for a text to parse for a file + line, parse it using
+'perly-sense-compile-get-file-line-from-buffer'. Return what it
+returns."
+  (with-temp-buffer
+    (insert (read-string "FILE, line N text: " (current-kill 0 t)))
+    (perly-sense-compile-get-file-line-from-buffer)
+    )
+  )
+
+
+(defun perly-sense-compile-get-file-line-from-buffer ()
+  "Return a two item list with (file . row) specified on the row at
+point, or an empty list () if none was found."
+  (save-excursion
+    (end-of-line)
+    (set-mark (point))
+    (beginning-of-line)
+    (if (search-forward-regexp
+         "\\(file +`\\|at +\\)\\([/a-zA-Z0-9._ ]+\\)'? +line +\\([0-9]+\\)[.,]"
+         (region-end) t)
+        (let* ((file (match-string 2))
+               (row (match-string 3)))
+          (list file row)
+          )
+      (list)
+      )
+    )
+  )
+
+
+
+
+
+;;;;;
 
 
 (defun perly-sense-class-goto-at-point ()
@@ -567,5 +621,7 @@
 (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
 (global-set-key (kbd "\C-p \C-c") 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (kbd "\C-p \C-c") 'perly-sense-display-api-for-class-at-point)
+
+(global-set-key (kbd "\C-p g e") 'perly-sense-compile-goto-error-file-line)
 
 

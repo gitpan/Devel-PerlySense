@@ -1008,7 +1008,7 @@ Return a temporary file name in fileTemp().
 =back
 
 =cut
-sub GetFileTemp {
+sub GetFileTemp : Path('search') {
     my $self = shift;
 
     my @aPackage =

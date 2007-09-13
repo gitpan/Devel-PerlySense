@@ -893,13 +893,17 @@ my $matchReplace = {
     q/'/ => q/'/,
     q/;/ => q/;/,
     q/sub\s+\w+\s*{/ => q/SPECIAL/,
+    q/sub\s+\w+\s*:\s*\w+[^{]+{/ => q/SPECIAL/,
     q/^=(?:head|item|for|pod)/ => q/SPECIAL/,
 };
 my $rexMatch = join("|", keys %$matchReplace );
 sub _stringReplace {
     my ($match) = @_;
-
-    index($match, "sub") > -1 and return "S{";
+    
+    if(index($match, "sub") > -1) {
+        index($match, ":") > -1 and return "SA{";
+        return "S{";
+    }
     index($match, "=") > -1 and return "=";
     
     return $matchReplace->{$match};
