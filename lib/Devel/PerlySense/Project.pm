@@ -200,6 +200,19 @@ sub newFromLocation(@) {
         
         if($dirFound) {
             my $dirProject = dir($dirFound)->parent . ""; ###TODO: if lib or bin
+
+            #Special case the Unix style root dir. It's never a
+            #project dir, but if often contains a lib dir and so will
+            #get identified as a Project.
+            #
+            #If it _is_ a root dir, override with an explicit
+            #.PerlySenseProject dir.
+            #
+            #On Windows, the root looks like X:\, and it's not
+            #entirely unlikely that a secondary drive or a SUBST drive
+            #letter contains the project root.
+            $dirProject eq "/" and return undef;
+            
             return $pkg->new(
                 oPerlySense => $oPerlySense,
                 dirProjectImplicitDir => $dirProject,
