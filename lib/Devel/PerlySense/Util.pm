@@ -13,6 +13,7 @@ our @EXPORT = (
     qw/
        debug
        slurp
+       textRenderTemplate
        /);
 
 our $VERSION = '0.01';
@@ -92,6 +93,30 @@ sub slurp {
     open(my $fh, "<", $file) or return undef;
     local $/;
     return <$fh>;
+}
+
+
+
+
+
+=head2 textRenderTemplate($template, $rhParam)
+
+Replace the keys in $rhParam with the values in $rhParam, for
+everything in $template that looks like
+
+  ${KEY_NAME}
+
+Return the rendered template.
+
+=cut
+sub textRenderTemplate {
+    my ($template, $rhParam) = @_;
+
+    my $rex = join("|", map { quotemeta } sort keys %$rhParam);
+
+    $template =~ s/\${($rex)}/ $rhParam->{$1} || "" /eg;  ###TODO: should be //
+
+    return $template;
 }
 
 

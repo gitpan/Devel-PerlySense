@@ -22,6 +22,9 @@ SYNOPSIS
     no sub declaration is available (like for generated getters/setters),
     any appropriate POD is used instead.
 
+    C-p C-r -- Run file -- Run the current file using the Compilation mode
+    and the settings appropriate for the source type.
+
     C-p m f -- Perl Module open File -- Open the source file of the module
     at point.
 
@@ -54,7 +57,7 @@ INSTALLATION
     Install required modules from CPAN.
 
   Emacs installation
-    Copy the file editors/emacs/perly-sense.el to your Emacs script dir
+    Copy the file "emacs/perly-sense.el" in editors to your Emacs script dir
     (which should be in the load-path), and add this to the end of your
     .emacs config file:
 
@@ -65,12 +68,15 @@ INSTALLATION
       (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
 
     Adjust according to preference: the key mappings will replace the C-p
-    command which obviously be fantastically annoying for you if you don't
-    use the arrow keys to move around. This is just how I use Emacs, and I
-    expect this will make you go *&&*%!
+    command which obviously will be fantastically annoying for you if you
+    don't use the arrow keys to move around. This is just how I use Emacs,
+    and I expect this will make you go *&&*%!
 
-    Calm down. The default key bindings will be changed before the first
+    Please don't. The default key bindings will be changed before the first
     real release. Suggestions welcome.
+
+    (actually, these keys are currently bound from within the .el file, so
+    make sure you comment them out if you're not happy with them)
 
 GETTING STARTED WITH EMACS
     Open one of your Perl source files.
@@ -177,13 +183,37 @@ GETTING STARTED WITH EMACS
 
     q -- Quit the Class Overview buffer.
 
+  Run File
+    C-p C-r -- Run the file of the current buffer using the Compilation
+    mode.
+
+    Files are run according to the source type, which is determined by the
+    file name (see the config file). The default for .t files is to run
+    "prove -v", for .pm files "perl -c", etc.
+
+    The file is usually run from the project root, and the @INC is set
+    appropriately. You can also specify additional @INC directories in the
+    config.
+
+    If any errors are encountered they are highlighted in the compilation
+    buffer and you can use C-c C-c to move from one error to the next within
+    the source buffer.
+
+    If you wish to start many runs at the same time, rename the compilation
+    buffer with M-x rename-buffer.
+
+    (Note: at the moment, all this only works with .t files)
+
   Go to Error line
+    If you don't use Run File on tests, this may be handy.
+
     C-p g e -- If point is located on an error line from a syntax error, or
     a stack trace from the debugger or similar, go to that file+line.
 
     If no file name can be found, prompt for a piece of text that contains
     the file+line spec. The kill ring or clipboard text is used as default
-    if available (so it's easy to copy the error line from the shell).
+    if available (so it's easy to just copy the error line from the shell,
+    run this command and hit return to accept the default text).
 
 ON PARSING PERL
     Since Perl is so dynamic, a perfect static analysis of the source is
@@ -194,7 +224,7 @@ ON PARSING PERL
 
     PerlySense tries to take advantage of the fact that Perl code is more
     than the plain source file. The source lives in a context of POD and a
-    directory structure and... well, oher source code.
+    directory structure and common Perl idioms.
 
     Sometimes when PerlySense can't make a decision, you're expected to chip
     in and tell it what you meant.
@@ -258,9 +288,26 @@ PROPERTIES
 
     Default: undef
 
+  oProject
+    Devel::PerlySense::Project object.
+
+    Default: A Devel::PerlySense::Project::Unknown object.
+
 API METHODS
   new()
     Create new PerlySense object.
+
+  setFindProject([file => $file], [dir => $dir])
+    Identify a project given the $file or $dir, and set the oProject
+    property.
+
+    If there is already a project defined, don't change it.
+
+    If no project was found, don't change oProject.
+
+    Return 1 if there is a valid project, else 0.
+
+    Die on errors.
 
   oDocumentParseFile($file)
     Parse $file into a new PerlySense::Document object.
@@ -314,6 +361,22 @@ API METHODS
 
     Die if $file doesn't exist, or on other errors.
 
+  rhRunFile(file => $fileSource)
+    Figure out what type of source file $fileSource is, and how it should be
+    run.
+
+    The settings in the Project's config->{run_file} is used to determine
+    the details.
+
+    Return hash ref with (keys: "dir_run_from", "command_run",
+    "type_source_file"), or die on errors (like if no Project could be
+    found).
+
+    dir_run_from is an absolute file name which should be the cwd when
+    command_run is executed.
+
+    type_source_file is something like "Test", "Module".
+
   classNameAt(file => $fileOrigin, row => $row, col => $row)
     Look in $file at location $row/$col and determine what class name that
     is.
@@ -351,10 +414,18 @@ API METHODS
 
 IMPLEMENTATION METHODS
   fileFindLookingAround($fileModuleBase, $dirOrigin)
-    Find the file containing the $nameModule given the $dirOrigin.
+    Find the file containing the $fileModuleBase given the $dirOrigin.
 
     Return the file name relative to $dirOrigin, or undef if none could be
     found. Die on errors.
+
+  dirFindLookingAround($fileModuleBase, $dirOrigin, [$raDirSub = [".", "lib", "bin"]])
+    Find the dir containing the $fileModuleBase (relative file path) given
+    the $dirOrigin. For all directories, also look in subdirectories in
+    $raDirSub.
+
+    Return the absolute dir name, or undef if none could be found. Die on
+    errors.
 
   fileFindLookingInInc($fileModuleBase)
     Find the file containing the $nameModule in @INC.

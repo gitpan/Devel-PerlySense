@@ -30,6 +30,9 @@ method/sub declaration for the symbol (module/method/sub) at point. If
 no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
 
+C-p C-r -- Run file -- Run the current file using the Compilation mode
+and the settings appropriate for the source type.
+
 C-p m f -- Perl Module open File -- Open the source file of the module
 at point.
 
@@ -78,8 +81,9 @@ Install required modules from CPAN.
 
 =head2 Emacs installation
 
-Copy the file editors/emacs/perly-sense.el to your Emacs script dir
-(which should be in the load-path), and add this to the end of your .emacs config file:
+Copy the file L<editors/emacs/perly-sense.el> to your Emacs script dir
+(which should be in the load-path), and add this to the end of your
+.emacs config file:
 
   ; PerlySense
   (load "perly-sense")
@@ -88,12 +92,15 @@ Copy the file editors/emacs/perly-sense.el to your Emacs script dir
   (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
 
 Adjust according to preference: the key mappings will replace the C-p
-command which obviously be fantastically annoying for you if you don't
-use the arrow keys to move around. This is just how I use Emacs, and I
-expect this will make you go *&&*%!
+command which obviously will be fantastically annoying for you if you
+don't use the arrow keys to move around. This is just how I use Emacs,
+and I expect this will make you go *&&*%!
 
-Calm down. The default key bindings will be changed before the first
-real release. Suggestions welcome.
+Please don't. The default key bindings will be changed before the
+first real release. Suggestions welcome.
+
+(actually, these keys are currently bound from within the .el file, so
+make sure you comment them out if you're not happy with them)
 
 
 
@@ -217,15 +224,41 @@ q -- Quit the Class Overview buffer.
 
 
 
+=head2 Run File
+
+C-p C-r -- Run the file of the current buffer using the Compilation
+mode.
+
+Files are run according to the source type, which is determined by the
+file name (see the config file).  The default for .t files is to run
+"prove -v", for .pm files "perl -c", etc.
+
+The file is usually run from the project root, and the @INC is set
+appropriately. You can also specify additional @INC directories in the
+config.
+
+If any errors are encountered they are highlighted in the compilation
+buffer and you can use C-c C-c to move from one error to the next
+within the source buffer.
+
+If you wish to start many runs at the same time, rename the
+compilation buffer with M-x rename-buffer.
+
+(Note: at the moment, all this only works with .t files)
+
+
+
 =head2 Go to Error line
+
+If you don't use Run File on tests, this may be handy.
 
 C-p g e -- If point is located on an error line from a syntax error,
 or a stack trace from the debugger or similar, go to that file+line.
 
 If no file name can be found, prompt for a piece of text that contains
 the file+line spec. The kill ring or clipboard text is used as default
-if available (so it's easy to copy the error line from the shell).
-
+if available (so it's easy to just copy the error line from the shell,
+run this command and hit return to accept the default text).
 
 
 
@@ -239,7 +272,7 @@ heuristics and a 90% solution that isn't perfect, but good-enough.
 
 PerlySense tries to take advantage of the fact that Perl code is more
 than the plain source file. The source lives in a context of POD and a
-directory structure and... well, oher source code.
+directory structure and common Perl idioms.
 
 Sometimes when PerlySense can't make a decision, you're expected to
 chip in and tell it what you meant.
@@ -319,7 +352,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_17';
+our $VERSION = '0.01_18';
 
 
 
@@ -343,6 +376,8 @@ use Devel::PerlySense::Util;
 use Devel::PerlySense::Class;
 use Devel::PerlySense::Document;
 use Devel::PerlySense::Document::Location;
+use Devel::PerlySense::Project;
+use Devel::PerlySense::Project::Unknown;
 
 
 
@@ -365,6 +400,19 @@ field "oCache" => undef;
 
 
 
+=head2 oProject
+
+Devel::PerlySense::Project object.
+
+Default: A Devel::PerlySense::Project::Unknown object.
+
+=cut
+field "oProject" => Devel::PerlySense::Project::Unknown->new();
+
+
+
+
+
 =head1 API METHODS
 
 =head2 new()
@@ -374,8 +422,39 @@ Create new PerlySense object.
 =cut
 sub new() {
     my $self = bless {}, shift;
-
     return($self);
+}
+
+
+
+
+
+=head2 setFindProject([file => $file], [dir => $dir])
+
+Identify a project given the $file or $dir, and set the oProject
+property.
+
+If there is already a project defined, don't change it.
+
+If no project was found, don't change oProject.
+
+Return 1 if there is a valid project, else 0.
+
+Die on errors.
+
+=cut
+sub setFindProject {
+    if( ! $self->oProject->isa("Devel::PerlySense::Project::Unknown")) {
+        return 1;
+    }
+    
+    my $oProject = Devel::PerlySense::Project->newFromLocation(
+        @_,
+        oPerlySense => $self,
+    ) or return 0;
+    $self->oProject($oProject);
+
+    return(1);
 }
 
 
@@ -598,6 +677,67 @@ sub oLocationSmartDoc {
 
 
 
+=head2 rhRunFile(file => $fileSource)
+
+Figure out what type of source file $fileSource is, and how it should
+be run.
+
+The settings in the Project's config->{run_file} is used to determine
+the details.
+
+Return hash ref with (keys: "dir_run_from", "command_run",
+"type_source_file"), or die on errors (like if no Project could be
+found).
+
+dir_run_from is an absolute file name which should be the cwd when
+command_run is executed.
+
+type_source_file is something like "Test", "Module".
+
+=cut
+sub rhRunFile {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+
+    $self->setFindProject(file => $file) or
+            die("Could not identify any PerlySense Project\n");
+
+    #Get config
+    my @aDirIncProject;
+    my $commandTemplateRun = 'prove -v ${INC} "${SOURCE_FILE}"';
+    my $typeSource = "Test";
+
+
+    #Find relative find name for source file
+    my $dirProject = dir($self->oProject->dirProject)->absolute . "";
+    my $rexDirProject = quotemeta($dirProject);
+    my $fileSourceRelative = file($file)->absolute;
+    $fileSourceRelative =~ s|^$rexDirProject.|| or
+            die("Source file ($file) not found under the Project dir ($dirProject)\n");
+
+    
+    my @aDirInc = (".", "lib", @aDirIncProject);
+    my $optionInc = join(" ", map { qq|"-I$_"| } @aDirInc);
+
+    my $commandRun = textRenderTemplate(
+        $commandTemplateRun, {
+            INC => $optionInc,
+            SOURCE_FILE => $fileSourceRelative,
+        },
+    );
+    
+    my $rhConfigRun = {
+        dir_run_from => $dirProject,
+        command_run => $commandRun,
+        type_source_file => $typeSource,
+    };
+    
+    return($rhConfigRun);
+}
+
+
+
+
+
 =head2 classNameAt(file => $fileOrigin, row => $row, col => $row)
 
 Look in $file at location $row/$col and determine what class name that is. 
@@ -729,7 +869,7 @@ sub oDocumentFindModule {
 
 =head2 fileFindLookingAround($fileModuleBase, $dirOrigin)
 
-Find the file containing the $nameModule given the $dirOrigin.
+Find the file containing the $fileModuleBase given the $dirOrigin.
 
 Return the file name relative to $dirOrigin, or undef if none could be
 found. Die on errors.
@@ -738,11 +878,45 @@ found. Die on errors.
 sub fileFindLookingAround {
 	my ($fileModuleBase, $dirOrigin) = @_;
 
-    my $dir = $dirOrigin;
+    my $dir = dir($dirOrigin);
     while(1) {
         for my $dirCur (map { dir($dir, $_) } qw/. bin lib/) {
             if(my $fileFound = $self->fileFoundInDir($dirCur, $fileModuleBase)) {
                 return(file($fileFound)->absolute . "");
+            }
+        }
+
+        $dir = $dir->parent;
+        $dir =~ m{^( / | \\ | \w: \\ )$}x and last;  #At the root? Unix/Win32. What filesystems are missing?
+    }
+
+    return(undef);
+}
+
+
+
+
+
+=head2 dirFindLookingAround($fileModuleBase, $dirOrigin, [$raDirSub = [".", "lib", "bin"]])
+
+Find the dir containing the $fileModuleBase (relative file path) given
+the $dirOrigin. For all directories, also look in subdirectories in
+$raDirSub.
+
+Return the absolute dir name, or undef if none could be found. Die on
+errors.
+
+=cut
+###TODO: remove duplication
+sub dirFindLookingAround {
+	my ($fileModuleBase, $dirOrigin, $raDirSub) = @_;
+    $raDirSub ||= [".", "lib", "bin"];
+    
+    my $dir = dir($dirOrigin);
+    while(1) {
+        for my $dirCur (map { dir($dir, $_) } @$raDirSub) {
+            if($self->fileFoundInDir($dirCur, $fileModuleBase)) {
+                return($dirCur->absolute . "");
             }
         }
 

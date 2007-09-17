@@ -174,6 +174,19 @@ sub main {
         };
         $@ and warn("Error: $@\n");
 
+    } elsif($command eq "run_file") {
+        $file or syntax("Missing option --file");
+
+        eval {
+            print $oEditor->formatOutputDataStructure(
+                rhData => $oPs->rhRunFile(file => $file),
+            );
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        } 
+        
     } elsif($command eq "class_api") {
         $file or syntax("Missing option --file");
         $row or syntax("Missing option --row");

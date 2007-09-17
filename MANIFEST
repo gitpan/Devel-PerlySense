@@ -11,6 +11,8 @@ lib/Devel/PerlySense/Document/Api.pm
 lib/Devel/PerlySense/Document/Location.pm
 lib/Devel/PerlySense/Document/Meta.pm
 lib/Devel/PerlySense/Editor/Emacs.pm
+lib/Devel/PerlySense/Project.pm
+lib/Devel/PerlySense/Project/Unknown.pm
 lib/Devel/PerlySense/Util.pm
 lib/Devel/TimeThis.pm
 Makefile.PL
@@ -37,6 +39,11 @@ t/data/project-lib/Game/Object/Worm/ShaiHulud.pm
 t/data/project-lib/Game/Object/Worm/Shaitan.pm
 t/data/project-lib/Game/UI.pm
 t/data/project-lib/Game/UI/None.pm
+t/data/project/with-dir/source/lib/Game/Lawn.pm
+t/data/project/with-dir/source/t/Game-Lawn.t
+t/data/project/with-perlysenseproject/source/.PerlySenseProject/project.cfg
+t/data/project/with-perlysenseproject/source/bogus/lib/Game/Lawn.pm
+t/data/project/with-use/source/lib/modules/Game/Lawn.pm
 t/data/simple-lib/lib/Game/Event/Timed.pm
 t/data/simple-lib/lib/Win32/Word/Writer.pm
 t/data/simple-lib/lib/Win32/Word/Writer/Table.pm
@@ -83,6 +90,8 @@ t/PerlySense-go-to-module-method-file.t
 t/PerlySense-go-to-object-method-file.t
 t/PerlySense-go-to-self-method-file.t
 t/PerlySense-module-pod.t
+t/PerlySense-Project-find.t
+t/PerlySense-run-file.t
 t/PerlySense-smart-doc-module-method.t
 t/PerlySense-smart-doc-object-method.t
 t/PerlySense-smart-doc-pod.t
