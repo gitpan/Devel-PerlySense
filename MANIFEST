@@ -6,6 +6,7 @@ dist.sh
 editors/emacs/perly-sense.el
 lib/Devel/PerlySense.pm
 lib/Devel/PerlySense/Class.pm
+lib/Devel/PerlySense/Config/Project.pm
 lib/Devel/PerlySense/Document.pm
 lib/Devel/PerlySense/Document/Api.pm
 lib/Devel/PerlySense/Document/Location.pm
@@ -52,6 +53,7 @@ t/PerlySense-cache.t
 t/PerlySense-Class-neighbourhood.t
 t/PerlySense-Class-new.t
 t/PerlySense-Class-subclass.t
+t/PerlySense-Config-Project.t
 t/PerlySense-Document-Api-consists-supported.t
 t/PerlySense-Document-api-likely.t
 t/PerlySense-Document-api-match.t

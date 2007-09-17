@@ -13,6 +13,7 @@ our @EXPORT = (
     qw/
        debug
        slurp
+       spew
        textRenderTemplate
        /);
 
@@ -93,6 +94,24 @@ sub slurp {
     open(my $fh, "<", $file) or return undef;
     local $/;
     return <$fh>;
+}
+
+
+
+
+
+=head2 spew($file, $text)
+
+Crete a new $file a and print $text to it.
+
+Return 1 on success, else 0.
+
+=cut
+sub spew {
+	my ($file, $text) = @_;
+    open(my $fh, ">", $file) or return 0;
+    print $fh $text or return 0;
+    return 1;
 }
 
 

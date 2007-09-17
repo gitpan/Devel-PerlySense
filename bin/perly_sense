@@ -25,10 +25,11 @@ main();
 
 
 sub main {
-    my ($dirOrigin, $fileOrigin, $module, $file, $row, $col, $nameClass, $clearCache, $widthDisplay);
+    my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $clearCache, $widthDisplay);
     GetOptions(
         "module:s" => \$module,
         "file:s" => \$file,
+        "dir:s" => \$dir,
         "row:i" => \$row,
         "col:i" => \$col,
         "file_origin:s" => \$fileOrigin,
@@ -68,7 +69,7 @@ sub main {
         oPerlySense => $oPs,
         widthDisplay => $widthDisplay,
     );
-    
+
 
     if($command eq "find_module_source_file") {
         $fileOrigin and $dirOrigin = dirname($fileOrigin);
@@ -133,7 +134,7 @@ sub main {
 
     } elsif($command eq "class_overview") {
         $file || $nameClass or syntax("Missing option --file or --class_name");
-        
+
         eval {
 
             my $oClass;
@@ -155,14 +156,14 @@ sub main {
                     dirOrigin => $dirOrigin,
                 );
             }
-                    
+
             if($oClass) {
                 print $oEditor->formatOutputDataStructure(
                     rhData => {
                         class_name => $oClass->name,
                         class_overview => $oEditor->classOverview(oClass => $oClass),
                         message => "Class Overview for (" . $oClass->name . ")",
-                    },      
+                    },
                 );
             } else {
                 print $oEditor->formatOutputDataStructure(
@@ -185,8 +186,14 @@ sub main {
         if(my $err = $@) {
             chomp($err);
             print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
-        } 
-        
+        }
+
+    } elsif($command eq "create_project") {
+        $dir ||= ".";
+
+        $oPs->createProject(dir => $dir);
+        print "PerlySense Project Created\n";
+
     } elsif($command eq "class_api") {
         $file or syntax("Missing option --file");
         $row or syntax("Missing option --row");
@@ -241,11 +248,11 @@ sub main {
                     keys %hFileTime) {
             printf("%0.6f : $file\n", $hFileTime{$file});
         }
-        
+
     } else {
         syntax("Invalid command ($command)");
     }
-    
+
     return(1);
 }
 

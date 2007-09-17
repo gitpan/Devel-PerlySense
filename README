@@ -377,6 +377,11 @@ API METHODS
 
     type_source_file is something like "Test", "Module".
 
+  createProject(dir => $dir)
+    Create a new PerlySense Project in $dir.
+
+    Return 1 on success, or die on errors.
+
   classNameAt(file => $fileOrigin, row => $row, col => $row)
     Look in $file at location $row/$col and determine what class name that
     is.

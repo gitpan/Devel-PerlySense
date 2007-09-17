@@ -352,7 +352,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_19';
+our $VERSION = '0.01_20';
 
 
 
@@ -378,7 +378,7 @@ use Devel::PerlySense::Document;
 use Devel::PerlySense::Document::Location;
 use Devel::PerlySense::Project;
 use Devel::PerlySense::Project::Unknown;
-
+use Devel::PerlySense::Config::Project;
 
 
 
@@ -732,6 +732,28 @@ sub rhRunFile {
     };
     
     return($rhConfigRun);
+}
+
+
+
+
+
+=head2 createProject(dir => $dir)
+
+Create a new PerlySense Project in $dir.
+
+Return 1 on success, or die on errors.
+
+=cut
+sub createProject {
+    my ($dir) = Devel::PerlySense::Util::aNamedArg(["dir"], @_);
+
+    my $oConfig = Devel::PerlySense::Config::Project->new();
+    $oConfig->createFileConfigDefault(dirRoot => $dir);
+
+    ###TODO: assign the config to $self->oConfigProject
+    
+    return(1);
 }
 
 
