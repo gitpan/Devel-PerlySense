@@ -42,7 +42,7 @@ t/data/project-lib/Game/UI.pm
 t/data/project-lib/Game/UI/None.pm
 t/data/project/with-dir/source/lib/Game/Lawn.pm
 t/data/project/with-dir/source/t/Game-Lawn.t
-t/data/project/with-perlysenseproject/source/.PerlySenseProject/project.cfg
+t/data/project/with-perlysenseproject/source/.PerlySenseProject/project.yml
 t/data/project/with-perlysenseproject/source/bogus/lib/Game/Lawn.pm
 t/data/project/with-use/source/lib/modules/Game/Lawn.pm
 t/data/simple-lib/lib/Game/Event/Timed.pm

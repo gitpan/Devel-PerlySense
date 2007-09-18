@@ -24,12 +24,22 @@ ok(
 
 diag("Run test file inside dir");
 {
+    #This is to avoid identifying the .PerlySenseProject directory
+    #_of_the_development_project_ to interfere with the test which
+    #expects a free way all the way up to the root without any
+    #projects.
+    no warnings;
+    local *Devel::PerlySense::Project::newFindExplicit = sub {
+        undef;
+    };
 
+    
     my $dirBase = "data/project/with-dir";
     my $dirProject = "$dirBase/source";
     my $dirTest = "$dirProject/t";
     my $fileTest = "$dirTest/Game-Lawn.t";
 
+    
     ok(
         my $rhRun = $oPerlySense->rhRunFile(file => $fileTest),
         "rhRunFile returned a data structure",

@@ -36,6 +36,7 @@ use Carp;
 use File::Basename;
 use File::Path;
 use Path::Class;
+use YAML::Tiny ();
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
@@ -53,7 +54,7 @@ The config file name relative to the root dir.
 Default: ./PerlySenseProject/project.cfg
 
 =cut
-field "nameFileConfig" => ".PerlySenseProject/project.cfg";
+field "nameFileConfig" => ".PerlySenseProject/project.yml";
 
 
 
@@ -65,56 +66,46 @@ field "nameFileConfig" => ".PerlySenseProject/project.cfg";
 The default contents of the config file
 
 =cut
-field "textConfigDefault" => q{#PerlySense Project Config   -*- mode:perl; -*-
+field "textConfigDefault" => q{#PerlySense Project Config
 
 #What's this all about? See: http://search.cpan.org/dist/Devel-PerlySense/
 
-my $project_config = {
+project:
 
-    project => {
-        #The human readable name of the Project
-        moniker => "A PerlySense Project",
+  #The human readable name of the Project
+  moniker: 'A PerlySense Project'
 
-        #Extra @INC directories, relative to the project root
-        inc_dir => [qw(  )],
-    },
+  #Extra @INC directories, relative to the project root
+  inc_dir: []
 
-    #These are evaluated in order to find a way to run a file. First
-    #match is used.
-    run_file => [
 
-        test => {
-            moniker => "Test",
-            rex => qr/\.t$/,
-            command => 'prove -v ${INC} "${SOURCE_FILE}"',
-            run_from => "project_root",
-        },
+#These are evaluated in order to find a way to run a file. First
+#match is used.
+run_file:
+  -
+    command: "prove -v ${INC} \"${SOURCE_FILE}\""
+    moniker: Test
+    rex: \.t$
+    run_from: project_root
+  -
+    command: "perl -c ${INC} \"${SOURCE_FILE}\""
+    moniker: Module
+    rex: \.pm$
+    run_from: project_root
+  -
+    command: "perl ${INC} \"${SOURCE_FILE}\""
+    moniker: Script
+    rex: \.pl$
+    run_from: cwd
 
-        test => {
-            moniker => "Module",
-            rex => qr/\.pm$/,
-            command => 'perl -c ${INC} "${SOURCE_FILE}"',
-            run_from => "project_root",
-        },
+  #This is a catch-all for all other types of files
+  -
+    command: "perl ${INC} \"${SOURCE_FILE}\""
+    moniker: 'Script (no .pl)'
+    rex: \.
+    run_from: cwd
 
-        script => {
-            moniker => "Script",
-            rex => qr/\.pl$/,
-            command => 'perl ${INC} "${SOURCE_FILE}"',
-            run_from => "cwd",
-        },
-
-        #This is a catch-all for all other types of files
-        script => {
-            moniker => "Script (no .pl)",
-            rex => qr/\./,
-            command => 'perl ${INC} "${SOURCE_FILE}"',
-            run_from => "cwd",
-        },
-
-    ],
-
-};
+#EOF
 };
 
 
@@ -164,8 +155,8 @@ sub loadConfig {
     my $fileConfig = file($dirRoot, $self->nameFileConfig);
     my $sourceConfig = slurp($fileConfig) or
             die("Could not open config file ($fileConfig)\n");
-    my $rhConfig = eval($sourceConfig);
-    $@ and die;
+    my ($rhConfig) = YAML::Tiny::Load($sourceConfig);
+    $rhConfig or die($YAML::Tiny::errstr);
 
     $self->dirRoot($dirRoot);
     $self->rhConfig($rhConfig);

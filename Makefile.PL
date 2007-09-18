@@ -22,6 +22,7 @@ WriteMakefile
                            'Getopt::Long' => 0,
                            'File::Find::Rule' => 0,
                            'Test::Exception' => 0,
+                           'YAML::Tiny' => 0,
                            'Spiffy' => '0.2',
                            'Data::Dumper' => 0,
                            'Carp' => 0,

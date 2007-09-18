@@ -163,17 +163,13 @@ sub newFromLocation(@) {
     $file and $dir = dirname($file);
     $dir and $dir = dir($dir)->absolute;
 
-    #Find explicit project
-    if($dir and my $dirProject = $oPerlySense->dirFindLookingAround(
-        ".PerlySenseProject",
-        $dir,
-        ["."],
-    )) {
-        return $pkg->new(
-            oPerlySense => $oPerlySense,
-            dirProjectExplicitDir => $dirProject,
-        );
-    }
+    my $oProject;
+
+    $dir and $oProject = $pkg->newFindExplicit(
+        dir => $dir,
+        oPerlySense => $oPerlySense,
+    ) and return $oProject;
+
     
     #If file, look for the dir from where any package in the file can
     #be used
@@ -202,11 +198,11 @@ sub newFromLocation(@) {
             my $dirProject = dir($dirFound)->parent . ""; ###TODO: if lib or bin
 
             #Special case the Unix style root dir. It's never a
-            #project dir, but if often contains a lib dir and so will
+            #Project dir, but if often contains a lib dir and so will
             #get identified as a Project.
             #
-            #If it _is_ a root dir, override with an explicit
-            #.PerlySenseProject dir.
+            #If it _is_ a root dir, this can be overriden with an
+            #explicit .PerlySenseProject dir.
             #
             #On Windows, the root looks like X:\, and it's not
             #entirely unlikely that a secondary drive or a SUBST drive
@@ -221,6 +217,36 @@ sub newFromLocation(@) {
     }
     
     return(undef);
+}
+
+
+
+
+
+=head2 newFindExplicit(dir => $dir, oPerlySense => $oPs)
+
+Create new Project if there is an explicit .PerlySenseProject
+directory in the path above $dir.
+
+Return the new object, or undef if no project could be found.
+
+=cut
+sub newFindExplicit(@) {
+    my $pkg = shift;
+    my ($oPerlySense, $dir) = Devel::PerlySense::Util::aNamedArg(["oPerlySense", "dir"], @_);
+    
+    if(my $dirProject = $oPerlySense->dirFindLookingAround(
+        ".PerlySenseProject",
+        $dir,
+        ["."],
+    )) {
+        return $pkg->new(
+            oPerlySense => $oPerlySense,
+            dirProjectExplicitDir => $dirProject,
+        );
+    }
+
+    return undef;
 }
 
 

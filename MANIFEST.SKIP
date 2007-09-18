@@ -11,3 +11,5 @@
 CVS  
 \.svn
 release.pl
+^\.PerlySenseProject
+

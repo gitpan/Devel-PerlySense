@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 16;
+use Test::More tests => 17;
 use Test::Exception;
 
 use File::Path;
@@ -50,7 +50,7 @@ throws_ok(
     sub {
         $oConfig->loadConfig(dirRoot => $dirTemp);
     },
-    qr/Could not open config file .t.data.config.temp..PerlySenseProject.project.cfg./,
+    qr/Could not open config file .t.data.config.temp..PerlySenseProject.project.yml./,
     "Can't load nonexisting config file ok",
 );
 
@@ -69,11 +69,22 @@ like(
     "dirRoot set to the new location",
 );
 ok(-e "$dirTemp/.PerlySenseProject", "Project dir created");
-ok(-e "$dirTemp/.PerlySenseProject/project.cfg", "Project config file created");
+ok(-e "$dirTemp/.PerlySenseProject/project.yml", "Project config file created");
 is(scalar keys %{$oConfig->rhConfig}, 2, "  Loaded config");
+is(
+    $oConfig->rhConfig->{run_file}->[0]->{moniker},
+    "Test",
+    "Sample key in structure is correct",
+);
 
 
 
+#rename file
+
+
+
+
+#parse file with syntax error
 
                             
 

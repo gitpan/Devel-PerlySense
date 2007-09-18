@@ -23,10 +23,11 @@ my $builder = Module::Build->new(
         'Path::Class' => 0.11,
         'Pod::Usage' => 0,
         'Spiffy' => 0.20,
-        'Test::Exception' => 0,
         'Test::Differences' => 0,
+        'Test::Exception' => 0,
         'Test::More' => 0,
         'Text::Table' => 1.107,
+        'YAML::Tiny' => 0,
         'perl'           => '5.6.0',
     },
     script_files => [

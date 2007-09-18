@@ -1,0 +1,41 @@
+#PerlySense Project Config
+
+#What's this all about? See: http://search.cpan.org/dist/Devel-PerlySense/
+
+project:
+
+  #The human readable name of the Project
+  moniker: 'A PerlySense Project'
+
+  #Extra @INC directories, relative to the project root
+  inc_dir: []
+
+
+
+#These are evaluated in order to find a way to run a file. First
+#match is used.
+run_file:
+  -
+    command: "prove -v ${INC} \"${SOURCE_FILE}\""
+    moniker: Test
+    rex: \.t$
+    run_from: project_root
+  -
+    command: "perl -c ${INC} \"${SOURCE_FILE}\""
+    moniker: Module
+    rex: \.pm$
+    run_from: project_root
+  -
+    command: "perl ${INC} \"${SOURCE_FILE}\""
+    moniker: Script
+    rex: \.pl$
+    run_from: cwd
+
+  #This is a catch-all for all other types of files
+  -
+    command: "perl ${INC} \"${SOURCE_FILE}\""
+    moniker: 'Script (no .pl)'
+    rex: \.
+    run_from: cwd
+
+#EOF

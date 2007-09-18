@@ -47,6 +47,15 @@ is(
 diag("Look for dirs that indicate a project");
 {
 
+    #This is to avoid identifying the .PerlySenseProject directory
+    #_of_the_development_project_ to interfere with the test which
+    #expects a free way all the way up to the root without any
+    #projects.
+    no warnings;
+    local *Devel::PerlySense::Project::newFindExplicit = sub {
+        undef;
+    };
+
     my $dirBase = "data/project/with-dir";
     my $dirProject = "$dirBase/source";
 
@@ -96,6 +105,11 @@ diag("Look for dirs that indicate a project");
 
 diag("Look for the modules itself that indicate a project");
 {
+    #See above.
+    no warnings;
+    local *Devel::PerlySense::Project::newFindExplicit = sub {
+        undef;
+    };
 
     my $dirBase = "data/project/with-use";
     my $dirProject = "$dirBase/source/lib";
