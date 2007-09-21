@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 17;
+use Test::More tests => 24;
 use Test::Exception;
 
 use File::Path;
@@ -79,12 +79,53 @@ is(
 
 
 
-#rename file
+
+
+diag("Re-create, rename file");
+
+ok($oConfig->rhConfig->{run_file}->[0]->{moniker} = "Blah", "Changed moniker");
+ok(
+    $oConfig->createFileConfigDefault(dirRoot => $dirTemp),
+    "Created new project config",
+);
+my @aFileBackup = glob("$dirTemp/.PerlySenseProject/project.yml.2*");
+is(
+    scalar @aFileBackup,
+    1,
+    "Original Project config file renamed",
+);
+like(
+    $oConfig->dirRoot,
+    qr/t.data.config.temp$/,
+    "dirRoot set to the new location",
+);
+is(
+    $oConfig->rhConfig->{run_file}->[0]->{moniker},
+    "Test",
+    "Sample key in structure is correct",
+);
+
+
+
+diag("Create another one");
+sleep(1);
+ok(
+    $oConfig->createFileConfigDefault(dirRoot => $dirTemp),
+    "Created new project config",
+);
+@aFileBackup = glob("$dirTemp/.PerlySenseProject/project.yml.2*");
+is(
+    scalar @aFileBackup,
+    2,
+    "Original Project config file renamed",
+);
+
 
 
 
 
 #parse file with syntax error
+
 
                             
 

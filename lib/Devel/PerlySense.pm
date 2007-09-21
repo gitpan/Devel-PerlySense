@@ -60,12 +60,26 @@ if not by the users.
 
 =head2 From the command line
 
-This is not very convenient unless you let your editor do it. See the
-L<bin/perly_sense> script on how to do this.
+  perly_sense create_project [--dir=DIR]
 
-There is one useful command though; cache all the modules in @INC:
+Create a PerlySense project in DIR (default is current dir).
 
-    perly_sense process_inc
+If there is already a project.yml file, back it up with a datestamp
+first.
+
+
+  perly_sense process_project
+
+Cache all modules in the project. (not implemented)
+
+
+  perly_sense process_inc
+
+Cache all the modules in @INC.
+
+This is a useful thing to do after installation (and after each
+upgrade), but it will take a wile so put it in the background and let
+it churn away at those modules.
 
 
 
@@ -105,8 +119,6 @@ make sure you comment them out if you're not happy with them)
 
 
 =head1 GETTING STARTED WITH EMACS
-
-Open one of your Perl source files.
 
 
 =head2 Smart docs
@@ -233,18 +245,28 @@ Files are run according to the source type, which is determined by the
 file name (see the config file).  The default for .t files is to run
 "prove -v", for .pm files "perl -c", etc.
 
-The file is usually run from the project root, and the @INC is set
-appropriately. You can also specify additional @INC directories in the
-config.
+(Note: at the moment, all this only works with .t files)
 
-If any errors are encountered they are highlighted in the compilation
-buffer and you can use C-c C-c to move from one error to the next
-within the source buffer.
+The file is run from the Project root directory, and the @INC is set
+appropriately. You can also specify additional @INC directories in the
+Project config.
+
+If any warnings, errors or test failures are encountered, they are
+highlighted in the *compilation* buffer. Use C-c C-c to move from one
+error to the next. Or press RET on a highlighted line.
 
 If you wish to start many runs at the same time, rename the
 compilation buffer with M-x rename-buffer.
 
-(Note: at the moment, all this only works with .t files)
+
+=head2 Re-run File
+
+Invoke C-p C-r from within the *compilaton* buffer to re-run (M-x
+recompile) the file. Useful when you have skipped around the source
+fixing errors and the .t file isn't visible.
+
+C-p r r -- If not even the *compilation* buffer is visible, issue
+Re-Run File from anywhere.
 
 
 
@@ -259,6 +281,83 @@ If no file name can be found, prompt for a piece of text that contains
 the file+line spec. The kill ring or clipboard text is used as default
 if available (so it's easy to just copy the error line from the shell,
 run this command and hit return to accept the default text).
+
+
+
+=head1 PROJECTS
+
+PerlySense has the concept of a Project root directory.
+
+If you follow the standard directory structure for CPAN modules, the
+Project directory is typically the one which contains the Makefile.PL,
+the lib, bin, and t directory, etc.
+
+Basically, this is where all the source lives, and where your program
+can go to find modules that are used. This is from where tests are run
+and files are found.
+
+
+
+=head2 Identifying a Project root directory
+
+The fastest and most solid way for PerlySense to know which is the
+Project directory is to create a .PerlySenseProject directory with a
+config file in it.
+
+=over 4
+
+=item *
+
+First, if there is any directory upwards in the dirctory path with a
+.PerlySenseProject dir in it, that is the Project directory.
+
+
+=item *
+
+Second, PerlySense will try figure out from where the current file (if
+any) was being required given the contained package names or used
+modules.
+
+=item *
+
+Third, if that doesn't work, PerlySense will look for lib and t
+directories.
+
+=back
+
+If that doesn't work, PerlySense is lost and you really do need to
+create an explicit Project directory using the following command:
+
+  perly_sense create_project
+
+
+
+=head2 Project Configuration
+
+The Project has a .PerlySenseProject/project.yml config file. Here you
+can change the name of the Project, add extra @INC directories, etc.
+
+There is a yaml-mode for Emacs, but I haven't got it to work properly
+(unless an infinite loop counts as "properly" these days). The
+shell-script-mode is good enough.
+
+The config file documentation is where it belongs, in the config file,
+so just take a look at it.
+
+
+
+=head2 perly_sense Project commands
+
+
+  perly_sense create_project [--dir=DIR]
+
+Create a PerlySense project in DIR (default is current dir).
+
+
+
+  perly_sense process_project
+
+Cache all modules in the project. (not implemented)
 
 
 
@@ -352,7 +451,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_21';
+our $VERSION = '0.01_22';
 
 
 

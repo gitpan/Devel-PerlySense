@@ -1,5 +1,23 @@
-Revision history for Devel-PerlySense
+Revision history for Devel-PerlySense (for users, see the commit log
+for boring details)
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+
+= 0.01_22 =
+
+* Docs about projects, etc.
+
+* If Run File is perfomed from within the compile buffer, do a
+  recompile.
+
+* C-p r r -- If not even the *compilation* buffer is visible, issue
+  Re-Run File from anywhere.
+
+* "perly_sense create_project" renames existing project.yml with
+  datestamp
+
+
+
+= Earlier =
+
+Stuff happened. Time passed.
 

@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
         'File::Spec' => 0.87,
         'Getopt::Long' => 0,
         'Graph::Easy' => 0.57,
+        'HTTP::Date' => 0,
         'List::MoreUtils' => 0,
         'PPI' => 1.003,
         'Path::Class' => 0.11,

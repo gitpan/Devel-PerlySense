@@ -25,6 +25,7 @@ WriteMakefile
                            'YAML::Tiny' => 0,
                            'Spiffy' => '0.2',
                            'Data::Dumper' => 0,
+                           'HTTP::Date' => 0,
                            'Carp' => 0,
                            'Test::More' => 0,
                            'Test::Differences' => 0,

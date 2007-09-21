@@ -143,39 +143,61 @@
 (defun perly-sense-run-file ()
   "Run the current file"
   (interactive)
-  (message "Run File...")
-  (let ((result
-         (shell-command-to-string
-          (format "perly_sense run_file --file=%s" (buffer-file-name)))
-         ))
-    (let* (
-           (result-hash (perly-sense-parse-sexp result))
-           (dir-run-from (cdr (assoc "dir-run-from" result-hash)))
-           (command-run (cdr (assoc "command-run" result-hash)))
-           (type-source-file (cdr (assoc "type-source-file" result-hash)))
-           (message-string (cdr (assoc "message" result-hash)))
-           )
-      (if command-run
-          (perly-sense-run-file-run-command
-;;           (perly-sense-run-file-get-command command-run type-source-file)
-           command-run
-           dir-run-from
-           )
+  
+  ;;If it's the compilation buffer, recompile, else run file
+  (if (string= (buffer-name) "*compilation*")
+      (progn
+        (message "Recompile file...")
+        (recompile)
         )
-      (if message-string
-          (message message-string)
-        )
+    (progn
+      (message "Run File...")
+      (let ((result
+             (shell-command-to-string
+              (format "perly_sense run_file --file=%s" (buffer-file-name)))
+             ))
+        (let* (
+               (result-hash (perly-sense-parse-sexp result))
+               (dir-run-from (cdr (assoc "dir-run-from" result-hash)))
+               (command-run (cdr (assoc "command-run" result-hash)))
+               (type-source-file (cdr (assoc "type-source-file" result-hash)))
+               (message-string (cdr (assoc "message" result-hash)))
+               )
+          (if command-run
+              (perly-sense-run-file-run-command
+               ;;             (perly-sense-run-file-get-command command-run type-source-file)
+               command-run
+               dir-run-from
+               )
+            )
+          (if message-string
+              (message message-string)
+            )
+          )       
+        )  
       )
-    
     )
   )
-
 
 (defun perly-sense-run-file-run-command (command dir-run-from)
   "Run command from dir-run-from using the compiler function"
   (with-temp-buffer
     (cd dir-run-from)
     (compile command)
+    )
+  )
+
+
+
+(defun perly-sense-rerun-file ()
+  "Rerun the current compilation buffer"
+  (interactive)
+  (if (get-buffer "*compilation*")
+      (progn
+        (switch-to-buffer "*compilation*")
+        (recompile)
+        )
+    (message "Can't re-run: No Run File in progress.")
     )
   )
 
@@ -664,7 +686,9 @@ point, or an empty list () if none was found."
 (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
 (global-set-key (kbd "\C-p \C-c") 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (kbd "\C-p \C-c") 'perly-sense-display-api-for-class-at-point)
+
 (global-set-key (kbd "\C-p \C-r") 'perly-sense-run-file)
+(global-set-key (kbd "\C-p r r") 'perly-sense-rerun-file)
 
 (global-set-key (kbd "\C-p g e") 'perly-sense-compile-goto-error-file-line)
 

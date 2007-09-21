@@ -37,6 +37,7 @@ use File::Basename;
 use File::Path;
 use Path::Class;
 use YAML::Tiny ();
+use HTTP::Date qw/ time2iso /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
@@ -187,7 +188,14 @@ sub createFileConfigDefault {
     mkpath($dirConfig);
     -d $dirConfig or die("Could not create config directory ($dirConfig)\n");
 
-    ###TODO: check existing
+    if(-e $fileConfig) {
+        my $textTime = time2iso( time() );
+        $textTime =~ s/\W+/_/g;
+        my $fileConfigBackup = $fileConfig . "." . $textTime;
+
+        rename($fileConfig, $fileConfigBackup)
+                or die("Could not rename ($fileConfig) -> ($fileConfigBackup)\n");
+    }
 
     spew($fileConfig, $self->textConfigDefault) or
             die("Could not create config file ($fileConfig)\n");
