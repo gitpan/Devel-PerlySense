@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.01_22
+version: 0.01_23
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
@@ -16,12 +16,14 @@ requires:
   File::Find::Rule: 0
   File::Slurp: 0
   File::Spec: 0.87
+  File::chdir: 0
   Getopt::Long: 0
   Graph::Easy: 0.57
   HTTP::Date: 0
   List::MoreUtils: 0
   PPI: 1.003
   Path::Class: 0.11
+  Pod::Text: 0
   Pod::Usage: 0
   Spiffy: 0.2
   Test::Differences: 0
@@ -33,12 +35,15 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.01_22
+    version: 0.01_23
   Devel::PerlySense::Class:
     file: lib/Devel/PerlySense/Class.pm
     version: 0.01
   Devel::PerlySense::Config::Project:
     file: lib/Devel/PerlySense/Config/Project.pm
+    version: 0.01
+  Devel::PerlySense::Config::Project::Default:
+    file: lib/Devel/PerlySense/Config/Project/Default.pm
     version: 0.01
   Devel::PerlySense::Document:
     file: lib/Devel/PerlySense/Document.pm

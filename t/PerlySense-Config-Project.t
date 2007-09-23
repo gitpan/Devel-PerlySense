@@ -5,6 +5,7 @@ use Test::More tests => 24;
 use Test::Exception;
 
 use File::Path;
+use Path::Class;
 
 use Data::Dumper;
 
@@ -27,6 +28,7 @@ my $dir = "t/data/config";
 my $dirTemp = "$dir/temp";
 
 diag("Creating temp dir");
+rmtree($dirTemp);
 mkpath($dirTemp);
 ok(-e $dirTemp, "Temp dir created ok");
 END {
@@ -70,7 +72,7 @@ like(
 );
 ok(-e "$dirTemp/.PerlySenseProject", "Project dir created");
 ok(-e "$dirTemp/.PerlySenseProject/project.yml", "Project config file created");
-is(scalar keys %{$oConfig->rhConfig}, 2, "  Loaded config");
+is(scalar keys %{$oConfig->rhConfig}, 4, "  Loaded config");
 is(
     $oConfig->rhConfig->{run_file}->[0]->{moniker},
     "Test",
@@ -82,18 +84,19 @@ is(
 
 
 diag("Re-create, rename file");
+my $globBackup = file("$dirTemp/.PerlySenseProject/project.yml") . ".*";
 
 ok($oConfig->rhConfig->{run_file}->[0]->{moniker} = "Blah", "Changed moniker");
 ok(
     $oConfig->createFileConfigDefault(dirRoot => $dirTemp),
     "Created new project config",
 );
-my @aFileBackup = glob("$dirTemp/.PerlySenseProject/project.yml.2*");
+my @aFileBackup = glob($globBackup);
 is(
     scalar @aFileBackup,
     1,
     "Original Project config file renamed",
-);
+) or warn("GLOB ($globBackup)\n");
 like(
     $oConfig->dirRoot,
     qr/t.data.config.temp$/,
@@ -113,7 +116,7 @@ ok(
     $oConfig->createFileConfigDefault(dirRoot => $dirTemp),
     "Created new project config",
 );
-@aFileBackup = glob("$dirTemp/.PerlySenseProject/project.yml.2*");
+@aFileBackup = glob("$dirTemp/.PerlySenseProject/project.yml.*");
 is(
     scalar @aFileBackup,
     2,

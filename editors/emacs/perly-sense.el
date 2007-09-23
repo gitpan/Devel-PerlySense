@@ -693,3 +693,8 @@ point, or an empty list () if none was found."
 (global-set-key (kbd "\C-p g e") 'perly-sense-compile-goto-error-file-line)
 
 
+
+(global-set-key (kbd "\C-p s n") 'flymake-goto-next-error)
+(global-set-key (kbd "\C-p s p") 'flymake-goto-prev-error)
+(global-set-key (kbd "\C-p s s") 'flymake-display-err-menu-for-current-line)
+

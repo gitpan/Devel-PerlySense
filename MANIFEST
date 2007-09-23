@@ -3,10 +3,12 @@ bin/perly_sense
 Build.PL
 Changes
 dist.sh
+editors/emacs/perly-sense-flymake.el
 editors/emacs/perly-sense.el
 lib/Devel/PerlySense.pm
 lib/Devel/PerlySense/Class.pm
 lib/Devel/PerlySense/Config/Project.pm
+lib/Devel/PerlySense/Config/Project/Default.pm
 lib/Devel/PerlySense/Document.pm
 lib/Devel/PerlySense/Document/Api.pm
 lib/Devel/PerlySense/Document/Location.pm
@@ -43,7 +45,9 @@ t/data/project-lib/Game/UI/None.pm
 t/data/project/with-dir/source/lib/Game/Lawn.pm
 t/data/project/with-dir/source/t/Game-Lawn.t
 t/data/project/with-perlysenseproject/source/.PerlySenseProject/project.yml
+t/data/project/with-perlysenseproject/source/bogus/bin/worms.pl
 t/data/project/with-perlysenseproject/source/bogus/lib/Game/Lawn.pm
+t/data/project/with-perlysenseproject/source/bogus/t/Game-Lawn.t
 t/data/project/with-use/source/lib/modules/Game/Lawn.pm
 t/data/simple-lib/lib/Game/Event/Timed.pm
 t/data/simple-lib/lib/Win32/Word/Writer.pm
@@ -92,6 +96,7 @@ t/PerlySense-go-to-module-method-file.t
 t/PerlySense-go-to-object-method-file.t
 t/PerlySense-go-to-self-method-file.t
 t/PerlySense-module-pod.t
+t/PerlySense-project-config.t
 t/PerlySense-Project-find.t
 t/PerlySense-run-file.t
 t/PerlySense-smart-doc-module-method.t

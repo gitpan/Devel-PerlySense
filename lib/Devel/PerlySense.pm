@@ -10,6 +10,11 @@ PerlySense is an IntelliSense style utility for editors.
 Conveniently navigate and browse the code and documentation of your
 project and Perl installation.
 
+Run tests and syntax check source with easy navigation to
+errors/warnings/failing tests.
+
+Highlight syntax errors and warnings in the source while editing.
+
 
 
 =head1 SYNOPSIS
@@ -31,13 +36,14 @@ no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
 
 C-p C-r -- Run file -- Run the current file using the Compilation mode
-and the settings appropriate for the source type.
+and the settings appropriate for the source type (Test, Module,
+etc.). Highlight errors and jump to source with C-c C-c.
 
 C-p m f -- Perl Module open File -- Open the source file of the module
 at point.
 
-As you can see, PerlySense duplicates some of the functionality in
-cperl-mode, and does more in certain areas.
+Flymake may be used to highlight syntax errors and warnings in the
+source while editing (continously or at every save).
 
 
 
@@ -52,9 +58,9 @@ Someone may want to write it.
 =head2 From other editors
 
 Any editor that is programmable and that can call a shell script could
-take advantage of PerlySense to implement something similar to the
-Emacs functionality. And most editors are programmable by the authors,
-if not by the users.
+take advantage of at least some parts of PerlySense to implement
+something similar to the Emacs functionality. And most editors are
+programmable by the authors, if not by the users.
 
 
 
@@ -95,12 +101,13 @@ Install required modules from CPAN.
 
 =head2 Emacs installation
 
-Copy the file L<editors/emacs/perly-sense.el> to your Emacs script dir
+Copy the files in L<editors/emacs> to your Emacs script dir
 (which should be in the load-path), and add this to the end of your
 .emacs config file:
 
   ; PerlySense
   (load "perly-sense")
+  (load "perly-sense-flymake")  ;; If you want this feature enabled
   (global-unset-key "\C-p")
   (global-set-key (kbd "\C-p \C-d") 'perly-sense-smart-docs-at-point)
   (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
@@ -113,8 +120,9 @@ and I expect this will make you go *&&*%!
 Please don't. The default key bindings will be changed before the
 first real release. Suggestions welcome.
 
-(actually, these keys are currently bound from within the .el file, so
-make sure you comment them out if you're not happy with them)
+(actually, these keys are currently bound from within the
+perly-sense.el file, so make sure you comment them out if you're not
+happy with them)
 
 
 
@@ -170,7 +178,8 @@ C-p m f -- Go to Class (will be changed to C-p g c) at point.
 =head2 Class Overview
 
 Pressing C-p C-c will bring up the Class Overview of the Class name at
-point, or otherwise the current Class (the active Package).
+point (not yet implemented), or otherwise the current Class (the
+active Package).
 
 Example class CatalystX::FeedMe::Controller::Feed
 
@@ -200,7 +209,8 @@ Example class CatalystX::FeedMe::Controller::Feed
 
 The B<Inheritance> section shows all Base classes of the
 Class. Inheriting from something like Catalyst is hopefully the
-hairiest you'll see.
+hairiest you'll see. Classes inherit upwards in the diagram unless
+there is an arrow.
 
 The B<Uses> section shows all used modules in the Class.
 
@@ -208,10 +218,10 @@ The B<NeighbourHood> section shows three columns (1: parent dir, 2:
 current dir, 3: subdir for the current class) with Classes located
 nearby.
 
-The B<Structure> section shows a Signature Survey of the file, showing
-an extreme abbreviation of the source. The intent is to convey an
-ambient feel for what the source contains. It's not clear this is a
-useful thing.
+The B<Structure> section shows a Signature Survey of the file, with an
+extreme abbreviation of the source. The intent is to convey an ambient
+feel for what the source contains. It's not clear this is a useful
+thing.
 
 
 When in the Class Overview buffer:
@@ -226,7 +236,7 @@ I -- Move point to the Inheritance heading in the buffer.
 
 U -- Move point to the Uses heading in the buffer.
 
-H -- Move point to the NeighbourHood (mnemonic: 'Hood) heading.
+H -- Move point to the NeighbourHood heading (mnemonic: 'Hood).
 
 M -- Move point to the Methods heading.
 
@@ -243,9 +253,8 @@ mode.
 
 Files are run according to the source type, which is determined by the
 file name (see the config file).  The default for .t files is to run
-"prove -v", for .pm files "perl -c", etc.
-
-(Note: at the moment, all this only works with .t files)
+"prove -v", for .pm files "perl -c", etc. This can be configured per
+Project (see below).
 
 The file is run from the Project root directory, and the @INC is set
 appropriately. You can also specify additional @INC directories in the
@@ -256,7 +265,7 @@ highlighted in the *compilation* buffer. Use C-c C-c to move from one
 error to the next. Or press RET on a highlighted line.
 
 If you wish to start many runs at the same time, rename the
-compilation buffer with M-x rename-buffer.
+compilation buffer with "M-x rename-buffer".
 
 
 =head2 Re-run File
@@ -266,21 +275,61 @@ recompile) the file. Useful when you have skipped around the source
 fixing errors and the .t file isn't visible.
 
 C-p r r -- If not even the *compilation* buffer is visible, issue
-Re-Run File from anywhere.
+Re-Run File from anywhere to bring it up and re-run.
 
 
 
 =head2 Go to Error line
 
-If you don't use Run File on tests, this may be handy.
+If you run tests in a regular shell (inside Emacs or in a terminal
+window), this may be handy.
 
 C-p g e -- If point is located on an error line from a syntax error,
 or a stack trace from the debugger or similar, go to that file+line.
 
 If no file name can be found, prompt for a piece of text that contains
 the file+line spec. The kill ring or clipboard text is used as default
-if available (so it's easy to just copy the error line from the shell,
-run this command and hit return to accept the default text).
+if available (so it's easy to just copy the error line from the
+terminal, run this command and hit return to accept the default text).
+
+
+
+=head2 Flymake Introduction
+
+"Flymake performs on-the-fly syntax checks of the files being edited
+using the external syntax check tool (usually the compiler).
+Highlights erroneous lines and displays associated error messages."
+
+Flymake is included in Emacs 22 (or available from
+http://flymake.sourceforge.net/, put flymake.el somewhere in your
+load-path. [[[explain how to fix brokenness?]]] ).
+
+Three inconveniences with vanilla Flymake are fixed: no proper @INC,
+only .pl files, and "perl -c" warns about redefined subs for
+recursively used modules (which is perfectly fine Perl).
+
+PerlySense uses flymake to check syntax (soon: Critic, etc). Syntax
+errors and warnings both use the error face.
+
+
+
+=head2 Using Flymake
+
+Create a PerlySense Project directory (see below) and look in the
+project.yml file for instructions on how to enable and configure
+flymake. You can also customize it with "M-x customize-group flymake".
+
+Personally I find the nagging while I type very distracting, but I
+welcome the immediate feedback whenever I save the file. YMMV.
+
+Look in the mode line for hints on whether there are any errors or
+warnings.
+
+C-p s n -- Go to the next Source error/warning.
+
+C-p s p -- Go to the previous Source error/warning.
+
+C-p s s -- Display the error/warning text of the current line.
 
 
 
@@ -302,7 +351,11 @@ and files are found.
 
 The fastest and most solid way for PerlySense to know which is the
 Project directory is to create a .PerlySenseProject directory with a
-config file in it.
+config file in it. This is highly recommended for all of your own
+projects.
+
+The complete project identification strategy is as follows:
+
 
 =over 4
 
@@ -315,8 +368,9 @@ First, if there is any directory upwards in the dirctory path with a
 =item *
 
 Second, PerlySense will try figure out from where the current file (if
-any) was being required given the contained package names or used
+any) was being required/used given the contained package names or used
 modules.
+
 
 =item *
 
@@ -326,9 +380,13 @@ directories.
 =back
 
 If that doesn't work, PerlySense is lost and you really do need to
-create an explicit Project directory using the following command:
+create an explicit Project directory by running the following command
+in your intended Project root directory:
 
   perly_sense create_project
+
+Any existing .PerlySenseProject/project.yml config file will be
+renamed.
 
 
 
@@ -401,6 +459,7 @@ Surveys. Introduced in this article about Software Archeology
 (L<http://www.pragmaticprogrammer.com/articles/mar_02_archeology.pdf>).
 
 
+
 =head1 AUTHOR
 
 Johan Lindström, C<< <johanl[ÄT]DarSerMan.com> >>
@@ -451,7 +510,7 @@ under the same terms as Perl itself.
 
 package Devel::PerlySense;
 
-our $VERSION = '0.01_22';
+our $VERSION = '0.01_23';
 
 
 
@@ -482,7 +541,12 @@ use Devel::PerlySense::Config::Project;
 
 
 
+
 =head1 *** THE FOLLOWING IS DEVELOPER DOCUMENTATION ***
+
+
+
+
 
 =head1 PROPERTIES
 
@@ -507,6 +571,26 @@ Default: A Devel::PerlySense::Project::Unknown object.
 
 =cut
 field "oProject" => Devel::PerlySense::Project::Unknown->new();
+
+
+
+
+
+=head2 rhConfig
+
+Hash ref with the current config.
+
+If there is a known Project, it reflects the Project's config,
+otherwise it's the default config.
+
+Readonly. Note that the _entire_ data structure is readonly. Each time
+you change/add/remove a value from it, a kitten is slain. So, dude,
+just don't go there!
+
+=cut
+sub rhConfig {
+    return $self->oProject->rhConfig;
+}
 
 
 
@@ -797,40 +881,29 @@ type_source_file is something like "Test", "Module".
 sub rhRunFile {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
 
-    $self->setFindProject(file => $file) or
-            die("Could not identify any PerlySense Project\n");
+    $self->setFindProject(file => $file)
+            or die("Could not identify any PerlySense Project\n");
 
-    #Get config
-    my @aDirIncProject;
-    my $commandTemplateRun = 'prove -v ${INC} "${SOURCE_FILE}"';
-    my $typeSource = "Test";
+    return $self->oProject->rhRunFile(file => $file);
+}
 
 
-    #Find relative find name for source file
-    my $dirProject = dir($self->oProject->dirProject)->absolute . "";
-    my $rexDirProject = quotemeta($dirProject);
-    my $fileSourceRelative = file($file)->absolute;
-    $fileSourceRelative =~ s|^$rexDirProject.|| or
-            die("Source file ($file) not found under the Project dir ($dirProject)\n");
 
-    
-    my @aDirInc = (".", "lib", @aDirIncProject);
-    my $optionInc = join(" ", map { qq|"-I$_"| } @aDirInc);
 
-    my $commandRun = textRenderTemplate(
-        $commandTemplateRun, {
-            INC => $optionInc,
-            SOURCE_FILE => $fileSourceRelative,
-        },
-    );
-    
-    my $rhConfigRun = {
-        dir_run_from => $dirProject,
-        command_run => $commandRun,
-        type_source_file => $typeSource,
-    };
-    
-    return($rhConfigRun);
+
+=head2 flymakeFile(file => $fileSource)
+
+Do a flymake run with $fileSource according to the flymake config and
+output the result to STDOUT and STDERR.
+
+=cut
+sub flymakeFile {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+
+    $self->setFindProject(file => $file)
+            or die("Could not identify any PerlySense Project\n");
+
+    return $self->oProject->flymakeFile(file => $file);
 }
 
 

@@ -188,6 +188,11 @@ sub main {
             print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
         }
 
+    } elsif($command eq "flymake_file") {
+        $file or syntax("Missing option --file");
+
+        $oPs->flymakeFile(file => $file);
+
     } elsif($command eq "create_project") {
         $dir ||= ".";
 

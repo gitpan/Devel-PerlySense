@@ -39,7 +39,6 @@ use Path::Class;
 use YAML::Tiny ();
 use HTTP::Date qw/ time2iso /;
 
-use Devel::PerlySense;
 use Devel::PerlySense::Util;
 
 
@@ -77,7 +76,15 @@ project:
   moniker: 'A PerlySense Project'
 
   #Extra @INC directories, relative to the project root
+  #These come before the default inc directories "." and "lib"
   inc_dir: []
+
+
+bookmarks:
+  -
+    moniker: Todo
+    rex: ### \s* TODO \s* : \s* (.+?) \s*
+    rex_match_text: "$1"
 
 
 #These are evaluated in order to find a way to run a file. First
@@ -87,24 +94,57 @@ run_file:
     command: "prove -v ${INC} \"${SOURCE_FILE}\""
     moniker: Test
     rex: \.t$
-    run_from: project_root
+    run_from: source_root_directory
   -
-    command: "perl -c ${INC} \"${SOURCE_FILE}\""
+    command: "perl -c ${INC} \"${SOURCE_FILE}\" 2>&1| perl -ne \"/Subroutine \\w+ redefined at/ or print\""
     moniker: Module
     rex: \.pm$
-    run_from: project_root
+    run_from: source_root_directory
   -
     command: "perl ${INC} \"${SOURCE_FILE}\""
     moniker: Script
     rex: \.pl$
-    run_from: cwd
+    run_from: file_directory
 
   #This is a catch-all for all other types of files
   -
     command: "perl ${INC} \"${SOURCE_FILE}\""
     moniker: 'Script (no .pl)'
-    rex: \.
-    run_from: cwd
+    rex: .
+    run_from: file_directory
+
+
+external:
+  editor:
+
+    #Emacs specific configuration
+    emacs:
+
+      #To enable flymake in Emacs, add this to your .emacs file, after
+      #loading cperl-mode and perly-sense.
+      #
+      # ;; Flymake
+      # (load "perly-sense-flymake")
+      #
+      # ;; If you only want syntax check whenever you save, not continously
+      # (setq flymake-no-changes-timeout 9999)
+      # (setq flymake-start-syntax-check-on-newline nil)
+      #
+      # ;; Emacs named colors: http://www.geocities.com/kensanata/colors.html
+      # (set-face-background 'flymake-errline "antique white")
+      # (set-face-background 'flymake-warnline "lavender")
+      flymake:
+
+        #During a flymake compilation, perly_sense can run:
+
+        #Check Syntax (perl -c)
+        #
+        #!!!NOTE!!!
+        #   Running perl -c on random Perl code will execute
+        #   the BEGIN blocks! Any funny business in them and you're toast!
+        #!!!NOTE!!!
+        syntax: 1
+
 
 #EOF
 };
@@ -135,6 +175,25 @@ Default: { }
 
 =cut
 field "rhConfig" => { };
+
+
+
+
+
+=head2 new()
+
+Create new Location object.
+
+=cut
+sub new(@) {
+    my $pkg = shift;
+
+    my $self = $pkg->SUPER::new(@_);
+
+    $self->dirRoot and $self->loadConfig(dirRoot => $self->dirRoot);
+
+    return($self);
+}
 
 
 

@@ -1,5 +1,21 @@
-Revision history for Devel-PerlySense (for users, see the commit log
-for boring details)
+= Feature oriented Revision history for Devel-PerlySense =
+
+
+
+= 0.01_23 =
+
+* Run File uses the Project config, and supports syntax checking .pm
+  files, running .pl files, etc. as well.
+
+* New config keys added, so run "perly_sense create_project" to
+  re-generate a default project.yml which you can then diff against
+  the old one (renamed with datestamp).
+
+* Flymake support - highlight syntax errors and warnings in the source
+  while editing (continously or at every save).
+
+  Note: new elisp file to install, and some .emacs configuration.
+
 
 
 = 0.01_22 =
@@ -19,5 +35,11 @@ for boring details)
 
 = Earlier =
 
-Stuff happened. Time passed.
+Stuff happened.
 
+Time passed.
+
+Code got written. Bugs were introduced and removed. Ideas were had,
+fleshed out, xdiscarded. Sometimes implemented.
+
+But that was then.
