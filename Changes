@@ -2,6 +2,18 @@
 
 
 
+= 0.01_24 =
+
+* Fixed potential breaking flymake elisp.
+
+* If the *compiation* buffer is already visible in any frame, switch
+  to that first, so we don't get to see two *compiation* buffers next
+  to each other. That just looks silly.
+
+* Perl::Critic using Flymake - first draft
+
+
+
 = 0.01_23 =
 
 * Run File uses the Project config, and supports syntax checking .pm

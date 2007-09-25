@@ -17,16 +17,15 @@ Configuration can be Project level, stored in .../.PerlySense/project.cfg
 
 
 
-package Devel::PerlySense::Config::Project;
+use strict;
+use warnings;
 
+package Devel::PerlySense::Config::Project;
 our $VERSION = '0.01';
 
 
 
 
-
-use strict;
-use warnings;
 
 use Spiffy -Base;
 
@@ -130,7 +129,7 @@ external:
       # (setq flymake-no-changes-timeout 9999)
       # (setq flymake-start-syntax-check-on-newline nil)
       #
-      # ;; Emacs named colors: http://www.geocities.com/kensanata/colors.html
+      # ;; Emacs named colors: M-x list-colors-display
       # (set-face-background 'flymake-errline "antique white")
       # (set-face-background 'flymake-warnline "lavender")
       flymake:
@@ -143,7 +142,13 @@ external:
         #   Running perl -c on random Perl code will execute
         #   the BEGIN blocks! Any funny business in them and you're toast!
         #!!!NOTE!!!
-        syntax: 1
+        syntax: 0
+
+        #Perl Critic
+        #PerlySense will point Critic to a .perlcritic file in this
+        #directory. A default config file with fairly lenient rules is
+        #provided.
+        critic: 0
 
 
 #EOF
@@ -182,7 +187,7 @@ field "rhConfig" => { };
 
 =head2 new()
 
-Create new Location object.
+Create new object.
 
 =cut
 sub new(@) {

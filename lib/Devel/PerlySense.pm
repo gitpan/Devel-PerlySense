@@ -304,28 +304,59 @@ Flymake is included in Emacs 22 (or available from
 http://flymake.sourceforge.net/, put flymake.el somewhere in your
 load-path. [[[explain how to fix brokenness?]]] ).
 
+PerlySense uses flymake to check syntax, Perl Critic, etc.
+
 Three inconveniences with vanilla Flymake are fixed: no proper @INC,
 only .pl files, and "perl -c" warns about redefined subs for
 recursively used modules (which is perfectly fine Perl).
 
-PerlySense uses flymake to check syntax (soon: Critic, etc). Syntax
-errors and warnings both use the error face.
+Syntax errors and warnings both use the error face.
+
+Perl Critic violations use the warning face.
+
+
+
+=head2 Enabling Flymake
+
+Create a PerlySense Project directory (see below) and look in the
+project.yml file for instructions on how to enable Flymake in Emacs,
+but basically, you need to load the perly-sense-flymake packacke.
+
+This will enable Flymake for all cperl-mode buffers, causing Emacs to
+call perly_sense for each check.
+
+PerlySense won't do anything at this point though. You still need to
+configure what should happen during a flymake. Set "syntax" / "critic"
+to 1 to enable them.
+
+The primary reason "syntax" is turned off by default is that it's a
+potential security hole; running "perl -c" on a file will only check
+the syntax, but BEGIN blocks are still executed. Doing that on random
+code may be considered... bad.
+
+This way you can have Flymake enabled globally and still not run "perl
+-c" on everything that happens to be in a buffer.
 
 
 
 =head2 Using Flymake
 
-Create a PerlySense Project directory (see below) and look in the
-project.yml file for instructions on how to enable and configure
-flymake. You can also customize it with "M-x customize-group flymake".
+In the Project config file there are some hints on how to customize
+Flymake, when it should run, etc. You can also customize it with "M-x
+customize-group flymake".
 
-Personally I find the nagging while I type very distracting, but I
-welcome the immediate feedback whenever I save the file. YMMV.
+(Personally I find the nagging while I type very distracting, but I
+welcome the immediate feedback whenever I save the file. YMMV.)
 
 Look in the mode line for hints on whether there are any errors or
 warnings.
 
 C-p s n -- Go to the next Source error/warning.
+
+Display the error in the minibuffer. If the warning is from a
+Perl::Critic module, copy the module name into the kill-ring, so you
+easily can yank it into the .perlcritic config file to disable
+it. (not implemented)
 
 C-p s p -- Go to the previous Source error/warning.
 
@@ -508,16 +539,14 @@ under the same terms as Perl itself.
 
 
 
-package Devel::PerlySense;
-
-our $VERSION = '0.01_23';
-
-
-
-
-
 use strict;
 use warnings;
+
+package Devel::PerlySense;
+our $VERSION = '0.01_24';
+
+
+
 use Spiffy -Base;
 use Carp;
 use Data::Dumper;

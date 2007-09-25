@@ -143,7 +143,7 @@
 (defun perly-sense-run-file ()
   "Run the current file"
   (interactive)
-  
+
   ;;If it's the compilation buffer, recompile, else run file
   (if (string= (buffer-name) "*compilation*")
       (progn
@@ -173,8 +173,8 @@
           (if message-string
               (message message-string)
             )
-          )       
-        )  
+          )
+        )
       )
     )
   )
@@ -192,14 +192,19 @@
 (defun perly-sense-rerun-file ()
   "Rerun the current compilation buffer"
   (interactive)
-  (if (get-buffer "*compilation*")
-      (progn
-        (switch-to-buffer "*compilation*")
-        (recompile)
-        )
+  (let* ((compilation-buffer (get-buffer "*compilation*")))
+    (if compilation-buffer
+        (let* ((compilation-window (get-buffer-window compilation-buffer "visible")))
+          (progn
+            (if compilation-window (select-window compilation-window))
+            (switch-to-buffer "*compilation*")
+            (recompile))
+          )
+      )
     (message "Can't re-run: No Run File in progress.")
     )
   )
+
 
 
 
@@ -405,7 +410,7 @@
     (goto-char (point-min))
     (while (search-forward-regexp "\\[ \\w+ +\\]" nil t)
       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-array-face)) ;'(:background "Gray80"))   ;;TODO: Move to config variable
-    
+
     (goto-char (point-min))
     (while (search-forward-regexp "\\[<\\w+ *>\\]" nil t)
       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face)) ;'(:background "Gray80"))   ;;TODO: Move to config variable

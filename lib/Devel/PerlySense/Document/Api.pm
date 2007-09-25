@@ -14,16 +14,16 @@ _may_ support).
 
 
 
-package Devel::PerlySense::Document::Api;
+use strict;
+use warnings;
 
+package Devel::PerlySense::Document::Api;
 our $VERSION = '0.01';
 
 
 
 
 
-use strict;
-use warnings;
 use Spiffy -Base;
 use Carp;
 use Data::Dumper;
@@ -63,7 +63,7 @@ sub new(@) {
 
     my $self = bless {}, $pkg;
 
-    return($self);    
+    return($self);
 }
 
 
@@ -84,7 +84,7 @@ sub parsePackageSetSub {
     #Temporal cohesion: let the sub declarations overwrite the called subs
       #TODO: The called subs shouldn't overwrite sub declarations of a base class
     $self->parseSourceSetSub(source => $source, oDocument => $oDocument);
-    
+
     for my $oNodeSub (@$raNodeSub) {
         $self->oLocationSetSub(nameSub => $oNodeSub->name, oDocument => $oDocument, oNode => $oNodeSub);
     }
@@ -112,7 +112,8 @@ sub parseSourceSetSub {
 
     #Look for $self->{property_name}
     my @aSelfHash =
-            map { s/ ^ (["'])  ( [^\1]* )   \1 $ /$2/x; $_ }  #Remove quotes
+            #Remove quotes
+            map { s/ ^ (["'])  ( [^\1]* )   \1 $ /$2/x; $_ }  ## no critic
             $source =~
             /
              \$self \s* -> \s* {
@@ -164,9 +165,9 @@ sub oLocationSetSub {
         );
     }
 
-    $oLocation->rhProperty->{sub} = $nameSub;    
+    $oLocation->rhProperty->{sub} = $nameSub;
     $self->rhSub->{$nameSub} = $oLocation;
-    
+
     return($oLocation);
 }
 
@@ -203,13 +204,13 @@ sub mergeWithBase {
             if($oLocationBase->row != 0 && $oLocation->row == 0) {
                 $rhSub->{$method} = $oLocationBase;
             }
-            
+
         } else {
             #Not present in self, copy from base
             $rhSub->{$method} = $oLocationBase;
         }
     }
-    
+
     return(1);
 }
 
@@ -261,7 +262,7 @@ $raNameSub will not affect the percentage.
 =cut
 sub percentConsistsOf {
     my ($raNameSub) = @_;
-    
+
     my %hNameSub = map { $_ => 1 } @$raNameSub;
     my $countConsists = grep { $hNameSub{$_} } keys %{$self->rhSub};
     my $percent = $countConsists / (scalar(keys %{$self->rhSub}) || 1);

@@ -18,16 +18,16 @@ optional properties.
 
 
 
-package Devel::PerlySense::Document::Location;
+use strict;
+use warnings;
 
+package Devel::PerlySense::Document::Location;
 our $VERSION = '0.01';
 
 
 
 
 
-use strict;
-use warnings;
 use Spiffy -Base;
 use Carp;
 use Data::Dumper;

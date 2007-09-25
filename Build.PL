@@ -23,6 +23,7 @@ my $builder = Module::Build->new(
         'List::MoreUtils'   => 0,
         'PPI'               => 1.003,
         'Path::Class'       => 0.11,
+        'Perl::Critic'      => 0,
         'Pod::Text'         => 0,
         'Pod::Usage'        => 0,
         'Spiffy'            => 0.20,

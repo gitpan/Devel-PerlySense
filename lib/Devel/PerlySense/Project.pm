@@ -19,16 +19,14 @@ A Project has configuration settings.
 
 
 
-package Devel::PerlySense::Project;
+use strict;
+use warnings;
 
+package Devel::PerlySense::Project;
 our $VERSION = '0.01';
 
 
 
-
-
-use strict;
-use warnings;
 use Spiffy -Base;
 use Carp;
 use Data::Dumper;
@@ -36,6 +34,7 @@ use File::Basename;
 use Path::Class;
 use File::Slurp;
 use File::chdir;
+use Perl::Critic;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
@@ -147,29 +146,6 @@ field "oPerlySense" => undef;
 
 
 =head1 CLASS METHODS
-
-=head2 new()
-
-Create new Location object.
-
-=cut
-# sub new(@) {
-#     my $pkg = shift;
-#     my (%p) = @_;
-
-#     my $self = bless {}, $pkg;
-
-#     $self->file($p{file} || "");
-#     $self->row($p{row} || 0);
-#     $self->col($p{col} || 0);
-#     $self->rhProperty($p{rhProperty} || {});
-
-#     return($self);
-# }
-
-
-
-
 
 =head2 newFromLocation(file => $file, dir => $dir, oPerlySense => $oPs)
 
@@ -427,6 +403,26 @@ sub flymakeFile {
 
         local $CWD = $rhConfigRun->{dir_run_from};
         system( $rhConfigRun->{command_run} );
+    }
+
+    if($self->oPerlySense->rhConfig->{external}{editor}{emacs}{flymake}{critic}) {
+        ###TODO: don't run if syntax errors found
+
+        my $fileConfigCritic = file(
+            dir($self->dirProject)->absolute, ".PerlySenseProject", ".perlcritic",
+        );
+        
+        my @aOption = (-profile => $fileConfigCritic . "");
+        -e $fileConfigCritic or @aOption = ();
+        
+        my $oCritic = Perl::Critic->new(@aOption);
+
+        my @aViolation = $oCritic->critique($file);
+
+        local $Perl::Critic::Violation::FORMAT = "%m near '%r' (%e, %p) at %f line %l.\n";
+        for my $violation (@aViolation) {
+            warn "Warning: $violation";
+        }
     }
 
     return 1;

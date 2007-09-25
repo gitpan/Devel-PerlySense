@@ -24,10 +24,11 @@
 (setq
  flymake-allowed-file-name-masks
  (append
-  (quote (("\\.pl\\'" flymake-perlysense-init)))
-  (quote (("\\.pm\\'" flymake-perlysense-init)))
-  (quote (("\\.t\\'" flymake-perlysense-init)))
+  '(("\\.pl\\'" flymake-perlysense-init))
+  '(("\\.pm\\'" flymake-perlysense-init))
+  '(("\\.t\\'" flymake-perlysense-init))
   flymake-allowed-file-name-masks))
+
 
 (add-hook 'cperl-mode-hook 'flymake-mode t)
 

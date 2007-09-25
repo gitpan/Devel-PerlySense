@@ -28,16 +28,16 @@ no good way to expire obsolete files.
 
 
 
-package Devel::PerlySense::Document;
+use strict;
+use warnings;
 
+package Devel::PerlySense::Document;
 our $VERSION = '0.01';
 
 
 
 
 
-use strict;
-use warnings;
 use Spiffy -Base;
 use Carp;
 use Data::Dumper;

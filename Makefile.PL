@@ -31,6 +31,7 @@ WriteMakefile
                            'Carp' => 0,
                            'Test::More' => 0,
                            'Test::Differences' => 0,
+                           'Perl::Critic' => 0,
                            'Path::Class' => '0.11',
                            'File::Basename' => 0
                          }
