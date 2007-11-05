@@ -2,6 +2,17 @@
 
 
 
+= 0.01_25
+
+* Fixed: Flymake emits redefined warnings for subs with namespace
+  qualifiers.
+
+* Debug logging in the HOME/.PerlySense/log directory
+
+* Warnings go to the debug log
+
+
+
 = 0.01_24 =
 
 * Fixed potential breaking flymake elisp.

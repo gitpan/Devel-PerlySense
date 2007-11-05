@@ -7,10 +7,11 @@ DESCRIPTION
     Conveniently navigate and browse the code and documentation of your
     project and Perl installation.
 
-    Run tests and syntax check source with easy navigation to
+    Run tests and scripts and syntax check source with easy navigation to
     errors/warnings/failing tests.
 
-    Highlight syntax errors and warnings in the source while editing.
+    Highlight syntax errors, warnings and Perl::Critic complaints in the
+    source while editing.
 
 SYNOPSIS
   From Emacs
@@ -97,6 +98,18 @@ INSTALLATION
     (actually, these keys are currently bound from within the perly-sense.el
     file, so make sure you comment them out if you're not happy with them)
 
+THE PERLYSENSE USER DIRECTORY
+    PerlySense keeps a per-user directory to store cache files, logs, etc.
+    The ".PerlySense" user directory is located under either of these
+    environment variables:
+
+      $APPDATA
+      $ALLUSERSPROFILE
+      $USERPROFILE
+      $HOME
+      $TEMP
+      $TMP
+
 GETTING STARTED WITH EMACS
   Smart docs
     C-p C-d is the "Smart docs" command. It brings up documentation for
@@ -160,9 +173,9 @@ GETTING STARTED WITH EMACS
 
       * NeighbourHood *
       [ CatalystX::FeedMe::DBIC ] [<CatalystX::FeedMe::Controller::Feed    >] -none-
-                                  [ CatalystX::FeedMe::Controller::FeedItem ]       
-                                  [ CatalystX::FeedMe::Controller::Homepage ]       
-                                  [ CatalystX::FeedMe::Controller::Root     ]       
+                                  [ CatalystX::FeedMe::Controller::FeedItem ]
+                                  [ CatalystX::FeedMe::Controller::Homepage ]
+                                  [ CatalystX::FeedMe::Controller::Root     ]
 
       * Structure *
       ;;;';;;;;;;{;";}{;;;;{}"";{}"";";}{;;;';';";;;{;'";;';;;};';}S{;";"";;}S{;'{}{"};;;}S{;;;;";"
@@ -170,7 +183,8 @@ GETTING STARTED WITH EMACS
 
     The Inheritance section shows all Base classes of the Class. Inheriting
     from something like Catalyst is hopefully the hairiest you'll see.
-    Classes inherit upwards in the diagram unless there is an arrow.
+    Classes inherit upwards in the diagram unless there is an arrow pointing
+    elsewhere.
 
     The Uses section shows all used modules in the Class.
 
@@ -437,6 +451,11 @@ PROPERTIES
     Devel::PerlySense::Project object.
 
     Default: A Devel::PerlySense::Project::Unknown object.
+
+  oHome
+    Devel::PerlySense::Home object.
+
+    Default: A newly created Home object.
 
   rhConfig
     Hash ref with the current config.

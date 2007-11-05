@@ -14,9 +14,11 @@ lib/Devel/PerlySense/Document/Api.pm
 lib/Devel/PerlySense/Document/Location.pm
 lib/Devel/PerlySense/Document/Meta.pm
 lib/Devel/PerlySense/Editor/Emacs.pm
+lib/Devel/PerlySense/Home.pm
 lib/Devel/PerlySense/Project.pm
 lib/Devel/PerlySense/Project/Unknown.pm
 lib/Devel/PerlySense/Util.pm
+lib/Devel/PerlySense/Util/Log.pm
 lib/Devel/TimeThis.pm
 Makefile.PL
 MANIFEST
@@ -102,6 +104,7 @@ t/PerlySense-run-file.t
 t/PerlySense-smart-doc-module-method.t
 t/PerlySense-smart-doc-object-method.t
 t/PerlySense-smart-doc-pod.t
+t/PerlySense-user-home.t
 t/PerlySense-Util-arg.t
 t/PerlySense.t
 t/pod-coverage.t

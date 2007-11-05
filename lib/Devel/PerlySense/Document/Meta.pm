@@ -9,6 +9,9 @@ during a parse
 
 
 
+use strict;
+use warnings;
+
 package Devel::PerlySense::Document::Meta;
 
 our $VERSION = '0.01';
@@ -17,8 +20,6 @@ our $VERSION = '0.01';
 
 
 
-use strict;
-use warnings;
 use Spiffy -Base;
 use Carp;
 use File::Basename;

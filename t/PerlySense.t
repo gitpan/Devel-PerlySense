@@ -1,18 +1,20 @@
 #!/usr/bin/perl -w
 use strict;
-use Test::More tests => 5;
+use Test::More tests => 7;
 use Test::Exception;
 
 use File::Basename;
 use File::Spec::Functions;
 
-use lib "../lib";
+use lib "../lib", "lib";
 
 
 
 use_ok("Devel::PerlySense");
 
 ok(my $oPs = Devel::PerlySense->new(), "new ok");
+isa_ok($oPs->oProject, "Devel::PerlySense::Project", "  oProject property");
+isa_ok($oPs->oHome, "Devel::PerlySense::Home", "  oHome property");
 
 
 is($oPs->fileFromModule("Foo"), "Foo.pm", "fileFromModule ok");

@@ -32,6 +32,7 @@ use POSIX qw/ ceil /;
 use Devel::PerlySense;
 use Devel::PerlySense::Class;
 use Devel::PerlySense::Util;
+use Devel::PerlySense::Util::Log;
 
 
 

@@ -14,16 +14,23 @@ use List::Util qw/ max /;
 
 use lib "../lib";
 use Devel::PerlySense;
+use Devel::PerlySense::Home;
+use Devel::PerlySense::Util::Log;
 use Devel::PerlySense::Editor::Emacs;
 use Time::HiRes qw/time/;
 
 use Data::Dumper;
 
 
-main();
+
+{
+    local $SIG{__WARN__} = sub { debug(@_); };
+    main();
+}
 
 
 
+#Oh yes, this file is in serious need of a makeover...
 sub main {
     my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $clearCache, $widthDisplay);
     GetOptions(
@@ -42,33 +49,29 @@ sub main {
 
     $command or syntax("Missing command");
 
-
     my $oPs = Devel::PerlySense->new();
-
-
-    my @aDirCachePossible = grep { $_ } ($ENV{APPDATA}, $ENV{ALLUSERSPROFILE}, $ENV{USERPROFILE}, $ENV{HOME}, $ENV{TEMP}, $ENV{TMP}, "/");
-    my $oCache;
-    for my $dirHome(@aDirCachePossible) {
-        my $dir = dir($dirHome, ".PerlySense", "cache");
-        mkpath([$dir]);
-        if(-d $dir) {
-            if($clearCache) {
-                rmtree([$dir]); -d $dir and die("Could not clear cache ($dir)\n");
-                mkpath([$dir]); -d $dir or die("Could not re-create cache dir ($dir)\n");
-            }
-
-            $oCache = Cache::FileCache->new({cache_root => $dir}) or warn("Could not create cache in ($dir)\n"), next;
-            last;
-        }
+    
+    my $oHome = $oPs->oHome;
+    my $dirHomeCache = $oHome->dirHomeCache
+            or warn(
+                "Could not create cache dir in either of:\n",
+                join(":", $oHome->aDirHomeCandidate) . "\n",
+            );
+    if($dirHomeCache && $clearCache) {
+        rmtree([$dirHomeCache]); -d $dir and die("Could not clear cache ($dirHomeCache)\n");
+        mkpath([$dirHomeCache]); -d $dir or die("Could not re-create cache dir ($dirHomeCache)\n");
     }
-    $oCache or warn("Could not create cache dir in either of:\n", join(":", @aDirCachePossible) . "\n");
+    my $oCache = Cache::FileCache->new({cache_root => $dirHomeCache})
+            or warn("Could not create cache in ($dirHomeCache)\n");
     $oPs->oCache($oCache);
+
 
 
     my $oEditor = Devel::PerlySense::Editor::Emacs->new(
         oPerlySense => $oPs,
         widthDisplay => $widthDisplay,
     );
+
 
 
     if($command eq "find_module_source_file") {
@@ -234,24 +237,24 @@ sub main {
 
         my %hFileTime;
         for my $file (@aFile) {
-            print "((($file)))\n";
+            debug("Processing file ($file)");
             my $timeStart = time();
             eval {
                 use Devel::TimeThis;
-                my $t = Devel::TimeThis->new("parse");
+#                my $t = Devel::TimeThis->new("parse");
                 $oPs->oDocumentParseFile($file);
             };
-            $@ and warn($@);
+            $@ and debug($@);
             my $timeDuration = time() - $timeStart;
             $hFileTime{$file} = $timeDuration;
-            printf("  %0.6f\n", $timeDuration);
+            debug(sprintf("  %0.6fs", $timeDuration));
         }
 
-        print "REPORT\n";
+        debug("REPORT");
         for my $file (
             sort { $hFileTime{$a} <=> $hFileTime{$b} }
                     keys %hFileTime) {
-            printf("%0.6f : $file\n", $hFileTime{$file});
+            debug(sprintf("%0.6f : $file", $hFileTime{$file}));
         }
 
     } else {

@@ -47,6 +47,7 @@ use List::MoreUtils qw/ uniq /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
+use Devel::PerlySense::Util::Log;
 use Devel::PerlySense::Document::Location;
 use Devel::PerlySense::Document::Api;
 use Devel::PerlySense::Document::Meta;

@@ -6,12 +6,14 @@ Devel::PerlySense::Util - Utility routines
 
 
 
+use strict;
+use warnings;
+
 package Devel::PerlySense::Util;
 use base "Exporter";
 
 our @EXPORT = (
     qw/
-       debug
        slurp
        spew
        textRenderTemplate
@@ -23,8 +25,6 @@ our $VERSION = '0.01';
 
 
 
-use strict;
-use warnings;
 use Carp;
 use Data::Dumper;
 use File::Basename;
@@ -55,28 +55,6 @@ sub aNamedArg {
     }
 
     return(@aResult);
-}
-
-
-
-
-
-=head2 debug($message)
-
-Log debug $message.
-
-Return 1.
-
-=cut
-my $fileDebug = "./debug.log";  ###TODO: Change to be bound to project root
-sub debug {
-	my ($message) = @_;
-    return 1;  ##Temporarily disabled until the logs aren't spread out
-               ##all over the file system
-    open(my $fh, ">>", $fileDebug) or return warn("Could not open ($fileDebug) for append\n");
-    $fh->print(localtime() . ": $message\n");
-    
-    return(1);
 }
 
 

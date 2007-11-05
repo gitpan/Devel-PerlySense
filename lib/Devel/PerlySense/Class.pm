@@ -16,16 +16,16 @@ A Perl Class is a Perl Package with an OO interface.
 
 
 
-package Devel::PerlySense::Class;
+use strict;
+use warnings;
 
+package Devel::PerlySense::Class;
 our $VERSION = '0.01';
 
 
 
 
 
-use strict;
-use warnings;
 use Spiffy -Base;
 use Carp;
 use Data::Dumper;
@@ -35,6 +35,7 @@ use List::MoreUtils qw/ uniq /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
+use Devel::PerlySense::Util::Log;
 use Devel::PerlySense::Document;
 use Devel::PerlySense::Document::Api;
 use Devel::PerlySense::Document::Meta;

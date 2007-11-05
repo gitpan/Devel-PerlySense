@@ -10,10 +10,11 @@ PerlySense is an IntelliSense style utility for editors.
 Conveniently navigate and browse the code and documentation of your
 project and Perl installation.
 
-Run tests and syntax check source with easy navigation to
+Run tests and scripts and syntax check source with easy navigation to
 errors/warnings/failing tests.
 
-Highlight syntax errors and warnings in the source while editing.
+Highlight syntax errors, warnings and Perl::Critic complaints in the
+source while editing.
 
 
 
@@ -126,6 +127,21 @@ happy with them)
 
 
 
+=head1 THE PERLYSENSE USER DIRECTORY
+
+PerlySense keeps a per-user directory to store cache files, logs,
+etc. The C<.PerlySense> user directory is located under either of
+these environment variables:
+
+  $APPDATA
+  $ALLUSERSPROFILE
+  $USERPROFILE
+  $HOME
+  $TEMP
+  $TMP
+
+
+
 =head1 GETTING STARTED WITH EMACS
 
 
@@ -198,9 +214,9 @@ Example class CatalystX::FeedMe::Controller::Feed
 
   * NeighbourHood *
   [ CatalystX::FeedMe::DBIC ] [<CatalystX::FeedMe::Controller::Feed    >] -none-
-                              [ CatalystX::FeedMe::Controller::FeedItem ]       
-                              [ CatalystX::FeedMe::Controller::Homepage ]       
-                              [ CatalystX::FeedMe::Controller::Root     ]       
+                              [ CatalystX::FeedMe::Controller::FeedItem ]
+                              [ CatalystX::FeedMe::Controller::Homepage ]
+                              [ CatalystX::FeedMe::Controller::Root     ]
 
   * Structure *
   ;;;';;;;;;;{;";}{;;;;{}"";{}"";";}{;;;';';";;;{;'";;';;;};';}S{;";"";;}S{;'{}{"};;;}S{;;;;";"
@@ -210,7 +226,7 @@ Example class CatalystX::FeedMe::Controller::Feed
 The B<Inheritance> section shows all Base classes of the
 Class. Inheriting from something like Catalyst is hopefully the
 hairiest you'll see. Classes inherit upwards in the diagram unless
-there is an arrow.
+there is an arrow pointing elsewhere.
 
 The B<Uses> section shows all used modules in the Class.
 
@@ -450,6 +466,8 @@ Cache all modules in the project. (not implemented)
 
 
 
+
+
 =head1 ON PARSING PERL
 
 Since Perl is so dynamic, a perfect static analysis of the source is
@@ -465,7 +483,7 @@ directory structure and common Perl idioms.
 Sometimes when PerlySense can't make a decision, you're expected to
 chip in and tell it what you meant.
 
-Sometimes it won't work at all. 
+Sometimes it won't work at all.
 
 Such is the way of dynamic languages.
 
@@ -543,7 +561,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.01_24';
+our $VERSION = '0.01_25';
 
 
 
@@ -560,12 +578,14 @@ use Cache::Cache;
 use Storable qw/freeze thaw/;
 
 use Devel::PerlySense::Util;
-use Devel::PerlySense::Class;
-use Devel::PerlySense::Document;
-use Devel::PerlySense::Document::Location;
+use Devel::PerlySense::Util::Log;
 use Devel::PerlySense::Project;
 use Devel::PerlySense::Project::Unknown;
 use Devel::PerlySense::Config::Project;
+use Devel::PerlySense::Home;
+use Devel::PerlySense::Class;
+use Devel::PerlySense::Document;
+use Devel::PerlySense::Document::Location;
 
 
 
@@ -600,6 +620,18 @@ Default: A Devel::PerlySense::Project::Unknown object.
 
 =cut
 field "oProject" => Devel::PerlySense::Project::Unknown->new();
+
+
+
+
+=head2 oHome
+
+Devel::PerlySense::Home object.
+
+Default: A newly created Home object.
+
+=cut
+field "oHome" => Devel::PerlySense::Home->new();
 
 
 
@@ -659,7 +691,7 @@ sub setFindProject {
     if( ! $self->oProject->isa("Devel::PerlySense::Project::Unknown")) {
         return 1;
     }
-    
+
     my $oProject = Devel::PerlySense::Project->newFromLocation(
         @_,
         oPerlySense => $self,
@@ -953,7 +985,7 @@ sub createProject {
     $oConfig->createFileConfigDefault(dirRoot => $dir);
 
     ###TODO: assign the config to $self->oConfigProject
-    
+
     return(1);
 }
 
@@ -963,7 +995,7 @@ sub createProject {
 
 =head2 classNameAt(file => $fileOrigin, row => $row, col => $row)
 
-Look in $file at location $row/$col and determine what class name that is. 
+Look in $file at location $row/$col and determine what class name that is.
 
 Return the class name or "" if it's package main.
 
@@ -974,7 +1006,7 @@ sub classNameAt {
     my ($file, $row, $col) = Devel::PerlySense::Util::aNamedArg(["file", "row", "col"], @_);
 
     my $oDocument = $self->oDocumentParseFile($file);
-    
+
     my $package = $oDocument->packageAt(row => $row);
 
     $package eq "main" and return "";
@@ -1026,7 +1058,7 @@ sub classByName {
         nameModule => $name,
         dirOrigin => $dirOrigin,
     ) or return undef;
-    
+
     return( Devel::PerlySense::Class->new(
         oPerlySense => $self,
         name => $name,
@@ -1078,7 +1110,7 @@ sub oDocumentFindModule {
         nameModule => $nameModule,
         dirOrigin => $dirOrigin,
     ) or return(undef);
-    
+
     my $oDocument = $self->oDocumentParseFile($fileModule) or return(undef);
 
     return($oDocument);
@@ -1134,7 +1166,7 @@ errors.
 sub dirFindLookingAround {
 	my ($fileModuleBase, $dirOrigin, $raDirSub) = @_;
     $raDirSub ||= [".", "lib", "bin"];
-    
+
     my $dir = dir($dirOrigin);
     while(1) {
         for my $dirCur (map { dir($dir, $_) } @$raDirSub) {

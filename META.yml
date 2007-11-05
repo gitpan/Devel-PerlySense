@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.01_24
+version: 0.01_25
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
@@ -36,7 +36,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.01_24
+    version: 0.01_25
   Devel::PerlySense::Class:
     file: lib/Devel/PerlySense/Class.pm
     version: 0.01
@@ -61,6 +61,9 @@ provides:
   Devel::PerlySense::Editor::Emacs:
     file: lib/Devel/PerlySense/Editor/Emacs.pm
     version: 0.01
+  Devel::PerlySense::Home:
+    file: lib/Devel/PerlySense/Home.pm
+    version: 0.01
   Devel::PerlySense::Project:
     file: lib/Devel/PerlySense/Project.pm
     version: 0.01
@@ -69,6 +72,9 @@ provides:
     version: 0.01
   Devel::PerlySense::Util:
     file: lib/Devel/PerlySense/Util.pm
+    version: 0.01
+  Devel::PerlySense::Util::Log:
+    file: lib/Devel/PerlySense/Util/Log.pm
     version: 0.01
   Devel::TimeThis:
     file: lib/Devel/TimeThis.pm
