@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.01_25
+version: 0.01_26
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
@@ -36,7 +36,19 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.01_25
+    version: 0.01_26
+  Devel::PerlySense::Bookmark::Definition:
+    file: lib/Devel/PerlySense/Bookmark/Definition.pm
+    version: 0.01
+  Devel::PerlySense::Bookmark::Match:
+    file: lib/Devel/PerlySense/Bookmark/Match.pm
+    version: 0.01
+  Devel::PerlySense::Bookmark::MatchResult:
+    file: lib/Devel/PerlySense/Bookmark/MatchResult.pm
+    version: 0.01
+  Devel::PerlySense::BookmarkConfig:
+    file: lib/Devel/PerlySense/BookmarkConfig.pm
+    version: 0.01
   Devel::PerlySense::Class:
     file: lib/Devel/PerlySense/Class.pm
     version: 0.01

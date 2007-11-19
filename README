@@ -90,18 +90,22 @@ INSTALLATION
     Adjust according to preference: the key mappings will replace the C-p
     command which obviously will be fantastically annoying for you if you
     don't use the arrow keys to move around. This is just how I use Emacs,
-    and I expect this will make you go *&&*%!
+    and I fully expect this will make you go, like, dude wtf?!
 
-    Please don't. The default key bindings will be changed before the first
-    real release. Suggestions welcome.
+    Chill. The default key bindings will be changed before the first real
+    release, and the bind prefix will be a configuration. Suggestions
+    welcome.
+
+    (\C-o seems to have a rater low useful-to-keystroke ration and so is a
+    strong candidate for stealing).
 
     (actually, these keys are currently bound from within the perly-sense.el
     file, so make sure you comment them out if you're not happy with them)
 
 THE PERLYSENSE USER DIRECTORY
     PerlySense keeps a per-user directory to store cache files, logs, etc.
-    The ".PerlySense" user directory is located under either of these
-    environment variables:
+    The ".PerlySense" user directory is located under the first available of
+    these environment variables:
 
       $APPDATA
       $ALLUSERSPROFILE
@@ -177,6 +181,10 @@ GETTING STARTED WITH EMACS
                                   [ CatalystX::FeedMe::Controller::Homepage ]
                                   [ CatalystX::FeedMe::Controller::Root     ]
 
+      * Bookmarks *
+      - Todo
+      Feed.pm:83: remove duplication
+
       * Structure *
       ;;;';;;;;;;{;";}{;;;;{}"";{}"";";}{;;;';';";;;{;'";;';;;};';}S{;";"";;}S{;'{}{"};;;}S{;;;;";"
       ;;};
@@ -190,6 +198,9 @@ GETTING STARTED WITH EMACS
 
     The NeighbourHood section shows three columns (1: parent dir, 2: current
     dir, 3: subdir for the current class) with Classes located nearby.
+
+    The Bookmarks section shows matches for bookmark definitions you have
+    defined in the Project config (see below).
 
     The Structure section shows a Signature Survey of the file, with an
     extreme abbreviation of the source. The intent is to convey an ambient
@@ -209,6 +220,10 @@ GETTING STARTED WITH EMACS
     U -- Move point to the Uses heading in the buffer.
 
     H -- Move point to the NeighbourHood heading (mnemonic: 'Hood).
+
+    B -- Move point to the Bookmarks heading.
+
+    S -- Move point to the Structure heading.
 
     M -- Move point to the Methods heading.
 
@@ -374,6 +389,27 @@ PROJECTS
 
     Cache all modules in the project. (not implemented)
 
+BOOKMARKS
+    Bookmarks are regexes that may match against a single line. Each
+    bookmark definition has a name/moniker under which the matches are
+    grouped in the Class Overview display.
+
+    The primary point of Bookmarks is to highlight unusual things in the
+    source. The secondary to make it easy for you go navigate to them.
+
+    This can be anything you like, but things that come to mind are:
+
+    * TODO comments
+    * FIXME/XXX/HACK comments
+    * Things you don't want left in the code, like
+        Breakpoints ($DB::single = 1)
+
+        Debugging warn/print statements
+
+  Configuration
+    Bookmarks are defined in the Project Config file (technical details are
+    documented there).
+
 ON PARSING PERL
     Since Perl is so dynamic, a perfect static analysis of the source is
     impossible. But not unusably so. Well, hopefully. Most of the time.
@@ -393,7 +429,7 @@ ON PARSING PERL
     Such is the way of dynamic languages.
 
     If it works for you, brilliant, use it to be more productive. If not...
-    there's always Java >:)
+    well, there's always Java >:)
 
 SEE ALSO
     sepia - similar effort
@@ -466,6 +502,9 @@ PROPERTIES
     Readonly. Note that the _entire_ data structure is readonly. Each time
     you change/add/remove a value from it, a kitten is slain. So, dude, just
     don't go there!
+
+  oBookmarkConfig
+    Devel::PerlySense::BookmarkConfig object.
 
 API METHODS
   new()

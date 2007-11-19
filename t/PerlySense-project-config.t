@@ -27,7 +27,7 @@ diag("No project -- default config");
 is_deeply(
     $oPerlySense->rhConfig->{project},
     {
-        moniker => "A PerlySense Project",
+        moniker => "The Project Without a Name",
         inc_dir => [ ],
     },
     "The default config looks right",

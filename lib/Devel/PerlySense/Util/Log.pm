@@ -55,7 +55,7 @@ sub debug {
         
     } or return 0;
     
-    open(my $fh, ">>", $fileDebug) or return warn("Could not open ($fileDebug) for append\n");
+    open(my $fh, ">>", $fileDebug) or return 0;
     $fh->print(localtime() . ": $message\n");
     
     return(1);

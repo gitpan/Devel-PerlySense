@@ -72,45 +72,24 @@ field "textConfigDefault" => q{#PerlySense Project Config
 project:
 
   #The human readable name of the Project
-  moniker: 'A PerlySense Project'
+  moniker: 'The Project Without a Name'
 
   #Extra @INC directories, relative to the project root
   #These come before the default inc directories "." and "lib"
   inc_dir: []
 
 
-bookmarks:
+#Bookmarks are regexes that may match against a single line.
+#
+#The "rex" is either a qr regex declaration, or an array ref of
+#regexes (any of them could match to make a bookmark for the line).
+#
+#The line, or $1 if captured, is displayed.
+bookmark:
   -
     moniker: Todo
-    rex: ### \s* TODO \s* : \s* (.+?) \s*
-    rex_match_text: "$1"
-
-
-#These are evaluated in order to find a way to run a file. First
-#match is used.
-run_file:
-  -
-    command: "prove -v ${INC} \"${SOURCE_FILE}\""
-    moniker: Test
-    rex: \.t$
-    run_from: source_root_directory
-  -
-    command: "perl -c ${INC} \"${SOURCE_FILE}\" 2>&1| perl -ne \"/Subroutine \\w+ redefined at/ or print\""
-    moniker: Module
-    rex: \.pm$
-    run_from: source_root_directory
-  -
-    command: "perl ${INC} \"${SOURCE_FILE}\""
-    moniker: Script
-    rex: \.pl$
-    run_from: file_directory
-
-  #This is a catch-all for all other types of files
-  -
-    command: "perl ${INC} \"${SOURCE_FILE}\""
-    moniker: 'Script (no .pl)'
-    rex: .
-    run_from: file_directory
+    rex:
+      - qr/\# \s* TODO \s* : \s* (.+?) \s*/x
 
 
 external:
@@ -149,6 +128,34 @@ external:
         #directory. A default config file with fairly lenient rules is
         #provided.
         critic: 0
+
+
+
+#These are evaluated in order to find a way to run a file. First
+#match is used.
+run_file:
+  -
+    command: "prove -v ${INC} \"${SOURCE_FILE}\""
+    moniker: Test
+    rex: \.t$
+    run_from: source_root_directory
+  -
+    command: "perl -c ${INC} \"${SOURCE_FILE}\" 2>&1| perl -ne \"/Subroutine \\w+ redefined at/ or print\""
+    moniker: Module
+    rex: \.pm$
+    run_from: source_root_directory
+  -
+    command: "perl ${INC} \"${SOURCE_FILE}\""
+    moniker: Script
+    rex: \.pl$
+    run_from: file_directory
+
+  #This is a catch-all for all other types of files
+  -
+    command: "perl ${INC} \"${SOURCE_FILE}\""
+    moniker: 'Script (no .pl)'
+    rex: .
+    run_from: file_directory
 
 
 #EOF

@@ -73,7 +73,7 @@ sub new { my $pkg = shift;
     $self->color("red");
     $self->probabilityTurnRandomly(0);
     $self->probabilityTurnTowardsPrize(0);
-
+    ##TODO: Fix something here
     return($self);
 }
 
@@ -90,10 +90,10 @@ turn was made.
 
 =cut
 sub possiblyTurnRandomly { my $self = shift;
-
+$DB::single = 1;
     if((rand() + .0001) < $self->probabilityTurnRandomly) {        #0.0001 to come above 0, so we can have a 0% chanse of turning
         $self->oDirection->turn( my $direction = $self->randomDirection() );
-
+        #XXX fix before checkin
         #If this turn puts us into a wall the next move, it's not worth it, turn back
         if(! $self->oValidLocationAfterMove()) {
             $direction = $self->oppositeDirection($direction);
@@ -124,14 +124,14 @@ sub possiblyTurnTowardsPrize { my $self = shift;
     #The rand is the least expensive here, do that first
     if((rand() + .0001) < $self->probabilityTurnTowardsPrize) {        #0.0001 to come above 0, so we can have a 0% chanse of turning
     
-        #Find a Prize
+        ##TODO: Find a Prize
         $self->oLawn or return("");        
         my $oDirection = $self->oLawn->oDirectionToPrize( $self->oLocation ) or return("");
         
         #Find a turn
         my $direction = $self->oDirection->turnDifference($oDirection) or return("");
         
-        #Turn
+        #TODO: Turn
         $self->oDirection->turn($direction);
 
         #If this turn puts us into a wall the next move, it's not worth it, turn back

@@ -8,14 +8,12 @@ use Test::Differences;
 use Data::Dumper;
 
 
-use lib "../lib";
+use lib "lib";
 
 use_ok("Devel::PerlySense");
 use_ok("Devel::PerlySense::Class");
 use_ok("Devel::PerlySense::Editor::Emacs");
 
-
-BEGIN { -d "t" and chdir("t"); }
 
 
 throws_ok(
@@ -52,7 +50,7 @@ my $sNone = "       ";
 
 
 {
-    my $dirData = "data/project-lib";
+    my $dirData = "t/data/project-lib";
     my $fileOrigin = "$dirData/Game/Object/Worm/ShaiHulud.pm";
 
     ok(
@@ -65,7 +63,19 @@ my $sNone = "       ";
         "newFromFileAt at proper package location ok",
     );
 
+    $oPerlySense->setFindProject(file => $fileOrigin);
+    local $oPerlySense->rhConfig->{bookmark} = [
+        {
+            moniker => "Todo",
+            rex => 'qr/\# \s* TODO: \s* ( .+ )/x',
+        },
+        {
+            moniker => "Note",
+            rex => 'qr/\# \s* XXX \s* .+/x',
+        },
+    ];
 
+    
     ok(
         my $textShai = $oEditor->classOverview(oClass => $oClassOjectWormShai),
         " render classOverview ok",
@@ -84,9 +94,17 @@ my $sNone = "       ";
 [ Game::Object::Wall  ] [<Game::Object::Worm::ShaiHulud>]$sNone
 [ Game::Object::Worm  ] [ Game::Object::Worm::Shaitan   ]$sNone
 
+* Bookmarks *
+- Todo
+ShaiHulud.pm:76: Fix something here
+ShaiHulud.pm:127: Find a Prize
+ShaiHulud.pm:134: Turn
+- Note
+ShaiHulud.pm:96:         #XXX fix before checkin
+
 * Structure *
-==;"";;;;===;==S{;;;;";;;;}=S{;{;'{;;";};}";}=S{;{";";";;'{
-;;";};}";};
+==;"";;;;===;==S{;;;;";;;;}=S{;;{;'{;;";};}";}=S{;{";";";;'
+{;;";};}";};
 /;
 
     eq_or_diff
@@ -98,9 +116,9 @@ my $sNone = "       ";
 
 
 {
-    my $dirData = "data/project-lib";
+    my $dirData = "t/data/project-lib";
     my $fileOrigin = "$dirData/Game/Object.pm";
-
+    
     ok(
         my $oClassOject = Devel::PerlySense::Class->newFromFileAt(
             oPerlySense => $oPerlySense,
@@ -135,12 +153,14 @@ my $sNone = "       ";
        [<Game::Object     >] $textGameObjectSpace
        [ Game::UI          ] $textGameObjectSpace
 
+* Bookmarks *
+
 * Structure *
 ==;;;;;==;=;=;=;=;=;==S{;;;;";;;;;;;}=S{;;{;;}";;};
 /;
 
-    #eq_or_diff
-    is
+    eq_or_diff
+    #is
     ($textShai, $textExpected, "  And got correct output");
 
 }

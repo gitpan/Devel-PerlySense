@@ -11,16 +11,16 @@ Devel::PerlySense::Editor::Emacs - Integration with Emacs
 
 
 
-package Devel::PerlySense::Editor::Emacs;
+use strict;
+use warnings;
 
+package Devel::PerlySense::Editor::Emacs;
 our $VERSION = '0.01';
 
 
 
 
 
-use strict;
-use warnings;
 use Spiffy -Base;
 use Data::Dumper;
 use File::Basename;
@@ -100,16 +100,20 @@ sub classOverview {
             $self->textClassInheritance(oClass => $oClass);
 
     my $textUses =
-            "* Uses *\n" .
-            $self->textClassUses(oClass => $oClass);
+            "* Uses *\n"
+            . $self->textClassUses(oClass => $oClass);
 
     my $textNeighbourhood =
-            "* NeighbourHood *\n" .
-            $self->textClassNeighbourhood(oClass => $oClass);
+            "* NeighbourHood *\n"
+            . $self->textClassNeighbourhood(oClass => $oClass);
+
+    my $textBookmarks =
+            "* Bookmarks *\n"
+            . $self->textClassBookmarks(oClass => $oClass);
 
     my $textStructure =
-            "* Structure *\n" .
-            $self->textClassStructure(oClass => $oClass);
+            "* Structure *\n"
+            . $self->textClassStructure(oClass => $oClass);
 
 
     my $textOverview = join(
@@ -117,6 +121,7 @@ sub classOverview {
         $textInheritance,
         $textUses,
         $textNeighbourhood,
+        $textBookmarks,
         $textStructure,
     );
 
@@ -125,7 +130,8 @@ sub classOverview {
     my $space = "[ ]";
     my $name = $oClass->name;
     $textOverview =~ s| $leftBracket \s+ ( $name \s*? ) $space ] |[<$1>]|xg;
-
+    debug($textOverview);
+    
     return $textOverview;
 }
 
@@ -286,6 +292,47 @@ sub textClassUses {
 
 
 
+=head2 textClassBookmarks(oClass)
+
+Return string representing the Bookmarks of $oClass.
+
+=cut
+sub textClassBookmarks {
+    my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
+
+    my @aBookmarkMatchResult = $oClass->aBookmarkMatchResult();
+
+    my $matches = join(
+        "\n",
+        map(
+            {
+                "- " . $_->oDefinition->moniker . "\n" . join(
+                    "\n",
+                    map(
+                        {
+                            sprintf(
+                                "%s:%s: %s",
+                                basename($_->oLocation->file),
+                                $_->oLocation->row,
+                                $_->text,   ##TODO: text escaped for { }
+                            );
+                        }
+                        @{$_->raMatch},
+                    ),
+                ),
+            }
+            @aBookmarkMatchResult,
+        ),
+    );
+    $matches &&= "$matches\n";
+
+    return $matches;
+}
+
+
+
+
+
 =head2 textClassStructure(oClass)
 
 Return string representing the structure of $oClass.
@@ -295,7 +342,7 @@ This includes a Signature Survey string.
 =cut
 sub textClassStructure {
     my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
-    
+
     my $textSignature = $self->textLineWrapped(
         join(
             "",
@@ -317,9 +364,9 @@ Return $text wrapped hard at the available number of columns.
 =cut
 sub textLineWrapped {
     my ($text) = @_;
-    
+
     my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
-    
+
     my @aLine;
     while (length($text)) {
         push(@aLine, substr($text, 0, $columnsToFitWithin, ""));
@@ -374,8 +421,8 @@ Return compact version of $text.
 sub textCompactGraph {
     my ($text) = Devel::PerlySense::Util::aNamedArg(["text"], @_);
 
-    debug($text);
-#    warn($text);
+#    debug($text);
+
     my @aLine = split(/\n/, $text);
 
     #Remove blank lines

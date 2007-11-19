@@ -1,5 +1,14 @@
 
 
+(require 'compile)
+
+
+
+(defun perly-sense-log (msg)
+  "log msg in a message and return msg"
+;;  (message "LOG(%s)" msg)
+  )
+
 
 (defun perly-sense-current-line ()
   "Return the vertical position of point"
@@ -200,8 +209,8 @@
             (switch-to-buffer "*compilation*")
             (recompile))
           )
+      (message "Can't re-run: No Run File in progress.")
       )
-    (message "Can't re-run: No Run File in progress.")
     )
   )
 
@@ -303,9 +312,11 @@
            (class-name (cdr (assoc "class-name" result-hash)))
            (class-overview (cdr (assoc "class-overview" result-hash)))
            (message-string (cdr (assoc "message" result-hash)))
+           (dir (cdr (assoc "dir" result-hash)))
            )
+;;      (perly-sense-log msg)
       (if class-name
-          (perly-sense-display-class-overview class-name class-overview)
+          (perly-sense-display-class-overview class-name class-overview dir)
         )
       (if message-string
           (message message-string)
@@ -318,7 +329,7 @@
 
 
 (defun perly-sense-parse-sexp (result)
-  (message result)
+;;  (message "%s" result)
   (eval (car (read-from-string result)))
   )
 
@@ -360,9 +371,11 @@
 
 
 
-(defun perly-sense-display-class-overview (class-name overview-text)
+(defun perly-sense-display-class-overview (class-name overview-text dir)
   (let ((buffer-name "*Class Overview*"))
     (with-current-buffer (get-buffer-create buffer-name)
+(message "dir (%s)" dir)      
+      (setq default-directory dir)
       (toggle-read-only t)(toggle-read-only)  ; No better way?
       (erase-buffer)
       (insert overview-text)
@@ -415,6 +428,20 @@
     (while (search-forward-regexp "\\[<\\w+ *>\\]" nil t)
       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face)) ;'(:background "Gray80"))   ;;TODO: Move to config variable
 
+    (goto-char (point-min))
+    (while (search-forward-regexp "^[^:\n]+:[0-9]+:" nil t)
+      (let
+          ((file-beginning (match-beginning 0))
+           (row-end (- (match-end 0) 1)))
+        (search-backward-regexp ":[0-9]+:" nil t)
+        (let
+            ((file-end (match-beginning 0))
+             (row-beginning (+ (match-beginning 0) 1)))
+          (put-text-property file-beginning file-end 'face grep-hit-face)  
+          (put-text-property row-beginning row-end 'face 'compilation-line-number)
+          )))
+
+;;grep-context-face    
 ;;     (goto-char (point-min))
 ;;     (while (search-forward-regexp "\\* \\w+ +\\*" nil t)
 ;;       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face))
@@ -485,7 +512,7 @@ point, or an empty list () if none was found."
 
 
 (defun perly-sense-class-goto-at-point ()
-  "Go to the class/method at point"
+  "Go to the class/method/bookmark at point"
   (interactive)
   (message "Goto at point")
   (let* ((class-name (perly-sense-find-class-name-at-point)))
@@ -494,11 +521,12 @@ point, or an empty list () if none was found."
                (message (format "Going to class (%s)" class-name))
                (perly-sense-find-source-for-module class-name)
                )
-           (message "No Class at point")
+           (if (not (perly-sense-class-goto-bookmark-at-point))
+               (message "No Class or Bookmark at point")
+             )
            )
          )
   )
-
 
 
 (defun perly-sense-class-docs-at-point ()
@@ -517,7 +545,27 @@ point, or an empty list () if none was found."
   )
 
 
-;; Reinstate when there is support to do Class Overview for named class
+(defun perly-sense-class-goto-bookmark-at-point ()
+  "Go to the bookmark at point, if there is any.
+Return t if there was any, else nil"
+  (interactive)
+  (message "Goto bookmark at point")
+  (save-excursion
+    (beginning-of-line)
+    (if (search-forward-regexp "^\\([^:\n]+\\):\\([0-9]+\\):" (point-at-eol) t)
+        (let ((file (match-string 1)) (row (string-to-number (match-string 2))))
+          (message "file (%s) row (%s)" file row)
+          (perly-sense-find-file-location file row 1)
+          t
+          )
+      nil
+      )
+    )
+  )
+
+
+
+
 (defun perly-sense-class-class-overview-at-point ()
   "Display Class Overview for the class/method at point"
   (interactive)
@@ -529,6 +577,26 @@ point, or an empty list () if none was found."
           (perly-sense-class-overview-with-argstring
            (format "--class_name=%s --dir_origin=." class-name)))
       (message "No Class at point")
+      )
+    )
+  )
+
+
+
+(defun perly-sense-class-class-overview-or-goto-at-point ()
+  "Display Class Overview for the class/method at point,
+or go to the Bookmark at point"
+  (interactive)
+  (message "Class Overview at point")
+  (let* ((class-name (perly-sense-find-class-name-at-point)))
+    (if class-name
+        (progn
+          (message (format "Class Overview for class (%s)" class-name))
+          (perly-sense-class-overview-with-argstring
+           (format "--class_name=%s --dir_origin=." class-name)))
+      (if (not (perly-sense-class-goto-bookmark-at-point))
+          (message "No Class or Bookmark at point")
+        )
       )
     )
   )
@@ -577,11 +645,25 @@ point, or an empty list () if none was found."
 
 
 
+(defun perly-sense-class-find-bookmarks ()
+  "Navigate to the * Bookmarks * in the Class Overview"
+  (interactive)
+  (goto-char (point-min))
+  (search-forward "* Bookmarks *" nil t)
+  (beginning-of-line 2)
+  (if (looking-at "-")
+      (beginning-of-line 2)
+    )
+  )
+
+
+
 (defun perly-sense-class-find-structure ()
   "Navigate to the * Structure * in the Class Overview"
   (interactive)
   (goto-char (point-min))
   (search-forward "* Structure *" nil t)
+  (search-forward "-" nil t)
   (beginning-of-line 2)
   )
 
@@ -615,12 +697,13 @@ point, or an empty list () if none was found."
 (define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-inheritance)
 (define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-neighbourhood)
 (define-key perly-sense-class-mode-map "U" 'perly-sense-class-find-used)
+(define-key perly-sense-class-mode-map "B" 'perly-sense-class-find-bookmarks)
 (define-key perly-sense-class-mode-map "S" 'perly-sense-class-find-structure)
 ;;(define-key perly-sense-class-mode-map "M" 'perly-sense-class-find-methods)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
 (define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
-(define-key perly-sense-class-mode-map [return] 'perly-sense-class-class-overview-at-point)
+(define-key perly-sense-class-mode-map [return] 'perly-sense-class-class-overview-or-goto-at-point)
 
 
 

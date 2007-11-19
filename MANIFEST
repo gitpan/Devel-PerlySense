@@ -6,6 +6,10 @@ dist.sh
 editors/emacs/perly-sense-flymake.el
 editors/emacs/perly-sense.el
 lib/Devel/PerlySense.pm
+lib/Devel/PerlySense/Bookmark/Definition.pm
+lib/Devel/PerlySense/Bookmark/Match.pm
+lib/Devel/PerlySense/Bookmark/MatchResult.pm
+lib/Devel/PerlySense/BookmarkConfig.pm
 lib/Devel/PerlySense/Class.pm
 lib/Devel/PerlySense/Config/Project.pm
 lib/Devel/PerlySense/Config/Project/Default.pm
@@ -54,6 +58,8 @@ t/data/project/with-use/source/lib/modules/Game/Lawn.pm
 t/data/simple-lib/lib/Game/Event/Timed.pm
 t/data/simple-lib/lib/Win32/Word/Writer.pm
 t/data/simple-lib/lib/Win32/Word/Writer/Table.pm
+t/PerlySense-Bookmark-match.t
+t/PerlySense-BookmarkConfig.t
 t/PerlySense-cache-methods.t
 t/PerlySense-cache.t
 t/PerlySense-Class-neighbourhood.t

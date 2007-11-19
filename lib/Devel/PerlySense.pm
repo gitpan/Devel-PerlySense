@@ -100,6 +100,7 @@ See the source of the L<bin/perly_sense> script, or the t directory.
 
 Install required modules from CPAN.
 
+
 =head2 Emacs installation
 
 Copy the files in L<editors/emacs> to your Emacs script dir
@@ -116,10 +117,14 @@ Copy the files in L<editors/emacs> to your Emacs script dir
 Adjust according to preference: the key mappings will replace the C-p
 command which obviously will be fantastically annoying for you if you
 don't use the arrow keys to move around. This is just how I use Emacs,
-and I expect this will make you go *&&*%!
+and I fully expect this will make you go, like, dude wtf?!
 
-Please don't. The default key bindings will be changed before the
-first real release. Suggestions welcome.
+Chill. The default key bindings will be changed before the first real
+release, and the bind prefix will be a configuration. Suggestions
+welcome.
+
+(\C-o seems to have a rater low useful-to-keystroke ration and so is a
+strong candidate for stealing).
 
 (actually, these keys are currently bound from within the
 perly-sense.el file, so make sure you comment them out if you're not
@@ -130,8 +135,8 @@ happy with them)
 =head1 THE PERLYSENSE USER DIRECTORY
 
 PerlySense keeps a per-user directory to store cache files, logs,
-etc. The C<.PerlySense> user directory is located under either of
-these environment variables:
+etc. The C<.PerlySense> user directory is located under the first
+available of these environment variables:
 
   $APPDATA
   $ALLUSERSPROFILE
@@ -218,6 +223,10 @@ Example class CatalystX::FeedMe::Controller::Feed
                               [ CatalystX::FeedMe::Controller::Homepage ]
                               [ CatalystX::FeedMe::Controller::Root     ]
 
+  * Bookmarks *
+  - Todo
+  Feed.pm:83: remove duplication
+
   * Structure *
   ;;;';;;;;;;{;";}{;;;;{}"";{}"";";}{;;;';';";;;{;'";;';;;};';}S{;";"";;}S{;'{}{"};;;}S{;;;;";"
   ;;};
@@ -233,6 +242,9 @@ The B<Uses> section shows all used modules in the Class.
 The B<NeighbourHood> section shows three columns (1: parent dir, 2:
 current dir, 3: subdir for the current class) with Classes located
 nearby.
+
+The B<Bookmarks> section shows matches for bookmark definitions you
+have defined in the Project config (see below).
 
 The B<Structure> section shows a Signature Survey of the file, with an
 extreme abbreviation of the source. The intent is to convey an ambient
@@ -253,6 +265,10 @@ I -- Move point to the Inheritance heading in the buffer.
 U -- Move point to the Uses heading in the buffer.
 
 H -- Move point to the NeighbourHood heading (mnemonic: 'Hood).
+
+B -- Move point to the Bookmarks heading.
+
+S -- Move point to the Structure heading.
 
 M -- Move point to the Methods heading.
 
@@ -466,6 +482,37 @@ Cache all modules in the project. (not implemented)
 
 
 
+=head1 BOOKMARKS
+
+Bookmarks are regexes that may match against a single line. Each
+bookmark definition has a name/moniker under which the matches are
+grouped in the Class Overview display.
+
+The primary point of Bookmarks is to highlight unusual things in the
+source. The secondary to make it easy for you go navigate to them.
+
+This can be anything you like, but things that come to mind are:
+
+=over 4
+
+=item * TODO comments
+
+=item * FIXME/XXX/HACK comments
+
+=item * Things you don't want left in the code, like
+
+Breakpoints ($DB::single = 1)
+
+Debugging warn/print statements
+
+=back
+
+
+=head2 Configuration
+
+Bookmarks are defined in the Project Config file (technical details
+are documented there).
+
 
 
 =head1 ON PARSING PERL
@@ -488,7 +535,7 @@ Sometimes it won't work at all.
 Such is the way of dynamic languages.
 
 If it works for you, brilliant, use it to be more productive. If
-not...  there's always Java >:)
+not...  well, there's always Java >:)
 
 
 
@@ -561,7 +608,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.01_25';
+our $VERSION = '0.01_26';
 
 
 
@@ -586,7 +633,7 @@ use Devel::PerlySense::Home;
 use Devel::PerlySense::Class;
 use Devel::PerlySense::Document;
 use Devel::PerlySense::Document::Location;
-
+use Devel::PerlySense::BookmarkConfig;
 
 
 
@@ -657,6 +704,17 @@ sub rhConfig {
 
 
 
+=head2 oBookmarkConfig
+
+Devel::PerlySense::BookmarkConfig object.
+
+=cut
+field "oBookmarkConfig" => undef;
+
+
+
+
+
 =head1 API METHODS
 
 =head2 new()
@@ -666,6 +724,7 @@ Create new PerlySense object.
 =cut
 sub new() {
     my $self = bless {}, shift;
+    $self->oBookmarkConfig(Devel::PerlySense::BookmarkConfig->new( oPerlySense => $self ));
     return($self);
 }
 

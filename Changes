@@ -2,6 +2,16 @@
 
 
 
+= 0.01_26
+
+* Fixed bug #30775: "Flymake not showing Perl::Critic warnings" which
+  was caused by redirecting warnings into the debug log.
+
+* Bookmark support (recreate the project config and check out the
+  "bookmark" entry).
+
+
+
 = 0.01_25
 
 * Fixed: Flymake emits redefined warnings for subs with namespace

@@ -379,6 +379,36 @@ sub aNameModuleUse {
 
 
 
+=head2 aBookmarkMatchResult()
+
+Return array of Bookmark::MatchResult objects that matches the current
+source.
+
+=cut
+sub aBookmarkMatchResult {
+    my $file = $self->raDocument->[0]->file;
+    return $self->oPerlySense->oBookmarkConfig->aMatchResult(file => $file);
+}
+
+
+
+
+
+=head2 dirModule()
+
+Return the base dir for this class, i.e. the dir in which the main .pm
+file is in.
+
+=cut
+sub dirModule {
+    my $file = $self->raDocument->[0]->file;
+    return file($file)->absolute->dir . "";
+}
+
+
+
+
+
 1;
 
 

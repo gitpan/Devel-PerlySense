@@ -421,7 +421,7 @@ sub flymakeFile {
 
         local $Perl::Critic::Violation::FORMAT = "%m near '%r' (%e, %p) at %f line %l.\n";
         for my $violation (@aViolation) {
-            warn "Warning: $violation";
+            print STDERR "Warning: $violation";
         }
     }
 

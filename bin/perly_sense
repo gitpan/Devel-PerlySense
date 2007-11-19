@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 $|++;
-BEGIN { unshift(@INC,  q|F:\Dokument\Projekt\Dev\CPAN\Devel-PerlySense\trunk\source\lib|); }
+BEGIN { unshift(@INC,  q|c:/Dokument/Project/Dev/CPAN/Devel-PerlySense/trunk/source/lib|); }
 use strict;
 
 use Getopt::Long;
@@ -58,8 +58,8 @@ sub main {
                 join(":", $oHome->aDirHomeCandidate) . "\n",
             );
     if($dirHomeCache && $clearCache) {
-        rmtree([$dirHomeCache]); -d $dir and die("Could not clear cache ($dirHomeCache)\n");
-        mkpath([$dirHomeCache]); -d $dir or die("Could not re-create cache dir ($dirHomeCache)\n");
+        rmtree([$dirHomeCache]); -d $dirHomeCache and die("Could not clear cache ($dirHomeCache)\n");
+        mkpath([$dirHomeCache]); -d $dirHomeCache or die("Could not re-create cache dir ($dirHomeCache)\n");
     }
     my $oCache = Cache::FileCache->new({cache_root => $dirHomeCache})
             or warn("Could not create cache in ($dirHomeCache)\n");
@@ -161,13 +161,16 @@ sub main {
             }
 
             if($oClass) {
-                print $oEditor->formatOutputDataStructure(
+                my $overview = $oEditor->formatOutputDataStructure(
                     rhData => {
                         class_name => $oClass->name,
                         class_overview => $oEditor->classOverview(oClass => $oClass),
                         message => "Class Overview for (" . $oClass->name . ")",
+                        dir => $oClass->dirModule,
                     },
                 );
+                debug($overview);
+                print $overview;
             } else {
                 print $oEditor->formatOutputDataStructure(
                     rhData => {
@@ -257,6 +260,14 @@ sub main {
             debug(sprintf("%0.6f : $file", $hFileTime{$file}));
         }
 
+    } elsif($command eq "info") {
+        $dir ||= ".";
+        $oPs->setFindProject(dir => $dir);
+        
+        print "HOME: (" . $oPs->oHome->dirHome . ")\n";
+        print "PROJECT (" . $oPs->oProject->dirProject . ")\n";
+        print "PROJECT CONFIG: " . Dumper($oPs->rhConfig);
+
     } else {
         syntax("Invalid command ($command)");
     }
@@ -343,3 +354,5 @@ perly_sense process_inc
 If you want to use this from within an editor/IDE you need to be able to shell
 out to call this program and to do something useful with the result using the
 editor's macro/programming facilities.
+
+=cut
