@@ -139,9 +139,9 @@ sub aMatch {
     my ($file, $source) = Devel::PerlySense::Util::aNamedArg(["file", "source"], @_);
 
     my @aMatch;
-    my $indexLine = 0;
-    for my $line (split(/\n/, $source)) {
-        $indexLine++;
+    my $row = 0;
+    for my $line (split(/\r?\n/, $source)) {
+        $row++;
 
         for my $rexText (@{$self->raRexText}) {
             my $qr = $self->rhQrRex->{$rexText};
@@ -156,7 +156,7 @@ sub aMatch {
                         file => $file,
                         line => $line,
                         text => $text,
-                        row => $indexLine,
+                        row => $row,
                     ),
                 );
                 last;

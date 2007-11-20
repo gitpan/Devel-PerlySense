@@ -2,6 +2,12 @@
 
 
 
+= 0.01_27
+
+* Fixed annoying failing Win/Unix newline test. Nothing else.
+
+
+
 = 0.01_26
 
 * Fixed bug #30775: "Flymake not showing Perl::Critic warnings" which
