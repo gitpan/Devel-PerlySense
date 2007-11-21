@@ -2,6 +2,13 @@
 
 
 
+= 0.01_28
+
+* Fixed another most likely insignificant failing test, added debug
+  output for another one. Bring on the CPAN testers! (kudos guys!)
+
+
+
 = 0.01_27
 
 * Fixed annoying failing Win/Unix newline test. Nothing else.

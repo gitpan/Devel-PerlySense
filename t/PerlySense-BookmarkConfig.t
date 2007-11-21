@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 14;
+use Test::More tests => 16;
 use Test::Exception;
 
 use Data::Dumper;
@@ -59,7 +59,7 @@ $oPerlySense->rhConfig->{bookmark} = [
         rex => 'qr/\# \s* TODO: \s* ( .+ )/x',
     },
     {
-        moniker => "Debugging",
+        moniker => "Debuggingu",
         rex => [
             'qr/DB::single/',
             'qr/debug\(/x',
@@ -77,7 +77,7 @@ is(scalar @{$oBookmarkConfig->raDefinition}, 2, "  found 2 definitions");
 
 ok(my $todo_definition = $oBookmarkConfig->raDefinition->[0], "Got Todo");
 isa_ok($todo_definition, "Devel::PerlySense::Bookmark::Definition");
-
+is($todo_definition->moniker, "Todo", "Correct moniker");
 
 
 
@@ -99,11 +99,17 @@ throws_ok(
 
 
 @aMatchResult = $oBookmarkConfig->aMatchResult(file => $fileOrigin);
-is(scalar @aMatchResult, 2, "Found correct number of matching definitions");
 
-my $oMatchResult = $aMatchResult[0];
-my @aMatch = @{$oMatchResult->raMatch};
-is(scalar @aMatch, 3, "  Found the correct number of matches");
+is_deeply(
+    [ map { $_->oDefinition->moniker } @aMatchResult ],
+    [ "Todo", "Debugging" ],
+    "Got correct moniker for both match results",
+) or diag Dumper(\@aMatchResult);
+
+my $oMatchResultTodo = $aMatchResult[0];
+is($oMatchResultTodo->oDefinition->moniker, "Todo", "  Correct moniker");
+my @aMatch = @{$oMatchResultTodo->raMatch};
+is(scalar @aMatch, 3, "  Found the correct number of matches") or diag Dumper(\@aMatchResult);
 
 
 

@@ -104,9 +104,9 @@ Die on errors, like if $file doesn't exist.
 sub aMatchResult {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
 
-    $self->oPerlySense->setFindProject(file => $file) or debug("Could not identify any PerlySense Project for Bookmark matching, but that's not fatal\n");
-    
     defined( my $source = slurp($file) ) or die("Could not read source file ($file)\n");
+
+    $self->oPerlySense->setFindProject(file => $file) or debug("Could not identify any PerlySense Project for Bookmark matching, but that's not fatal\n");
 
     my @aMatchResult = map {
         Devel::PerlySense::Bookmark::MatchResult->newFromMatch(

@@ -89,7 +89,7 @@ bookmark:
   -
     moniker: Todo
     rex:
-      - qr/\# \s* TODO \s* : \s* (.+?) \s*/x
+      - qr/\# \s* TODO \s* : \s* (.+?) \s*$/x
 
 
 external:
