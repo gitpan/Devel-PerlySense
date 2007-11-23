@@ -53,13 +53,19 @@ throws_ok(
 
 
 diag("Proper bookmark config");
+
+my $dirData = "t/data/project-lib";
+my $fileOrigin = "$dirData/Game/Object/Worm/ShaiHulud.pm";
+$oPerlySense->setFindProject(dir => $fileOrigin);
+
+        
 $oPerlySense->rhConfig->{bookmark} = [
     {
         moniker => "Todo",
         rex => 'qr/\# \s* TODO: \s* ( .+ )/x',
     },
     {
-        moniker => "Debuggingu",
+        moniker => "Debugging",
         rex => [
             'qr/DB::single/',
             'qr/debug\(/x',
@@ -81,10 +87,6 @@ is($todo_definition->moniker, "Todo", "Correct moniker");
 
 
 
-
-
-my $dirData = "t/data/project-lib";
-my $fileOrigin = "$dirData/Game/Object/Worm/ShaiHulud.pm";
 
 my @aMatchResult;
 

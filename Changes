@@ -2,6 +2,14 @@
 
 
 
+= 0.01_29
+
+* Fixed failing test.
+
+* Fixed broken initial project config (bad bookmark regexp)
+
+
+
 = 0.01_28
 
 * Fixed another most likely insignificant failing test, added debug
