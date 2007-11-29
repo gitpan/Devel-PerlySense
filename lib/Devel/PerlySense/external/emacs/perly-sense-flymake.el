@@ -1,11 +1,6 @@
 
 ;;;; Flymake support for PerlySense
 
-;; Flymake is included in Emacs 22 (or available from
-;; http://flymake.sourceforge.net/, put flymake.el somewhere in your
-;; load-path.
-
-
 
 (require 'flymake)
 
@@ -31,6 +26,12 @@
 
 
 (add-hook 'cperl-mode-hook 'flymake-mode t)
+
+
+
+(global-set-key (format "%ssn" perly-sense-key-prefix) 'flymake-goto-next-error)
+(global-set-key (format "%ssp" perly-sense-key-prefix) 'flymake-goto-prev-error)
+(global-set-key (format "%sss" perly-sense-key-prefix) 'flymake-display-err-menu-for-current-line)
 
 
 

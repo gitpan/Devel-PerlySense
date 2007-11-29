@@ -2,6 +2,19 @@
 
 
 
+= 0.0130
+
+* Fist non-developer release!
+
+* New .emacs load procedure, read the docs again.
+
+* Automatic identification of elisp files using "perly_sense
+  external_dir".
+
+* Configurable Emacs prefix. Default is C-o.
+
+
+
 = 0.01_29
 
 * Fixed failing test.

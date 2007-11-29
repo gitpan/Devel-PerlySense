@@ -28,6 +28,7 @@ use Graph::Easy;
 use Text::Table;
 use List::Util qw/ max /;
 use POSIX qw/ ceil /;
+use Path::Class;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Class;
@@ -66,7 +67,23 @@ field "widthDisplay" => undef;
 
 
 
-=head1 API METHODS
+=head1 CLASS METHODS
+
+=head2 dirExtenal()
+
+Return the absolute directory of the external editor files.
+
+=cut
+sub dirExtenal {
+    return dir(
+        file(__FILE__)->dir->parent->absolute,
+        "external",
+    ) . "";
+}
+
+
+
+
 
 =head2 new(oPerlySense, widthDisplay = undef)
 
@@ -86,6 +103,8 @@ sub new {
 
 
 
+
+=head1 METHODS
 
 =head2 classOverview(oClass)
 

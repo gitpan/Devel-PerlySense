@@ -98,19 +98,12 @@ external:
     #Emacs specific configuration
     emacs:
 
-      #To enable flymake in Emacs, add this to your .emacs file, after
-      #loading cperl-mode and perly-sense.
+      #To enable flymake in Emacs, configure this in your .emacs file
+      #(setq perly-sense-load-flymake t)
       #
-      # ;; Flymake
-      # (load "perly-sense-flymake")
+      #For more details, settings and colors, see:
+      #http://search.cpan.org/dist/Devel-PerlySense/lib/Devel/PerlySense.pm#Emacs_installation
       #
-      # ;; If you only want syntax check whenever you save, not continously
-      # (setq flymake-no-changes-timeout 9999)
-      # (setq flymake-start-syntax-check-on-newline nil)
-      #
-      # ;; Emacs named colors: M-x list-colors-display
-      # (set-face-background 'flymake-errline "antique white")
-      # (set-face-background 'flymake-warnline "lavender")
       flymake:
 
         #During a flymake compilation, perly_sense can run:

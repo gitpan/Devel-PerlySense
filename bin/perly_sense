@@ -74,7 +74,9 @@ sub main {
 
 
 
-    if($command eq "find_module_source_file") {
+    if($command eq "external_dir") {
+        print Devel::PerlySense::Editor::Emacs->dirExtenal;
+    } elsif($command eq "find_module_source_file") {
         $fileOrigin and $dirOrigin = dirname($fileOrigin);
         $dirOrigin ||= ".";
         $module or syntax("Missing option --module");

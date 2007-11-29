@@ -15,24 +15,24 @@ DESCRIPTION
 
 SYNOPSIS
   From Emacs
-    C-p C-c -- Class Overview -- Show information about the Class at point
+    C-o C-c -- Class Overview -- Show information about the Class at point
     or the current Class.
 
-    C-p C-d -- Smart docs -- Show docs (POD/signature/etc) for the symbol
+    C-o C-d -- Smart Docs -- Show docs (POD/signature/etc) for the symbol
     (module/method/sub) at point. A doc hint is displayed in the message
     area (for methods and subs), or a new POD buffer is created (for
     modules).
 
-    C-p C-g -- Smart go to -- Open file at proper location for module,
+    C-o C-g -- Smart Go to -- Open file at proper location for module,
     method/sub declaration for the symbol (module/method/sub) at point. If
     no sub declaration is available (like for generated getters/setters),
     any appropriate POD is used instead.
 
-    C-p C-r -- Run file -- Run the current file using the Compilation mode
+    C-o C-r -- Run file -- Run the current file using the Compilation mode
     and the settings appropriate for the source type (Test, Module, etc.).
     Highlight errors and jump to source with C-c C-c.
 
-    C-p m f -- Perl Module open File -- Open the source file of the module
+    C-o m f -- Perl Module open File -- Open the source file of the module
     at point.
 
     Flymake may be used to highlight syntax errors and warnings in the
@@ -73,59 +73,92 @@ SYNOPSIS
     See the source of the "perly_sense" in bin script, or the t directory.
 
 INSTALLATION
+  perly_sense installation
     Install required modules from CPAN.
 
   Emacs installation
-    Copy the files in "emacs" in editors to your Emacs script dir (which
-    should be in the load-path), and add this to the end of your .emacs
-    config file:
+    Make sure the Devel::PerlySense CPAN module is installed, it contains
+    the required elisp files which will be loaded automatically with the
+    following in your .emacs config file:
 
-      ; PerlySense
-      (load "perly-sense")
-      (load "perly-sense-flymake")  ;; If you want this feature enabled
-      (global-unset-key "\C-p")
-      (global-set-key (kbd "\C-p \C-d") 'perly-sense-smart-docs-at-point)
-      (global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
+        ;; *** PerlySense Config ***
 
-    Adjust according to preference: the key mappings will replace the C-p
-    command which obviously will be fantastically annoying for you if you
-    don't use the arrow keys to move around. This is just how I use Emacs,
-    and I fully expect this will make you go, like, dude wtf?!
+        ;; ** PerlySense **
+        ;; The PerlySense prefix key (unset only if needed)
+        (global-unset-key "\C-o")
+        (setq perly-sense-key-prefix "\C-o")
 
-    Chill. The default key bindings will be changed before the first real
-    release, and the bind prefix will be a configuration. Suggestions
-    welcome.
+        ;; ** Flymake **
+        ;; Load flymake if t
+        ;; Flymake must be installed.
+        ;; It is included in Emacs 22, or available from
+        ;;   http://flymake.sourceforge.net/
+        ;; Put flymake.el somewhere in your load-path.
+        (setq perly-sense-load-flymake t)
+        ;; Note: more flymake config below, after loading PerlySense
 
-    (\C-o seems to have a rater low useful-to-keystroke ration and so is a
-    strong candidate for stealing).
+        ;; *** PerlySense load (don't touch) ***
+        (setq perly-sense-external-dir (shell-command-to-string "perly_sense external_dir"))
+        (if (string-match "Devel.PerlySense.external" perly-sense-external-dir)
+            (progn
+              (message
+               "PerlySense elisp files  at (%s) according to perly_sense, loading..."
+               perly-sense-external-dir)
+              (setq load-path (cons
+                               (expand-file-name
+                                (format "%s/%s" perly-sense-external-dir "emacs")
+                                ) load-path))
+              (load "perly-sense")
+              (if perly-sense-load-flymake (load "perly-sense-flymake"))
+              )
+          (message "Could not identify PerlySense install dir.
+        Is Devel::PerlySense installed properly?
+        Does 'perly_sense external_dir' give you a proper directory? (%s)" perly-sense-external-dir)
+          )
 
-    (actually, these keys are currently bound from within the perly-sense.el
-    file, so make sure you comment them out if you're not happy with them)
+        ;; ** Flymake Config **
 
-THE PERLYSENSE USER DIRECTORY
-    PerlySense keeps a per-user directory to store cache files, logs, etc.
-    The ".PerlySense" user directory is located under the first available of
-    these environment variables:
+        ;; If you only want syntax check whenever you save, not continously
+        (setq flymake-no-changes-timeout 9999)
+        (setq flymake-start-syntax-check-on-newline nil)
 
-      $APPDATA
-      $ALLUSERSPROFILE
-      $USERPROFILE
-      $HOME
-      $TEMP
-      $TMP
+        ;; Emacs named colors: http://www.geocities.com/kensanata/colors.html
+        ;; These colors work fine with a white X11 background. They may not look
+        ;; that great on a console with the default color scheme.
+        (set-face-background 'flymake-errline "antique white")
+        (set-face-background 'flymake-warnline "lavender")
+
+        ;; *** PerlySense End ***
+
+    The load path is handled automatically by asking "perly_sense
+    external_dir" where the elisp source was installed (that way,
+    Devel::PerlySense and the elisp is always in sync).
+
+  Emacs Configuration
+    The most important config you can change is the prefix key.
+
+    The default, \C-o, seemed to have a rater low useful-to-keystroke ratio
+    and so was a strong candidate for stealing for this much more important
+    purpose :)
+
+    If you want to use flymake to do background syntax and Perl::Critic
+    checks, set perly-sense-load-flymake to t (this is a very nifty thing,
+    so yes you want to do this) and configure the colors to your liking.
+
+    Note: This also needs to be enabled on a per-project basis.
 
 GETTING STARTED WITH EMACS
   Smart docs
-    C-p C-d is the "Smart docs" command. It brings up documentation for
+    C-o C-d is the "Smart docs" command. It brings up documentation for
     what's at point.
 
     Put the cursor on the "method" word of a $self->method call and press
-    C-p C-d and wait until a documentation hint for the method call is
+    C-o C-d and wait until a documentation hint for the method call is
     displayed briefly in the message buffer. PerlySense will look in base
     classes if the method can't be found in the current class.
 
     Put the cursor on the "method" word of an $object->method call and press
-    C-p C-d to see the docs hint. PerlySense will look through all your
+    C-o C-d to see the docs hint. PerlySense will look through all your
     "use" modules (and their base classes) for the method call and try to
     identify the best match.
 
@@ -133,15 +166,15 @@ GETTING STARTED WITH EMACS
     two, and the very first time you run the command with lots of "use"
     modules it's bound to take longer than that.
 
-    Put the cursor on a module name and press C-p C-d to bring up a new
+    Put the cursor on a module name and press C-o C-d to bring up a new
     buffer with the POD for that module (this is similar to the cperl-mode
     feature, only a) not as good, but b) it works on Windows).
 
-    Press C-p C-d with nothing under the cursor brings up a POD buffer for
+    Press C-o C-d with nothing under the cursor brings up a POD buffer for
     the current file.
 
   Smart go to
-    C-p C-g is the "Smart go to" command. It's similar to Smart Docs, but
+    C-o C-g is the "Smart go to" command. It's similar to Smart Docs, but
     instead of bringing the docs to you, it brings you to the definition of
     what's at point.
 
@@ -153,10 +186,10 @@ GETTING STARTED WITH EMACS
     globally with C-x C-SPC, or locally with C-u C-SPC.
 
   Go to Class
-    C-p m f -- Go to Class (will be changed to C-p g c) at point.
+    C-o m f -- Go to Class (will be changed to C-o g c) at point.
 
   Class Overview
-    Pressing C-p C-c will bring up the Class Overview of the Class name at
+    Pressing C-o C-c will bring up the Class Overview of the Class name at
     point (not yet implemented), or otherwise the current Class (the active
     Package).
 
@@ -191,8 +224,8 @@ GETTING STARTED WITH EMACS
 
     The Inheritance section shows all Base classes of the Class. Inheriting
     from something like Catalyst is hopefully the hairiest you'll see.
-    Classes inherit upwards in the diagram unless there is an arrow pointing
-    elsewhere.
+    Classes inherit from their parents upwards in the diagram unless there
+    is an arrow pointing elsewhere.
 
     The Uses section shows all used modules in the Class.
 
@@ -204,8 +237,8 @@ GETTING STARTED WITH EMACS
 
     The Structure section shows a Signature Survey of the file, with an
     extreme abbreviation of the source. The intent is to convey an ambient
-    feel for what the source contains. It's not clear this is a useful
-    thing.
+    feel for what the source contains. It's not clear this is a useful thing
+    (it will probably be ditched).
 
     When in the Class Overview buffer:
 
@@ -232,7 +265,7 @@ GETTING STARTED WITH EMACS
     q -- Quit the Class Overview buffer.
 
   Run File
-    C-p C-r -- Run the file of the current buffer using the Compilation
+    C-o C-r -- Run the file of the current buffer using the Compilation
     mode.
 
     Files are run according to the source type, which is determined by the
@@ -240,9 +273,18 @@ GETTING STARTED WITH EMACS
     "prove -v", for .pm files "perl -c", etc. This can be configured per
     Project (see below).
 
-    The file is run from the Project root directory, and the @INC is set
-    appropriately. You can also specify additional @INC directories in the
-    Project config.
+    The file is run from the Project root directory or from the file
+    directory depending on the file type, and the @INC is set appropriately.
+    You can also specify additional @INC directories in the Project config.
+
+    (Note that you can configure whatever type of run profile you like, not
+    just Perl source files.
+
+    As a taste of what's possible, imagine that you have a test framework
+    with .yml acceptance test data files and a corresponding yml-runner.pl
+    script. With the x option (not implemented) you can edit the .yml file
+    and type C-o C-r to run the acceptance test the same way as a regular
+    test.)
 
     If any warnings, errors or test failures are encountered, they are
     highlighted in the *compilation* buffer. Use C-c C-c to move from one
@@ -252,18 +294,18 @@ GETTING STARTED WITH EMACS
     buffer with "M-x rename-buffer".
 
   Re-run File
-    Invoke C-p C-r from within the *compilaton* buffer to re-run (M-x
+    Invoke C-o C-r from within the *compilaton* buffer to re-run (M-x
     recompile) the file. Useful when you have skipped around the source
     fixing errors and the .t file isn't visible.
 
-    C-p r r -- If not even the *compilation* buffer is visible, issue Re-Run
+    C-o r r -- If not even the *compilation* buffer is visible, issue Re-Run
     File from anywhere to bring it up and re-run.
 
   Go to Error line
     If you run tests in a regular shell (inside Emacs or in a terminal
     window), this may be handy.
 
-    C-p g e -- If point is located on an error line from a syntax error, or
+    C-o g e -- If point is located on an error line from a syntax error, or
     a stack trace from the debugger or similar, go to that file+line.
 
     If no file name can be found, prompt for a piece of text that contains
@@ -291,21 +333,25 @@ GETTING STARTED WITH EMACS
     Perl Critic violations use the warning face.
 
   Enabling Flymake
-    Create a PerlySense Project directory (see below) and look in the
-    project.yml file for instructions on how to enable Flymake in Emacs, but
-    basically, you need to load the perly-sense-flymake packacke.
+    First off, flymake itself needs to be enabled. Refer to the Emacs
+    Installation description.
 
     This will enable Flymake for all cperl-mode buffers, causing Emacs to
     call perly_sense for each check.
 
     PerlySense won't do anything at this point though. You still need to
-    configure what should happen during a flymake. Set "syntax" / "critic"
-    to 1 to enable them.
+    configure what should happen during a flymake.
+
+    Create a PerlySense Project directory (see below) and look in the
+    project.yml file for instructions on how to configure Flymake
+    activities.
+
+    Set "syntax" / "critic" to 1 to enable them.
 
     The primary reason "syntax" is turned off by default is that it's a
-    potential security hole; running "perl -c" on a file will only check the
-    syntax, but BEGIN blocks are still executed. Doing that on random code
-    may be considered... bad.
+    potential security hole; running "perl -c" on a file will not only check
+    the syntax; BEGIN and CHECK blocks are also executed. Doing that on
+    random code may be considered... baaad.
 
     This way you can have Flymake enabled globally and still not run "perl
     -c" on everything that happens to be in a buffer.
@@ -321,16 +367,28 @@ GETTING STARTED WITH EMACS
     Look in the mode line for hints on whether there are any errors or
     warnings.
 
-    C-p s n -- Go to the next Source error/warning.
+    C-o s n -- Go to the next Source error/warning.
 
     Display the error in the minibuffer. If the warning is from a
     Perl::Critic module, copy the module name into the kill-ring, so you
     easily can yank it into the .perlcritic config file to disable it. (not
     implemented)
 
-    C-p s p -- Go to the previous Source error/warning.
+    C-o s p -- Go to the previous Source error/warning.
 
-    C-p s s -- Display the error/warning text of the current line.
+    C-o s s -- Display the error/warning text of the current line.
+
+THE PERLYSENSE USER DIRECTORY
+    PerlySense keeps a per-user directory to store cache files, logs, etc.
+    The ".PerlySense" user directory is located under the first available of
+    these environment variables:
+
+      $APPDATA
+      $ALLUSERSPROFILE
+      $USERPROFILE
+      $HOME
+      $TEMP
+      $TMP
 
 PROJECTS
     PerlySense has the concept of a Project root directory.
@@ -363,7 +421,8 @@ PROJECTS
 
     If that doesn't work, PerlySense is lost and you really do need to
     create an explicit Project directory by running the following command in
-    your intended Project root directory:
+    your intended Project root directory (that would typically be the
+    directory which has a "lib" directory in it):
 
       perly_sense create_project
 
@@ -410,7 +469,7 @@ BOOKMARKS
     Bookmarks are defined in the Project Config file (technical details are
     documented there).
 
-ON PARSING PERL
+IN CLOSING -- ON PARSING PERL
     Since Perl is so dynamic, a perfect static analysis of the source is
     impossible. But not unusably so. Well, hopefully. Most of the time.
 

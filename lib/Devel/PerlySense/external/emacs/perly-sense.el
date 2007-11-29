@@ -1,7 +1,15 @@
 
+;;
+;; INSTALLATION
+;;
+;; See the instructions at:
+;; http://search.cpan.org/dist/Devel-PerlySense/lib/Devel/PerlySense.pm#Emacs_installation
+;;
+
+
+
 
 (require 'compile)
-
 
 
 (defun perly-sense-log (msg)
@@ -374,7 +382,7 @@
 (defun perly-sense-display-class-overview (class-name overview-text dir)
   (let ((buffer-name "*Class Overview*"))
     (with-current-buffer (get-buffer-create buffer-name)
-(message "dir (%s)" dir)      
+(message "dir (%s)" dir)
       (setq default-directory dir)
       (toggle-read-only t)(toggle-read-only)  ; No better way?
       (erase-buffer)
@@ -437,11 +445,11 @@
         (let
             ((file-end (match-beginning 0))
              (row-beginning (+ (match-beginning 0) 1)))
-          (put-text-property file-beginning file-end 'face grep-hit-face)  
+          (put-text-property file-beginning file-end 'face grep-hit-face)
           (put-text-property row-beginning row-end 'face 'compilation-line-number)
           )))
 
-;;grep-context-face    
+;;grep-context-face
 ;;     (goto-char (point-min))
 ;;     (while (search-forward-regexp "\\* \\w+ +\\*" nil t)
 ;;       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face))
@@ -755,34 +763,31 @@ or go to the Bookmark at point"
 ;;   ...)
 
 
+
+;; Key bindings
+;;;; TODO: move some of these to cperl-mode local bindings
+
+(global-set-key (format "%smf" perly-sense-key-prefix) 'perly-sense-find-source-for-module-at-point)
+(global-set-key (format "%smp" perly-sense-key-prefix) 'perly-sense-display-pod-for-module-at-point)
+
+(global-set-key (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-smart-docs-at-point)
+(global-set-key (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-smart-go-to-at-point)
+(global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
+;; (global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-display-api-for-class-at-point)
+
+(global-set-key (format "%s\C-r" perly-sense-key-prefix) 'perly-sense-run-file)
+(global-set-key (format "%srr" perly-sense-key-prefix) 'perly-sense-rerun-file)
+
+(global-set-key (format "%sge" perly-sense-key-prefix) 'perly-sense-compile-goto-error-file-line)
+
+
+
+
+
 (provide 'perly-sense)
 
 
 
 
 
-
-;; Key bindings
-;;;; TODO: move to cperl-mode local bindings
-
-; #(global-unset-key "\C-p")
-
-(global-set-key (kbd "\C-p m f") 'perly-sense-find-source-for-module-at-point)
-(global-set-key (kbd "\C-p m p") 'perly-sense-display-pod-for-module-at-point)
-
-(global-set-key (kbd "\C-p \C-d") 'perly-sense-smart-docs-at-point)
-(global-set-key (kbd "\C-p \C-g") 'perly-sense-smart-go-to-at-point)
-(global-set-key (kbd "\C-p \C-c") 'perly-sense-class-overview-for-class-at-point)
-;; (global-set-key (kbd "\C-p \C-c") 'perly-sense-display-api-for-class-at-point)
-
-(global-set-key (kbd "\C-p \C-r") 'perly-sense-run-file)
-(global-set-key (kbd "\C-p r r") 'perly-sense-rerun-file)
-
-(global-set-key (kbd "\C-p g e") 'perly-sense-compile-goto-error-file-line)
-
-
-
-(global-set-key (kbd "\C-p s n") 'flymake-goto-next-error)
-(global-set-key (kbd "\C-p s p") 'flymake-goto-prev-error)
-(global-set-key (kbd "\C-p s s") 'flymake-display-err-menu-for-current-line)
-
+;; EOF
