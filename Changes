@@ -2,6 +2,13 @@
 
 
 
+= 0.0131
+
+* Fixed broken Build.PL which didn't properly install the .el files
+  into the lib directory. The Makefile.PL worked earlier though...
+
+
+
 = 0.0130
 
 * Fist non-developer release!

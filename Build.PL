@@ -41,5 +41,5 @@ my $builder = Module::Build->new(
     create_readme => 1,
     create_makefile_pl => 'traditional',
 );
-
+$builder->add_build_element('el');
 $builder->create_build_script();
