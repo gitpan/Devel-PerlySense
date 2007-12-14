@@ -746,6 +746,7 @@ sub determineLikelyApi0 {
             @aNodeSub = ();
         }
 
+        ###TODO: push this down into the API class?
         if ($oNode->isa("PPI::Statement::Sub") && ! $oNode->forward) {
             push(@aNodeSub, $oNode);
             $sourcePackage .= $oNode;

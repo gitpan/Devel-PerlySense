@@ -130,9 +130,13 @@ sub classOverview {
             "* Bookmarks *\n"
             . $self->textClassBookmarks(oClass => $oClass);
 
-    my $textStructure =
-            "* Structure *\n"
-            . $self->textClassStructure(oClass => $oClass);
+#     my $textStructure =
+#             "* Structure *\n"
+#             . $self->textClassStructure(oClass => $oClass);
+
+    my $textApi =
+            "* API *\n"
+            . $self->textClassApi(oClass => $oClass);
 
 
     my $textOverview = join(
@@ -141,7 +145,8 @@ sub classOverview {
         $textUses,
         $textNeighbourhood,
         $textBookmarks,
-        $textStructure,
+#        $textStructure,
+        $textApi,
     );
 
     #Highlight the current class
@@ -370,6 +375,36 @@ sub textClassStructure {
     );
 
     return "$textSignature\n";
+}
+
+
+
+
+
+=head2 textClassApi(oClass)
+
+Return string representing the API of $oClass.
+
+=cut
+sub textClassApi {
+    my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
+
+    my $oDocument = $oClass->raDocument->[0]; ### or die
+    $oDocument->determineLikelyApi(nameModule => $oClass->name);
+
+    my $oApi = $oDocument->rhPackageApiLikely->{$oClass->name}; ### or die
+
+    my $stringSub = join(
+        "\n",
+        map {
+            my $oLocation = $oApi->rhSub->{$_};
+            my $fileSub = $oLocation->file;
+            $oDocument->file eq $fileSub ? "->$_" : "\\>$_"
+        }
+        sort keys %{$oApi->rhSub}
+    );
+
+    return "$stringSub\n";
 }
 
 

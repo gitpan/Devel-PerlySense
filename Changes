@@ -2,6 +2,15 @@
 
 
 
+= 0.0132
+
+* "perly_sense info" provides useful information about what the
+  current project directory, user home directory, etc. is.
+
+* Class Overview lists the API, i.e. methods and properties.
+
+
+
 = 0.0131
 
 * Fixed broken Build.PL which didn't properly install the .el files

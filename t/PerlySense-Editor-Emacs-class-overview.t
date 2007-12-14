@@ -75,7 +75,7 @@ my $sNone = "       ";
         },
     ];
 
-    
+
     ok(
         my $textShai = $oEditor->classOverview(oClass => $oClassOjectWormShai),
         " render classOverview ok",
@@ -102,14 +102,69 @@ ShaiHulud.pm:134: Turn
 - Note
 ShaiHulud.pm:96:         #XXX fix before checkin
 
-* Structure *
-==;"";;;;===;==S{;;;;";;;;}=S{;;{;'{;;";};}";}=S{;{";";";;'
-{;;";};}";};
+* API *
+\\>END
+\\>awardScorePoints
+\\>buildBodyRight
+\\>checkTick
+\\>color
+\\>crash
+\\>grow
+\\>height
+\\>isAnythingAt
+\\>isAnythingBlockingAt
+\\>isBlocking
+\\>isLocationOnLawn
+\\>isLocationValidForMove
+\\>isLocationValidForPlacement
+\\>isObjectAt
+\\>isObjectLocationValidForPlacement
+\\>isRealPlayer
+\\>lengthActual
+\\>lengthIdeal
+\\>loadFile
+\\>moveForward
+->new
+\\>oController
+\\>oDirection
+\\>oDirectionToPrize
+\\>oEventMove
+\\>oLawn
+\\>oLocation
+\\>oLocationRandom
+\\>oPlacePrize
+\\>oPlaceWorm
+\\>oUI
+\\>oValidLocationAfterMove
+\\>objectHasMoved
+->oppositeDirection
+\\>placeObjectAt
+\\>placeObjectBodyPartAt
+->possiblyTurnRandomly
+->possiblyTurnTowardsPrize
+\\>prizeWasClaimedBy
+->probabilityTurnRandomly
+->probabilityTurnTowardsPrize
+\\>raBodyChar
+\\>raBodyLocation
+->randomDirection
+\\>removeObject
+\\>removeObjectBodyPartAt
+\\>rhGrid
+\\>rhPrize
+\\>score
+\\>turn
+\\>width
+\\>wormHasCrashed
 /;
-
     eq_or_diff
 #    is
             ($textShai, $textExpected, "  And got correct output");
+
+# * Structure *
+# ==;"";;;;===;==S{;;;;";;;;}=S{;;{;'{;;";};}";}=S{;{";";";;'
+# {;;";};}";};
+
 
 }
 
@@ -118,7 +173,7 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 {
     my $dirData = "t/data/project-lib";
     my $fileOrigin = "$dirData/Game/Object.pm";
-    
+
     ok(
         my $oClassOject = Devel::PerlySense::Class->newFromFileAt(
             oPerlySense => $oPerlySense,
@@ -155,13 +210,24 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 
 * Bookmarks *
 
-* Structure *
-==;;;;;==;=;=;=;=;=;==S{;;;;";;;;;;;}=S{;;{;;}";;};
+* API *
+->buildBodyRight
+->color
+->isBlocking
+->new
+->oLawn
+->oLocation
+->raBodyChar
+->raBodyLocation
 /;
 
     eq_or_diff
     #is
     ($textShai, $textExpected, "  And got correct output");
+
+# * Structure *
+# ==;;;;;==;=;=;=;=;=;==S{;;;;";;;;;;;}=S{;;{;;}";;};
+
 
 }
 

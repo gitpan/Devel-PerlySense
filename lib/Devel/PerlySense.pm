@@ -67,6 +67,7 @@ programmable by the authors, if not by the users.
 
 =head2 From the command line
 
+
   perly_sense create_project [--dir=DIR]
 
 Create a PerlySense project in DIR (default is current dir).
@@ -75,9 +76,11 @@ If there is already a project.yml file, back it up with a datestamp
 first.
 
 
+
   perly_sense process_project
 
 Cache all modules in the project. (not implemented)
+
 
 
   perly_sense process_inc
@@ -87,6 +90,13 @@ Cache all the modules in @INC.
 This is a useful thing to do after installation (and after each
 upgrade), but it will take a wile so put it in the background and let
 it churn away at those modules.
+
+
+
+  perly_sense info
+
+Display useful information about what the current project directory,
+user home directory, etc. is.
 
 
 
@@ -266,10 +276,11 @@ Example class CatalystX::FeedMe::Controller::Feed
   - Todo
   Feed.pm:83: remove duplication
 
-  * Structure *
-  ;;;';;;;;;;{;";}{;;;;{}"";{}"";";}{;;;';';";;;{;'";;';;;};';}S{;";"";;}S{;'{}{"};;;}S{;;;;";"
-  ;;};
-
+  * API *
+  \>mutator_name_for
+  ->new
+  ->path_prefix
+  ...
 
 The B<Inheritance> section shows all Base classes of the
 Class. Inheriting from something like Catalyst is hopefully the
@@ -280,15 +291,18 @@ The B<Uses> section shows all used modules in the Class.
 
 The B<NeighbourHood> section shows three columns (1: parent dir, 2:
 current dir, 3: subdir for the current class) with Classes located
-nearby.
+nearby (this can be bizarrely huge (and take a long time) if you
+browse your site_lib or similar).
 
 The B<Bookmarks> section shows matches for bookmark definitions you
 have defined in the Project config (see below).
 
-The B<Structure> section shows a Signature Survey of the file, with an
-extreme abbreviation of the source. The intent is to convey an ambient
-feel for what the source contains. It's not clear this is a useful
-thing (it will probably be ditched).
+the B<API> section shows things that look like methods and properties
+of the class (sub declarations, $self method calls,
+$self->{hash_ref_keys}):
+
+  ->method_in_this_class
+  \>method_in_base_class  (note the arrow coming from above)
 
 
 When in the Class Overview buffer:
@@ -307,11 +321,9 @@ H -- Move point to the NeighbourHood heading (mnemonic: 'Hood).
 
 B -- Move point to the Bookmarks heading.
 
-S -- Move point to the Structure heading.
+A -- Move point to the API heading.
 
-M -- Move point to the Methods heading.
-
-N -- Move point to the 'new' method in the buffer (if any).
+N -- Move point to the '->new' method in the buffer (if any).
 
 q -- Quit the Class Overview buffer.
 
@@ -677,7 +689,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0131';
+our $VERSION = '0.0132';
 
 
 

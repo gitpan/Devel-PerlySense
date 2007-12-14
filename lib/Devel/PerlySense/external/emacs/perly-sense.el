@@ -9,7 +9,10 @@
 
 
 
+;; for the faces
 (require 'compile)
+(require 'grep)
+
 
 
 (defun perly-sense-log (msg)
@@ -449,6 +452,20 @@
           (put-text-property row-beginning row-end 'face 'compilation-line-number)
           )))
 
+    (goto-char (point-min))
+    (while (search-forward-regexp "->\\w+" nil t)  ;; ->method 
+      (put-text-property (match-beginning 0) (match-end 0) 'face font-lock-function-name-face)) ;   ;;TODO: Move to config variable
+    
+    (goto-char (point-min))
+    (while (search-forward-regexp "\\\\>\\w+" nil t)  ;; \>method
+      (put-text-property (match-beginning 0) (match-end 0) 'face 'font-lock-keyword-face)) ;   ;;TODO: Move to config variable
+
+    (goto-char (point-min))
+    (while (search-forward-regexp ".>new" nil t)  ;; ->new
+      (put-text-property (match-beginning 0) (match-end 0) 'face cperl-array-face))    ;; TODO fix proper bold, so it retains the color
+    
+
+;;font-lock-function-name-face
 ;;grep-context-face
 ;;     (goto-char (point-min))
 ;;     (while (search-forward-regexp "\\* \\w+ +\\*" nil t)
@@ -498,7 +515,7 @@ returns."
 point, or an empty list () if none was found."
   (save-excursion
     (end-of-line)
-    (set-mark (point))
+    (push-mark (point))
     (beginning-of-line)
     (if (search-forward-regexp
          "\\(file +`\\|at +\\)\\([/a-zA-Z0-9._ ]+\\)'? +line +\\([0-9]+\\)[.,]"
@@ -623,6 +640,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-inheritance ()
   "Navigate to the * Inheritance * in the Class Overview"
   (interactive)
+  (push-mark (point))
   (goto-char (point-min))
   (search-forward "* Inheritance *" nil t)
   (search-forward "[<" nil t)
@@ -634,6 +652,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-neighbourhood ()
   "Navigate to the * NeighbourHood * in the Class Overview"
   (interactive)
+  (push-mark (point))
   (goto-char (point-min))
   (search-forward "* NeighbourHood *" nil t)
   (search-forward "[<" nil t)
@@ -645,6 +664,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-used ()
   "Navigate to the * Uses * in the Class Overview"
   (interactive)
+  (push-mark (point))
   (goto-char (point-min))
   (search-forward "* Uses *" nil t)
   (beginning-of-line 2)
@@ -656,6 +676,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-bookmarks ()
   "Navigate to the * Bookmarks * in the Class Overview"
   (interactive)
+  (push-mark (point))
   (goto-char (point-min))
   (search-forward "* Bookmarks *" nil t)
   (beginning-of-line 2)
@@ -669,10 +690,34 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-structure ()
   "Navigate to the * Structure * in the Class Overview"
   (interactive)
+  (push-mark (point))
   (goto-char (point-min))
   (search-forward "* Structure *" nil t)
   (search-forward "-" nil t)
   (beginning-of-line 2)
+  )
+
+
+
+(defun perly-sense-class-find-api ()
+  "Navigate to the * API * in the Class Overview"
+  (interactive)
+  (push-mark (point))
+  (goto-char (point-min))
+  (search-forward "* API *" nil t)
+  (beginning-of-line 2)
+  )
+
+
+
+(defun perly-sense-class-find-api-new ()
+  "Navigate to the new method in the Class Overview"
+  (interactive)
+  (push-mark (point))
+  (goto-char (point-min))
+  (search-forward-regexp ".>new" nil t)
+  (beginning-of-line)
+  (forward-char 2)
   )
 
 
@@ -707,7 +752,8 @@ or go to the Bookmark at point"
 (define-key perly-sense-class-mode-map "U" 'perly-sense-class-find-used)
 (define-key perly-sense-class-mode-map "B" 'perly-sense-class-find-bookmarks)
 (define-key perly-sense-class-mode-map "S" 'perly-sense-class-find-structure)
-;;(define-key perly-sense-class-mode-map "M" 'perly-sense-class-find-methods)
+(define-key perly-sense-class-mode-map "A" 'perly-sense-class-find-api)
+(define-key perly-sense-class-mode-map "N" 'perly-sense-class-find-api-new)
 (define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
 (define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)

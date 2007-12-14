@@ -69,6 +69,11 @@ SYNOPSIS
     upgrade), but it will take a wile so put it in the background and let it
     churn away at those modules.
 
+      perly_sense info
+
+    Display useful information about what the current project directory,
+    user home directory, etc. is.
+
   From Perl
     See the source of the "perly_sense" in bin script, or the t directory.
 
@@ -218,9 +223,11 @@ GETTING STARTED WITH EMACS
       - Todo
       Feed.pm:83: remove duplication
 
-      * Structure *
-      ;;;';;;;;;;{;";}{;;;;{}"";{}"";";}{;;;';';";;;{;'";;';;;};';}S{;";"";;}S{;'{}{"};;;}S{;;;;";"
-      ;;};
+      * API *
+      \>mutator_name_for
+      ->new
+      ->path_prefix
+      ...
 
     The Inheritance section shows all Base classes of the Class. Inheriting
     from something like Catalyst is hopefully the hairiest you'll see.
@@ -230,15 +237,19 @@ GETTING STARTED WITH EMACS
     The Uses section shows all used modules in the Class.
 
     The NeighbourHood section shows three columns (1: parent dir, 2: current
-    dir, 3: subdir for the current class) with Classes located nearby.
+    dir, 3: subdir for the current class) with Classes located nearby (this
+    can be bizarrely huge (and take a long time) if you browse your site_lib
+    or similar).
 
     The Bookmarks section shows matches for bookmark definitions you have
     defined in the Project config (see below).
 
-    The Structure section shows a Signature Survey of the file, with an
-    extreme abbreviation of the source. The intent is to convey an ambient
-    feel for what the source contains. It's not clear this is a useful thing
-    (it will probably be ditched).
+    the API section shows things that look like methods and properties of
+    the class (sub declarations, $self method calls,
+    $self->{hash_ref_keys}):
+
+      ->method_in_this_class
+      \>method_in_base_class  (note the arrow coming from above)
 
     When in the Class Overview buffer:
 
@@ -256,11 +267,9 @@ GETTING STARTED WITH EMACS
 
     B -- Move point to the Bookmarks heading.
 
-    S -- Move point to the Structure heading.
+    A -- Move point to the API heading.
 
-    M -- Move point to the Methods heading.
-
-    N -- Move point to the 'new' method in the buffer (if any).
+    N -- Move point to the '->new' method in the buffer (if any).
 
     q -- Quit the Class Overview buffer.
 

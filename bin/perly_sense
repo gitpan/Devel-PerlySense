@@ -18,6 +18,7 @@ use Devel::PerlySense::Home;
 use Devel::PerlySense::Util::Log;
 use Devel::PerlySense::Editor::Emacs;
 use Time::HiRes qw/time/;
+use YAML::Tiny;
 
 use Data::Dumper;
 
@@ -266,9 +267,10 @@ sub main {
         $dir ||= ".";
         $oPs->setFindProject(dir => $dir);
         
-        print "HOME: (" . $oPs->oHome->dirHome . ")\n";
+#        print "PROJECT CONFIG: " . YAML::Tiny::Dump($oPs->rhConfig);
         print "PROJECT (" . $oPs->oProject->dirProject . ")\n";
-        print "PROJECT CONFIG: " . Dumper($oPs->rhConfig);
+        print "HOME: (" . $oPs->oHome->dirHome . ")\n";
+        print "HOME DEBUG LOG: (" . file($oPs->oHome->dirHome, "log", "debug.log") . ")\n";
 
     } else {
         syntax("Invalid command ($command)");
