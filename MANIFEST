@@ -11,6 +11,7 @@ lib/Devel/PerlySense/BookmarkConfig.pm
 lib/Devel/PerlySense/Class.pm
 lib/Devel/PerlySense/Config/Project.pm
 lib/Devel/PerlySense/Config/Project/Default.pm
+lib/Devel/PerlySense/Cookbook.pod
 lib/Devel/PerlySense/Document.pm
 lib/Devel/PerlySense/Document/Api.pm
 lib/Devel/PerlySense/Document/Location.pm
@@ -97,6 +98,7 @@ t/PerlySense-Editor-Emacs-class-overview.t
 t/PerlySense-Editor-Emacs-external-dir.t
 t/PerlySense-Editor-Emacs-item-in-groups.t
 t/PerlySense-Editor-Emacs-line-wrap.t
+t/PerlySense-Editor-fit-columns.t
 t/PerlySense-find-file-inc.t
 t/PerlySense-find-file-up-down.t
 t/PerlySense-find-module-interface.t

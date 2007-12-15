@@ -142,11 +142,11 @@ sub classOverview {
     my $textOverview = join(
         "\n",
         $textInheritance,
+        $textApi,
+        $textBookmarks,
         $textUses,
         $textNeighbourhood,
-        $textBookmarks,
 #        $textStructure,
-        $textApi,
     );
 
     #Highlight the current class
@@ -155,7 +155,7 @@ sub classOverview {
     my $name = $oClass->name;
     $textOverview =~ s| $leftBracket \s+ ( $name \s*? ) $space ] |[<$1>]|xg;
     debug($textOverview);
-    
+
     return $textOverview;
 }
 
@@ -282,22 +282,49 @@ sub textClassUses {
     my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
 
     my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
+    
+    return(
+        $self->textTable(
+            [ $oClass->aNameModuleUse() ],
+            $columnsToFitWithin,
+            sub {
+                my ($item, $raItem) = @_;
+                my $lenMax = max( map { length } @$raItem );
+                sprintf("[ %-*s ]", $lenMax, $item);
+            },
+        )
+    );
+}
 
-    my @aNameModule = $oClass->aNameModuleUse();
 
 
+
+
+=head2 textTable($raItem, $columnWidthMax, [$rsRenderItem = string-as-is])
+
+Return string with the items in $raItem rendered as a table, with as
+few columns as possible.
+
+If the $rsRenderItem sub ref is passed, it is called for each item to
+be rendered:
+
+  $rsRenderItem->($stringItem, $rsItemColumn)
+
+where $stringItem is each individual item, and $rsItemColumn is the
+items in the current column. The default is to just pass through the
+$stringItem text.
+
+=cut
+sub textTable {
+    my ($raItemAll, $columnsToFitWithin, $rsRenderItem) = @_;
+    $rsRenderItem ||= sub { $_[0] };
+    
     my $text = "";
-    for my $columns (reverse 1 .. @aNameModule) {
+    for my $columns (reverse 1 .. @$raItemAll) {
         my @aColText;
 
-        for my $raItem ( @{$self->raItemInNGroups(\@aNameModule, $columns)} ) {
-            my $lenMax = max( map { length } @$raItem );
-
-            my $text = join(
-                "\n",
-                map { sprintf("[ %-*s ]", $lenMax, $_) } @$raItem,
-            );
-
+        for my $raItem ( @{$self->raItemInNGroups($raItemAll, $columns)} ) {
+            my $text = join("\n", map { $rsRenderItem->($_, $raItem) } @$raItem);
             push(@aColText, $text);
         }
 
@@ -392,19 +419,21 @@ sub textClassApi {
     my $oDocument = $oClass->raDocument->[0]; ### or die
     $oDocument->determineLikelyApi(nameModule => $oClass->name);
 
-    my $oApi = $oDocument->rhPackageApiLikely->{$oClass->name}; ### or die
+    my $oApi = $oDocument->rhPackageApiLikely->{$oClass->name} or do {
+        debug("Could not find API for ("
+                      . $oClass->name . ") in ("
+                      . $oDocument->file . ")");
+        return("");
+    };
 
-    my $stringSub = join(
-        "\n",
-        map {
-            my $oLocation = $oApi->rhSub->{$_};
-            my $fileSub = $oLocation->file;
-            $oDocument->file eq $fileSub ? "->$_" : "\\>$_"
-        }
-        sort keys %{$oApi->rhSub}
-    );
+    my @aColText = map {
+        my $oLocation = $oApi->rhSub->{$_};
+        my $fileSub = $oLocation->file;
+        $oDocument->file eq $fileSub ? "->$_" : "\\>$_"
+    } sort keys %{$oApi->rhSub};
 
-    return "$stringSub\n";
+    my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config    
+    return( $self->textTable(\@aColText, $columnsToFitWithin) );
 }
 
 

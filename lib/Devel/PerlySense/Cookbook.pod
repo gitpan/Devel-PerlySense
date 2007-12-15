@@ -1,0 +1,40 @@
+=head1 NAME
+
+Devel::PerlySense::Cookbook -- simple solutions to common issues
+
+
+=head1 COMMON PROBLEMS
+
+=head2 Weird characters in the *compilation* buffer when runnign tests
+
+You probably use a recent version of Test::Harness or something. It
+has nice colorized output as default.
+
+Change your Project Config for running files to
+
+  prove --nocolor
+
+
+
+=head1 CONVENIENT TRICKS
+
+=head2 Highlight Catalyst/DBIC setup code
+
+Add this
+
+  -
+    moniker: "Package method calls (Cat/DBIC)"
+    rex:
+      - qr/ __PACKAGE__ \s* -> \s* ( [\w]+ .* ) /x
+
+to the Bookmarks section in your Project Config.  It will highlight things like
+
+  __PACKAGE__->table("cust");
+
+These declarations are part of what defines the class, and so are very
+useful to see in the Class Overview.
+
+
+
+
+=cut

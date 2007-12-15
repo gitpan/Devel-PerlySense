@@ -399,6 +399,12 @@ THE PERLYSENSE USER DIRECTORY
       $TEMP
       $TMP
 
+    Run
+
+      perly_sense info
+
+    to see which directory is actually being used.
+
 PROJECTS
     PerlySense has the concept of a Project root directory.
 
@@ -498,6 +504,9 @@ IN CLOSING -- ON PARSING PERL
 
     If it works for you, brilliant, use it to be more productive. If not...
     well, there's always Java >:)
+
+MORE DOCUMENTATION
+    Devel::PerlySense::Cookbook
 
 SEE ALSO
     sepia - similar effort

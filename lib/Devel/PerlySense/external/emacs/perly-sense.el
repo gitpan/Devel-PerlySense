@@ -715,9 +715,8 @@ or go to the Bookmark at point"
   (interactive)
   (push-mark (point))
   (goto-char (point-min))
-  (search-forward-regexp ".>new" nil t)
-  (beginning-of-line)
-  (forward-char 2)
+  (search-forward-regexp ".>new\\b" nil t)
+  (backward-char 3)
   )
 
 

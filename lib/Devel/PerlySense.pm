@@ -475,6 +475,13 @@ available of these environment variables:
   $TMP
 
 
+Run
+
+  perly_sense info
+
+to see which directory is actually being used.
+
+
 
 =head1 PROJECTS
 
@@ -620,6 +627,12 @@ not...  well, there's always Java >:)
 
 
 
+=head1 MORE DOCUMENTATION
+
+L<Devel::PerlySense::Cookbook>
+
+
+
 =head1 SEE ALSO
 
 L<sepia> - similar effort
@@ -689,7 +702,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0132';
+our $VERSION = '0.0133';
 
 
 

@@ -1,6 +1,15 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0133
+
+* Cookbook.pod added
+
+* Class Overview
+  - reorder the things displyed to bring the more useful stuff to the top
+  - display API methods in columns
+
+
 
 = 0.0132
 

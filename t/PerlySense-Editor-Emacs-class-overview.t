@@ -34,7 +34,6 @@ lives_ok(
 
 
 
-
 ok(my $oPerlySense = Devel::PerlySense->new(), "Created PerlySense object ok");
 ok(
     my $oEditor = Devel::PerlySense::Editor::Emacs->new(
@@ -43,6 +42,7 @@ ok(
     ),
     "Created Editor ok",
 );
+$oEditor->widthDisplay(70);
 
 
 my $s = " ";
@@ -86,13 +86,34 @@ my $sNone = "       ";
 [ Game::Object::Worm            ]       |
 [<Game::Object::Worm::ShaiHulud>] --> [ Game::Lawn ]
 
-* Uses *
-[ Carp ] [ Class::MethodMaker ] [ Data::Dumper ]
-
-* NeighbourHood *
-[ Game::Object::Prize ] [ Game::Object::Worm::Bot       ] -none-
-[ Game::Object::Wall  ] [<Game::Object::Worm::ShaiHulud>]$sNone
-[ Game::Object::Worm  ] [ Game::Object::Worm::Shaitan   ]$sNone
+* API *
+\\>END                               \\>oLocation
+\\>awardScorePoints                  \\>oLocationRandom
+\\>buildBodyRight                    \\>oPlacePrize
+\\>checkTick                         \\>oPlaceWorm
+\\>color                             \\>oUI
+\\>crash                             \\>oValidLocationAfterMove
+\\>grow                              \\>objectHasMoved
+\\>height                            ->oppositeDirection
+\\>isAnythingAt                      \\>placeObjectAt
+\\>isAnythingBlockingAt              \\>placeObjectBodyPartAt
+\\>isBlocking                        ->possiblyTurnRandomly
+\\>isLocationOnLawn                  ->possiblyTurnTowardsPrize
+\\>isLocationValidForMove            \\>prizeWasClaimedBy
+\\>isLocationValidForPlacement       ->probabilityTurnRandomly
+\\>isObjectAt                        ->probabilityTurnTowardsPrize
+\\>isObjectLocationValidForPlacement \\>raBodyChar
+\\>isRealPlayer                      \\>raBodyLocation
+\\>lengthActual                      ->randomDirection
+\\>lengthIdeal                       \\>removeObject
+\\>loadFile                          \\>removeObjectBodyPartAt
+\\>moveForward                       \\>rhGrid
+->new                               \\>rhPrize
+\\>oController                       \\>score
+\\>oDirection                        \\>turn
+\\>oDirectionToPrize                 \\>width
+\\>oEventMove                        \\>wormHasCrashed
+\\>oLawn
 
 * Bookmarks *
 - Todo
@@ -102,64 +123,16 @@ ShaiHulud.pm:134: Turn
 - Note
 ShaiHulud.pm:96:         #XXX fix before checkin
 
-* API *
-\\>END
-\\>awardScorePoints
-\\>buildBodyRight
-\\>checkTick
-\\>color
-\\>crash
-\\>grow
-\\>height
-\\>isAnythingAt
-\\>isAnythingBlockingAt
-\\>isBlocking
-\\>isLocationOnLawn
-\\>isLocationValidForMove
-\\>isLocationValidForPlacement
-\\>isObjectAt
-\\>isObjectLocationValidForPlacement
-\\>isRealPlayer
-\\>lengthActual
-\\>lengthIdeal
-\\>loadFile
-\\>moveForward
-->new
-\\>oController
-\\>oDirection
-\\>oDirectionToPrize
-\\>oEventMove
-\\>oLawn
-\\>oLocation
-\\>oLocationRandom
-\\>oPlacePrize
-\\>oPlaceWorm
-\\>oUI
-\\>oValidLocationAfterMove
-\\>objectHasMoved
-->oppositeDirection
-\\>placeObjectAt
-\\>placeObjectBodyPartAt
-->possiblyTurnRandomly
-->possiblyTurnTowardsPrize
-\\>prizeWasClaimedBy
-->probabilityTurnRandomly
-->probabilityTurnTowardsPrize
-\\>raBodyChar
-\\>raBodyLocation
-->randomDirection
-\\>removeObject
-\\>removeObjectBodyPartAt
-\\>rhGrid
-\\>rhPrize
-\\>score
-\\>turn
-\\>width
-\\>wormHasCrashed
-/;
+* Uses *
+[ Carp ] [ Class::MethodMaker ] [ Data::Dumper ]
+
+* NeighbourHood *
+[ Game::Object::Prize ] [ Game::Object::Worm::Bot       ] -none-
+[ Game::Object::Wall  ] [<Game::Object::Worm::ShaiHulud>]
+[ Game::Object::Worm  ] [ Game::Object::Worm::Shaitan   ]/;
     eq_or_diff
 #    is
-            ($textShai, $textExpected, "  And got correct output");
+            (stripWs($textShai), $textExpected, "  And got correct output");
 
 # * Structure *
 # ==;"";;;;===;==S{;;;;";;;;}=S{;;{;'{;;";};}";}=S{;{";";";;'
@@ -195,6 +168,12 @@ ShaiHulud.pm:96:         #XXX fix before checkin
     my $textExpected = qq/* Inheritance *
 [<Game::Object>]
 
+* API *
+->buildBodyRight ->isBlocking ->oLawn     ->raBodyChar
+->color          ->new        ->oLocation ->raBodyLocation
+
+* Bookmarks *
+
 * Uses *
 [ Class::MethodMaker ] [ Game::Event::Timed ]
 [ Data::Dumper       ] [ Game::Location     ]
@@ -203,27 +182,14 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 -none- [ Game::Application ] [ Game::Object::Prize ]
        [ Game::Controller  ] [ Game::Object::Wall  ]
        [ Game::Direction   ] [ Game::Object::Worm  ]
-       [ Game::Lawn        ] $textGameObjectSpace
-       [ Game::Location    ] $textGameObjectSpace
-       [<Game::Object     >] $textGameObjectSpace
-       [ Game::UI          ] $textGameObjectSpace
-
-* Bookmarks *
-
-* API *
-->buildBodyRight
-->color
-->isBlocking
-->new
-->oLawn
-->oLocation
-->raBodyChar
-->raBodyLocation
-/;
+       [ Game::Lawn        ]
+       [ Game::Location    ]
+       [<Game::Object     >]
+       [ Game::UI          ]/;
 
     eq_or_diff
     #is
-    ($textShai, $textExpected, "  And got correct output");
+    (stripWs($textShai), $textExpected, "  And got correct output");
 
 # * Structure *
 # ==;;;;;==;=;=;=;=;=;==S{;;;;";;;;;;;}=S{;;{;;}";;};
@@ -232,6 +198,15 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 }
 
 
+
+sub stripWs {
+    my ($string) = @_;
+
+    return join(
+        "\n",
+        map { $_ =~ s/\s+$//; $_ } split("\n", $string), ## no critic
+    );
+}
 
 
 
