@@ -261,6 +261,34 @@
 
 
 
+;; todo: remove duplication betweenthis defun and the one above
+(defun perly-sense-class-method-docs (class-name method)
+  "Display documentation for the 'method' of 'class-name'."
+  (interactive)
+  (message "Finding docs for method (%s)..." method)
+  (let* (
+         (result (shell-command-to-string
+                  (format "perly_sense method_doc --class_name=%s --method_name=%s --dir_origin=."
+                          class-name method
+                          )
+                  ))
+         (result-text (perly-sense-result-text result))
+         )
+    (if (not (string= result ""))
+        (let* ((properties (perly-sense-result-properties result))
+               (found    (nth 1 properties))
+               (name     (nth 3 properties))
+               (doc-type (nth 5 properties)))
+          (perly-sense-display-doc-message-or-buffer doc-type name result-text)
+          )
+      (message "Nothing found")
+      )
+    )
+  )
+
+
+
+
 
 (defun perly-sense-find-file-location (file row col)
   "Find the file and go to the row col location"
@@ -296,6 +324,37 @@
     )
   )
 
+
+
+
+;; todo: remove duplication between this defun and the one above
+(defun perly-sense-class-method-go-to (class-name method)
+  "Go to the original symbol of 'method' in 'class-name'. Return
+t on success, else nil"
+  (interactive)
+  (message "Go to method (%s)..." method)
+  (let ((result (shell-command-to-string
+                 (format
+                  "perly_sense method_go_to --class_name=%s --method_name=%s --dir_origin=."
+                  class-name
+                  method
+                  )
+                 )
+                ))
+    (if (string-match "[\t]" result)
+        (let ((value (split-string result "[\t]")))
+          (let ((file (pop value)))
+            (perly-sense-find-file-location file (string-to-number (pop value)) (string-to-number (pop value)))
+            (message "Went to: %s" file)
+            )
+          )
+      (progn
+        (message "Could not find method (%s) (it could be declared in sub classes, or in XS)" method)
+        nil
+        )
+      )
+    )
+  )
 
 
 
@@ -453,17 +512,17 @@
           )))
 
     (goto-char (point-min))
-    (while (search-forward-regexp "->\\w+" nil t)  ;; ->method 
+    (while (search-forward-regexp "->\\w+" nil t)  ;; ->method
       (put-text-property (match-beginning 0) (match-end 0) 'face font-lock-function-name-face)) ;   ;;TODO: Move to config variable
-    
+
     (goto-char (point-min))
     (while (search-forward-regexp "\\\\>\\w+" nil t)  ;; \>method
       (put-text-property (match-beginning 0) (match-end 0) 'face 'font-lock-keyword-face)) ;   ;;TODO: Move to config variable
 
     (goto-char (point-min))
-    (while (search-forward-regexp ".>new" nil t)  ;; ->new
+    (while (search-forward-regexp ".>new\\b" nil t)  ;; ->new
       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-array-face))    ;; TODO fix proper bold, so it retains the color
-    
+
 
 ;;font-lock-function-name-face
 ;;grep-context-face
@@ -546,12 +605,33 @@ point, or an empty list () if none was found."
                (message (format "Going to class (%s)" class-name))
                (perly-sense-find-source-for-module class-name)
                )
-           (if (not (perly-sense-class-goto-bookmark-at-point))
-               (message "No Class or Bookmark at point")
+           (if (not (perly-sense-class-goto-method-at-point))
+               (if (not (perly-sense-class-goto-bookmark-at-point))
+                   (message "No Class/Method/Bookmark at point")
+                 )
              )
            )
          )
   )
+
+
+
+(defun perly-sense-class-goto-method-at-point ()
+  "Go to the method declaration for the method at point and
+return t, or return nil if no method could be found at point."
+  (interactive)
+  (let* ((method (perly-sense-class-method-at-point))
+         (current-class (perly-sense-class-current-class)))
+    (if (and current-class method)
+        (progn
+          (perly-sense-class-method-go-to current-class method)
+          t
+          )
+      nil
+      )
+    )
+  )
+
 
 
 (defun perly-sense-class-docs-at-point ()
@@ -564,10 +644,35 @@ point, or an empty list () if none was found."
                (message (format "Finding docs for class (%s)" class-name))
                (perly-sense-display-pod-for-module class-name)
                )
-           (message "No Class at point")
+           (let* ((method (perly-sense-class-method-at-point))  ;;;'
+                  (current-class (perly-sense-class-current-class)))
+             (if (and current-class method)
+                 (perly-sense-class-method-docs current-class method)
+               (message "No Class or Method at point")
+               )
+             )
            )
          )
+  
   )
+
+
+
+(defun perly-sense-class-method-at-point ()
+  "Return the method name at (or very near) point, or nil if none was found."
+  (save-excursion
+    (if (looking-at "[ \n]") (backward-char)) ;; if at end of method name, move into it
+    (if (looking-at "\\w")                ;; we may be on a method name
+        (while (looking-at "\\w") (backward-char))   ;; position at beginning of word
+      )
+    (if (looking-at ">") (backward-char))
+    (if (looking-at "[\\\\-]>\\(\\w+\\)")            ;; If on -> or \>, capture method name
+        (match-string 1)
+      nil
+      )
+    )
+  )
+
 
 
 (defun perly-sense-class-goto-bookmark-at-point ()
@@ -619,10 +724,23 @@ or go to the Bookmark at point"
           (message (format "Class Overview for class (%s)" class-name))
           (perly-sense-class-overview-with-argstring
            (format "--class_name=%s --dir_origin=." class-name)))
-      (if (not (perly-sense-class-goto-bookmark-at-point))
-          (message "No Class or Bookmark at point")
+      (if (not (perly-sense-class-goto-method-at-point))
+          (if (not (perly-sense-class-goto-bookmark-at-point))
+              (message "No Class/Method/Bookmark at point")
+            )
         )
       )
+    )
+  )
+
+
+
+(defun perly-sense-class-current-class ()
+  "Return the class currenlty being displayed in the Class Overview buffer."
+  (save-excursion
+    (goto-char (point-min))
+    (search-forward-regexp "\\[<\\(\\w+\\) *>\\]" nil t)
+    (match-string 1)
     )
   )
 
@@ -753,10 +871,20 @@ or go to the Bookmark at point"
 (define-key perly-sense-class-mode-map "S" 'perly-sense-class-find-structure)
 (define-key perly-sense-class-mode-map "A" 'perly-sense-class-find-api)
 (define-key perly-sense-class-mode-map "N" 'perly-sense-class-find-api-new)
-(define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
-(define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
-(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
+
 (define-key perly-sense-class-mode-map [return] 'perly-sense-class-class-overview-or-goto-at-point)
+
+(define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
+(define-key perly-sense-class-mode-map (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-class-docs-at-point)
+
+(define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
+(define-key perly-sense-class-mode-map (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-class-goto-at-point)
+
+(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
+(define-key perly-sense-class-mode-map (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-class-class-overview-at-point)
+
+
+
 
 
 

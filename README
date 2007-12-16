@@ -253,9 +253,9 @@ GETTING STARTED WITH EMACS
 
     When in the Class Overview buffer:
 
-    g -- Go to the file of the thing at point.
+    g -- Go to the file of the thing at point (Module/Method/Bookmark)
 
-    d -- Documentation for the thing at point.
+    d -- Documentation for the thing at point (Module/Method)
 
     c -- Class Overview for the thing at point. RET does the same.
 
@@ -650,6 +650,32 @@ API METHODS
     If there's nothing at $row/col, use the current document.
 
     Die if $file doesn't exist, or on other errors.
+
+  oLocationMethodDocFromDocument($oDocument, $method)
+    Look in $oDocument and find the documentation for it and return a
+    Document::Location object with the following rhProperty keys set:
+
+      text - the docs text
+      found - "method" | "module"
+      docType - "hint" | "document"
+      name - the name of the thing found
+
+    If possible, also set "pod" and "podHeading".
+
+    Return undef if no doc could be found.
+
+    Currently, only POD is regarded as documentation. Todo: fail to listing
+    an example/abstracted invocation of the method.
+
+    Die on errors.
+
+  oLocationMethodDefinitionFromDocument(oDocument => $oDocument, nameClass => $nameClass, nameMethod => $method)
+    Look in $oDocument and find the declaration for $nameMmethod and return
+    a Document::Location object.
+
+    Return undef if no declaration could be found.
+
+    Die on errors.
 
   rhRunFile(file => $fileSource)
     Figure out what type of source file $fileSource is, and how it should be

@@ -30,13 +30,15 @@ ok($oLocation = $oPs->oLocationSmartDoc(file => $fileOrigin, row => 391, col => 
 like($oLocation->file, $rexFile, " file same");
 is($oLocation->row, 44, " row ok");
 is($oLocation->col, 1, " col ok");
-is($oLocation->rhProperty->{text}, q{PROPERTIES
+is(
+    $oLocation->rhProperty->{text},
+    q{PROPERTIES
   top
     Top coordinate
 
     Default: 0},
-   " doc text ok");
-
+   " doc text ok",
+);
 
 
 

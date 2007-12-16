@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 37;
+use Test::More tests => 44;
 use Test::Exception;
 
 use File::Basename;
@@ -94,6 +94,29 @@ is($oLocation->rhProperty->{name}, "hasWrittenText", " Got name ok");
 is($oLocation->rhProperty->{docType}, "hint", " Got docType ok");
 is($oLocation->rhProperty->{found}, "method", " Got found ok");
 
+
+
+
+
+diag("Base classes");
+
+$dirData = "data/project-lib";
+my $rexFileDest = qr/Game.Object.Worm.pm/;
+
+ok($oDocument = Devel::PerlySense::Document->new(oPerlySense => Devel::PerlySense->new()), "new ok");
+$fileOrigin = "$dirData/Game/Object/Worm/Bot.pm";
+ok($oDocument->parse(file => $fileOrigin), "Parsed file ok");
+
+
+
+ok(! $oDocument->oLocationPod(name => "loadFile", lookFor => "method", ignoreBaseModules => 1), "Did not find anything in current package only");
+
+
+
+ok($oLocation = $oDocument->oLocationPod(name => "loadFile", lookFor => "method"), "Found correct POD in base package");
+like($oLocation->file, $rexFileDest, " Got file");
+is($oLocation->row, 355, "  row");
+is($oLocation->col, 1, "  col");
 
 
 

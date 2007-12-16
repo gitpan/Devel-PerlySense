@@ -307,9 +307,9 @@ $self->{hash_ref_keys}):
 
 When in the Class Overview buffer:
 
-g -- Go to the file of the thing at point.
+g -- Go to the file of the thing at point (Module/Method/Bookmark)
 
-d -- Documentation for the thing at point.
+d -- Documentation for the thing at point (Module/Method)
 
 c -- Class Overview for the thing at point. RET does the same.
 
@@ -702,7 +702,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0133';
+our $VERSION = '0.0134';
 
 
 
@@ -1017,33 +1017,32 @@ sub oLocationSmartDoc {
 
     my $oDocument = $self->oDocumentParseFile($file);
 
-    my $oLocation = undef;
+    #$self->method
     if(my $method = $oDocument->selfMethodCallAt(row => $row, col => $col)) {
-        $oLocation = $oDocument->oLocationPod(name => $method, lookFor => "method");
-        return( $self->oLocationRenderPodToText($oLocation) );
+        return( $self->oLocationMethodDocFromDocument($oDocument, $method) );
     }
 
+    #Module::Name->method
     my ($module, $method) = $oDocument->moduleMethodCallAt(row => $row, col => $col);
     if($module && $method) {
         if(my $oDocumentDest = $self->oDocumentFindModule(nameModule => $module, dirOrigin => dirname($file))) {
-            my $oLocation = $oDocumentDest->oLocationPod(name => $method, lookFor => "method");
-            return( $self->oLocationRenderPodToText($oLocation) );
+            return( $self->oLocationMethodDocFromDocument($oDocumentDest, $method) );
         }
     }
 
-
+    #$object->method
     my ($oObject, $oMethod, $oLocationSub) = $oDocument->aObjectMethodCallAt(row => $row, col => $col);
     if($oObject && $oMethod && $oLocationSub) {
         my @aMethodCall = $oDocument->aMethodCallOf(nameObject => "$oObject", oLocationWithin => $oLocationSub);
         my @aNameModuleUse = $oDocument->aNameModuleUse();
         my @aDocumentDest = $self->aDocumentFindModuleWithInterface(raNameModule => \@aNameModuleUse, raMethodRequired => [ "$oMethod" ] , raMethodNice => \@aMethodCall, dirOrigin => dirname($file));
         if(@aDocumentDest) {
-            my $oLocation = $aDocumentDest[0]->oLocationPod(name => "$oMethod", lookFor => "method");
-            return( $self->oLocationRenderPodToText($oLocation) );
+            ###TODO: report all possible methods, and let the user chose from them in the editor
+            return( $self->oLocationMethodDocFromDocument($aDocumentDest[0], "$oMethod") );
         }
     }
 
-
+    #Module::Name
     if(my $module = $oDocument->moduleAt(row => $row, col => $col)) {
         my $file = $self->fileFindModule(nameModule => $module, dirOrigin => dirname($file))
                 or return(undef);
@@ -1056,10 +1055,9 @@ sub oLocationSmartDoc {
         return($oLocation);
     }
 
-
     #Fail to docs about this current file
     if($oDocument->isEmptyAt(row => $row, col => $col)) {
-        $oLocation = Devel::PerlySense::Document::Location->new(file => $file, row => 1, col => 1);
+        my $oLocation = Devel::PerlySense::Document::Location->new(file => $file, row => 1, col => 1);
         $oLocation->rhProperty->{found} = "module";
         $oLocation->rhProperty->{docType} = "document";
         $oLocation->rhProperty->{name} = $oDocument->packageAt(row => $row);
@@ -1068,6 +1066,58 @@ sub oLocationSmartDoc {
     }
 
     return(undef);
+}
+
+
+
+
+
+=head2 oLocationMethodDocFromDocument($oDocument, $method)
+
+Look in $oDocument and find the documentation for it and
+return a Document::Location object with the following rhProperty keys set:
+
+  text - the docs text
+  found - "method" | "module"
+  docType - "hint" | "document"
+  name - the name of the thing found
+
+If possible, also set "pod" and "podHeading".
+
+Return undef if no doc could be found.
+
+Currently, only POD is regarded as documentation. Todo: fail to
+listing an example/abstracted invocation of the method.
+
+Die on errors.
+
+=cut
+sub oLocationMethodDocFromDocument {
+    my ($oDocument, $method) = @_;
+    my $oLocation = $oDocument->oLocationPod(name => $method, lookFor => "method");
+    return( $self->oLocationRenderPodToText($oLocation) );
+}
+
+
+
+
+
+=head2 oLocationMethodDefinitionFromDocument(oDocument => $oDocument, nameClass => $nameClass, nameMethod => $method)
+
+Look in $oDocument and find the declaration for $nameMmethod and
+return a Document::Location object.
+
+Return undef if no declaration could be found.
+
+Die on errors.
+
+=cut
+sub oLocationMethodDefinitionFromDocument {
+    my ($oDocument, $nameClass, $nameMethod) = Devel::PerlySense::Util::aNamedArg(["oDocument", "nameClass", "nameMethod"], @_);
+    my $oLocation = $oDocument->oLocationSubDefinition(
+        package => $nameClass,
+        name => $nameMethod,
+    );
 }
 
 

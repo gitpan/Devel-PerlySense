@@ -63,6 +63,7 @@ t/PerlySense-Bookmark-match.t
 t/PerlySense-BookmarkConfig.t
 t/PerlySense-cache-methods.t
 t/PerlySense-cache.t
+t/PerlySense-Class-method-doc-goto.t
 t/PerlySense-Class-neighbourhood.t
 t/PerlySense-Class-new.t
 t/PerlySense-Class-subclass.t

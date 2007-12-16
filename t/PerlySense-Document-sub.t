@@ -95,7 +95,7 @@ $fileOrigin = "$dirData/Game/Object/Worm/Bot.pm";
 ok($oDocument->parse(file => $fileOrigin), "Parsed file ok");
 ok($oLocation = $oDocument->oLocationSubDefinition(name => "loadFile", package => "Game::Object::Worm::Bot"), "Found sub in parent package");
 like($oLocation->file, $rexFileDest, " Got file");
-is($oLocation->row, 355, "  row");
+is($oLocation->row, 360, "  row");
 is($oLocation->col, 1, "  col");
 
 

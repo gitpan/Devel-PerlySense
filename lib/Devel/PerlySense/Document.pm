@@ -563,13 +563,12 @@ sub oLocationSubDefinition {
     $oLocation and return($oLocation);
 
     #Fail to POD in same file
-    $oLocation = $self->oLocationPod(name => $name, lookFor => "method");
+    $oLocation = $self->oLocationPod(name => $name, lookFor => "method", ignoreBaseModules => 1);
     $oLocation and return($oLocation);
-
 
     #Fail to base classes
     for my $moduleBase ($self->aNameBase) {
-        my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(nameModule => $moduleBase, dirOrigin => dirname($self->file)) or warn("Could not find module ($moduleBase)\n"), next;
+        my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(nameModule => $moduleBase, dirOrigin => dirname($self->file)) or debug("Could not find module ($moduleBase)\n"), next;
         $oLocation = $oDocumentBase->oLocationSubDefinition(name => $name, package => $moduleBase);
         $oLocation and return($oLocation);
     }
@@ -581,7 +580,7 @@ sub oLocationSubDefinition {
 
 
 
-=head2 oLocationPod(name => $name, lookFor => $lookFor)
+=head2 oLocationPod(name => $name, lookFor => $lookFor, [ignoreBaseModules => 0])
 
 Return a Devel::PerlySense::Document::Location object with the "best"
 location of the pod =head? or =item where $name is present, or undef
@@ -590,7 +589,7 @@ if it wasn't found.
 $lookFor can be "method", i.e. what the search was looking for.
 
 If $lookFor is "method" and the POD isn't found, try in the base
-classes.
+classes, unless $ignoreBaseModules is true.
 
 If the method POD is found in a base class, make sure that notice is
 in the rhProperty->{pod} (once).
@@ -608,6 +607,8 @@ Die on errors.
 =cut
 sub oLocationPod {
     my ($name, $lookFor) = Devel::PerlySense::Util::aNamedArg(["name", "lookFor"], @_);
+    my %p = @_;
+    my $ignoreBaseModules = $p{ignoreBaseModules} || 0;
     $lookFor eq "method" or croak("Invalid value for lookFor ($lookFor). Valid values are: 'method'.");
 
     my $rexName = quotemeta($name);
@@ -626,7 +627,9 @@ sub oLocationPod {
     }
 
 
-    #Fail to base classes
+    $ignoreBaseModules and return(undef);
+    #Fail to base classes, maybe
+
     for my $moduleBase ($self->aNameBase) {
         my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(nameModule => $moduleBase, dirOrigin => dirname($self->file)) or warn("Could not find module ($moduleBase)\n"), next;
         if(my $oLocation = $oDocumentBase->oLocationPod(name => $name, lookFor => $lookFor)) {
@@ -901,13 +904,13 @@ my $matchReplace = {
 my $rexMatch = join("|", keys %$matchReplace );
 sub _stringReplace {
     my ($match) = @_;
-    
+
     if(index($match, "sub") > -1) {
         index($match, ":") > -1 and return "SA{";
         return "S{";
     }
     index($match, "=") > -1 and return "=";
-    
+
     return $matchReplace->{$match};
 }
 sub stringSignatureSurveyFromSource {
@@ -916,16 +919,16 @@ sub stringSignatureSurveyFromSource {
     my @aToken = $source =~ /($rexMatch)/gm;
 #    print Dumper(\@aToken);
     my $signature = join(
-        "", 
+        "",
         map { $self->_stringReplace($_) } @aToken,
     );
-    
+
     #Remove closing " and ', they just clutter things up
     $signature =~ s/(["'])\1/$1/gsm;
 
     #Remove empty {}, they most often indicate hash accesses or derefs
     $signature =~ s/{}//gsm;
-    
+
     #Remove =['"]+ that's a sign of quotes inside POD text
     $signature =~ s/=['"]+/=/gsm;
 

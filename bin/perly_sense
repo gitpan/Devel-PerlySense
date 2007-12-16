@@ -33,7 +33,9 @@ use Data::Dumper;
 
 #Oh yes, this file is in serious need of a makeover...
 sub main {
-    my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $clearCache, $widthDisplay);
+    my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $nameMethod, $clearCache, $widthDisplay);
+    debug("ARGV: (" . join(" ", "perly_sense",  @ARGV) . ")");
+    
     GetOptions(
         "module:s" => \$module,
         "file:s" => \$file,
@@ -43,6 +45,7 @@ sub main {
         "file_origin:s" => \$fileOrigin,
         "dir_origin:s" => \$dirOrigin,
         "class_name:s" => \$nameClass,
+        "method_name:s" => \$nameMethod,
         "clear_cache" => \$clearCache,
         "width_display:s" => \$widthDisplay,
         );
@@ -184,6 +187,42 @@ sub main {
         };
         $@ and warn("Error: $@\n");
 
+    } elsif($command eq "method_doc") {
+        $nameClass or syntax("Missing option --class_name");
+        $nameMethod or syntax("Missing option --method_name");
+        $dirOrigin or syntax("Missing option --dir_origin");
+        
+        eval {
+            my $oClass = $oPs->classByName(
+                name => $nameClass,
+                dirOrigin => $dirOrigin,
+            );
+            if($oClass) {
+                if (my $oLocation = $oClass->oLocationMethodDoc(method => $nameMethod)) {
+                    print join("\t",  map { $_ => $oLocation->rhProperty->{$_} } qw/ found name docType / ) . "\n";
+                    print $oLocation->rhProperty->{text} || "";
+                }
+            };
+            $@ and warn("Error: $@\n");
+        }
+        
+    } elsif($command eq "method_go_to") {
+        $nameClass or syntax("Missing option --class_name");
+        $nameMethod or syntax("Missing option --method_name");
+        $dirOrigin or syntax("Missing option --dir_origin");
+        
+        eval {
+            my $oClass = $oPs->classByName(
+                name => $nameClass,
+                dirOrigin => $dirOrigin,
+            );
+            if($oClass) {
+                if (my $oLocation = $oClass->oLocationMethodGoTo(method => $nameMethod)) {
+                    print join("\t", $oLocation->file, $oLocation->row, $oLocation->col);                }
+            };
+            $@ and warn("Error: $@\n");
+        }
+        
     } elsif($command eq "run_file") {
         $file or syntax("Missing option --file");
 

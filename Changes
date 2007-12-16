@@ -3,6 +3,15 @@
 
 = 0.0133
 
+* Docs and Goto now works on Methods in the Class Overview.
+
+* Bug: Goto method declaration goes to the POD rather than the sub {}
+  if found in base classes.
+
+
+
+= 0.0133
+
 * Cookbook.pod added
 
 * Class Overview

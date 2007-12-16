@@ -157,7 +157,7 @@ sub newFromFileAt {
 
     if($package eq "main") {
         $package = ($oDocument->aNamePackage)[0] or return undef;
-    } 
+    }
 
     my $class = Devel::PerlySense::Class->new(
         oPerlySense => $oPerlySense,
@@ -313,12 +313,12 @@ ref with (keys: up, current, down; values: array refs with (Package names).
 =cut
 sub raClassInDirs {
     my ($raDir) = @_;
-    
+
     my @aNameClass;
     for my $dir (@$raDir) {
         push(@aNameClass, $self->aNameClassInDir(dir => $dir));
     }
-    
+
     return [ sort( uniq(@aNameClass) ) ];
 }
 sub rhDirNameClassInNeighbourhood {
@@ -350,7 +350,7 @@ Class names.
 sub aNameClassInDir {
     my ($dir) = Devel::PerlySense::Util::aNamedArg(["dir"], @_);
 
-    my @aNameClass = 
+    my @aNameClass =
             map {
                 my $oDocument = Devel::PerlySense::Document->new(
                     oPerlySense => $self->oPerlySense,
@@ -358,7 +358,7 @@ sub aNameClassInDir {
                 $oDocument->parse(file => $_) ? $oDocument->aNamePackage : ();
             }
             glob("$dir/*.pm");
-                
+
     return sort( uniq( @aNameClass ) );
 }
 
@@ -403,6 +403,48 @@ file is in.
 sub dirModule {
     my $file = $self->raDocument->[0]->file;
     return file($file)->absolute->dir . "";
+}
+
+
+
+
+
+=head2 oLocationMethodDoc(method => $method)
+
+Find the docs for the $method name and return a Location object
+similar to PerlySense->oLocationMethodDocFromDocument, or undef if no
+doc could be found.
+
+Die on errors.
+
+=cut
+sub oLocationMethodDoc {
+    my ($method) = Devel::PerlySense::Util::aNamedArg(["method"], @_);
+    my $oDocument = $self->raDocument->[0] or return undef;
+    return $self->oPerlySense->oLocationMethodDocFromDocument($oDocument, $method);
+}
+
+
+
+
+
+=head2 oLocationMethodGoTo(method => $method)
+
+Find the declaration for the $method name and return a Location object
+similar to PerlySense->oLocationSubDefinitionFromDocument, or undef if no
+declaration could be found.
+
+Die on errors.
+
+=cut
+sub oLocationMethodGoTo {
+    my ($method) = Devel::PerlySense::Util::aNamedArg(["method"], @_);
+    my $oDocument = $self->raDocument->[0] or return undef;
+    return $self->oPerlySense->oLocationMethodDefinitionFromDocument(
+        nameClass => $self->name,
+        nameMethod => $method,
+        oDocument => $oDocument,
+    );
 }
 
 
