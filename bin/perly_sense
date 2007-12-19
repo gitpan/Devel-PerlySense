@@ -21,18 +21,24 @@ use Time::HiRes qw/time/;
 use YAML::Tiny;
 
 use Data::Dumper;
-
+use Devel::TimeThis;
 
 
 {
-    local $SIG{__WARN__} = sub { debug(@_); };
-    main();
+#     my $total = Devel::TimeThis->new("Total loop");
+#      for (1..5) {
+#          my $iteration = Devel::TimeThis->new("Iteration");
+#          local @ARGV = @ARGV;
+#          sleep(5);
+         local $SIG{__WARN__} = sub { debug(@_); };
+         caller() or main_perly_sense();
+#      }
 }
 
 
 
 #Oh yes, this file is in serious need of a makeover...
-sub main {
+sub main_perly_sense {
     my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $nameMethod, $clearCache, $widthDisplay);
     debug("ARGV: (" . join(" ", "perly_sense",  @ARGV) . ")");
     
@@ -307,7 +313,8 @@ sub main {
         $oPs->setFindProject(dir => $dir);
         
 #        print "PROJECT CONFIG: " . YAML::Tiny::Dump($oPs->rhConfig);
-        print "PROJECT (" . $oPs->oProject->dirProject . ")\n";
+        print "VERSION: (" . Devel::PerlySense->VERSION . ")\n";
+        print "PROJECT: (" . $oPs->oProject->dirProject . ")\n";
         print "HOME: (" . $oPs->oHome->dirHome . ")\n";
         print "HOME DEBUG LOG: (" . file($oPs->oHome->dirHome, "log", "debug.log") . ")\n";
 

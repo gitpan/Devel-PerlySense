@@ -18,16 +18,16 @@ scope
 
 
 
-package Devel::TimeThis;
+use strict;
+use warnings;
 
+package Devel::TimeThis;
 our $VERSION = '0.01';
 
 
 
 
 
-use strict;
-use warnings;
 use Carp;
 use Data::Dumper;
 use Time::HiRes qw/time/;

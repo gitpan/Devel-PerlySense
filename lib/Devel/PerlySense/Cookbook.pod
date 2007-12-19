@@ -5,10 +5,11 @@ Devel::PerlySense::Cookbook -- simple solutions to common issues
 
 =head1 COMMON PROBLEMS
 
-=head2 Weird characters in the *compilation* buffer when runnign tests
+=head2 Weird characters in the *compilation* buffer when running tests
 
 You probably use a recent version of Test::Harness or something. It
-has nice colorized output as default.
+has nice colorized output as default. Which doesn't look so good in
+the not-so-ansi-color-aware buffer.
 
 Change your Project Config for running files to
 

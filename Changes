@@ -1,7 +1,24 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
-= 0.0133
+= 0.0135
+
+* Changed key binding for Class Overview from C-o C-c (focusing on
+  Class) to C-o C-o (focusing on Overviwe). This is to bring it in
+  line with the convention of having the first keystroke be an
+  "action", not an "object".
+
+* "perly_sense info" displays Version
+
+* Removed dependency on "grep-mode" which was only used for the faces.
+
+* Faces are now dealt with properly in the customize-group perly-sense
+  (if you use PerlySense in text-only mode, please let me know if it
+  looks ok).
+
+
+
+= 0.0134
 
 * Docs and Goto now works on Methods in the Class Overview.
 

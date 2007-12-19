@@ -11,9 +11,131 @@
 
 ;; for the faces
 (require 'compile)
-(require 'grep)
+(require 'cperl-mode)
 
 
+
+
+;;;; Configuration
+
+
+(defgroup perly-sense nil
+  "PerlySense Perl IDE."
+  :prefix "perly-sense-"
+  :group 'languages
+  :version "1.0")
+
+
+
+(defgroup perly-sense-faces nil
+  "Colors."
+  :link '(custom-group-link :tag "Font Lock Faces group" font-lock-faces)
+  :prefix "perly-sense-"
+  :group 'perly-sense)
+
+
+(defcustom perly-sense-here-face 'font-lock-string-face
+  "*Face for here-docs highlighting."
+  :type 'face
+  :group 'perly-sense-faces)
+
+
+
+(defface perly-sense-heading
+  `((t (:inherit 'custom-face-tag :height 1.1 )))
+;  `((t (:inherit 'bold)))  ;
+  "Face for headings."
+  :group 'perly-sense-faces)
+(defvar perly-sense-heading-face 'perly-sense-heading
+  "Face for headings.")
+
+
+
+
+
+(defface perly-sense-module-name
+  `((((class grayscale) (background light))
+     (:background "Gray90"))
+    (((class grayscale) (background dark))
+     (:foreground "Gray80" :weight bold))
+    (((class color) (background light))
+     (:foreground "Blue" :background "lightyellow2"))
+    (((class color) (background dark))
+     (:foreground "yellow" :background ,cperl-dark-background))
+    (t (:weight bold)))
+  "Face for module names."
+  :group 'perly-sense-faces)
+(defvar perly-sense-module-name-face 'perly-sense-module-name
+  "Face for module names.")
+
+(defface perly-sense-highlighted-module-name
+  `((((class grayscale) (background light))
+     (:background "Gray90" :weight bold))
+    (((class grayscale) (background dark))
+     (:foreground "Gray80" :weight bold))
+    (((class color) (background light))
+     (:foreground "Blue" :background "lightyellow2" :weight bold))
+    (((class color) (background dark))
+     (:foreground "Blue" :background, cperl-dark-background :weight bold))
+    (t (:weight bold)))
+  "Face for highlighted module names."
+  :group 'perly-sense-faces)
+(defvar perly-sense-highlighted-module-name-face 'perly-sense-highlighted-module-name
+  "Face for highlighted module names.")
+
+(defvar perly-sense-bookmark-file-face compilation-info-face
+  "Face for Bookmark file names.")
+
+(defvar perly-sense-bookmark-line-number-face 'compilation-line-number
+  "Face for Bookmark line numbers.")
+
+(defface perly-sense-current-class-method
+  `((t (:inherit 'font-lock-function-name-face)))
+  "Face for methods in the current class."
+  :group 'perly-sense-faces)
+(defvar perly-sense-current-class-method-face 'perly-sense-current-class-method
+  "Face for methods in the current class.")
+
+(defface perly-sense-current-new-method
+  `((t (:inherit 'font-lock-function-name-face :weight bold)))
+  "Face for new in the current class."
+  :group 'perly-sense-faces)
+(defvar perly-sense-current-new-method-face 'perly-sense-current-new-method
+  "Face for new in the current class.")
+
+(defface perly-sense-base-class-method
+  `((t (:inherit 'font-lock-keyword-face)))
+  "Face for methods in the base class."
+  :group 'perly-sense-faces)
+(defvar perly-sense-base-class-method-face 'perly-sense-base-class-method
+  "Face for methods in the base class.")
+
+(defface perly-sense-base-new-method
+  `((t (:inherit 'font-lock-keyword-face :weight bold)))
+  "Face for new in the base class."
+  :group 'perly-sense-faces)
+(defvar perly-sense-base-new-method-face 'perly-sense-base-new-method
+  "Face for new in the base class.")
+
+(defface perly-sense-cpan-base-class-method
+  `((t (:inherit 'font-lock-keyword-face)))
+  "Face for methods in base classes outside the Project."
+  :group 'perly-sense-faces)
+(defvar perly-sense-cpan-base-class-method-face 'perly-sense-cpan-base-class-method
+  "Face for methods in base classes outside the Project.")
+
+(defface perly-sense-cpan-base-new-method
+  `((t (:inherit 'font-lock-keyword-face :weight bold)))
+  "Face for new in base classes outside the Project."
+  :group 'perly-sense-faces)
+(defvar perly-sense-cpan-base-new-method-face 'perly-sense-cpan-base-new-method
+  "Face for new in base classes outside the Project.")
+
+
+
+
+
+;;;; Defuns
 
 (defun perly-sense-log (msg)
   "log msg in a message and return msg"
@@ -28,6 +150,11 @@
      )
   )
 
+
+
+
+
+;;;;
 
 (defun perly-sense-find-source-for-module (module)
   (let ((file (shell-command-to-string (format "perly_sense find_module_source_file --module=%s" module))))
@@ -292,7 +419,7 @@
 
 (defun perly-sense-find-file-location (file row col)
   "Find the file and go to the row col location"
-  (set-mark-command nil)
+  (push-mark (point))
   (find-file file)
   (goto-line row)
   (beginning-of-line)
@@ -492,11 +619,11 @@ t on success, else nil"
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\[ \\w+ +\\]" nil t)
-      (put-text-property (match-beginning 0) (match-end 0) 'face cperl-array-face)) ;'(:background "Gray80"))   ;;TODO: Move to config variable
+      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-module-name-face))
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\[<\\w+ *>\\]" nil t)
-      (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face)) ;'(:background "Gray80"))   ;;TODO: Move to config variable
+      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-highlighted-module-name-face))
 
     (goto-char (point-min))
     (while (search-forward-regexp "^[^:\n]+:[0-9]+:" nil t)
@@ -507,29 +634,37 @@ t on success, else nil"
         (let
             ((file-end (match-beginning 0))
              (row-beginning (+ (match-beginning 0) 1)))
-          (put-text-property file-beginning file-end 'face grep-hit-face)
-          (put-text-property row-beginning row-end 'face 'compilation-line-number)
+          (put-text-property file-beginning file-end 'face perly-sense-bookmark-file-face)
+          (put-text-property row-beginning row-end 'face perly-sense-bookmark-line-number-face)
           )))
 
     (goto-char (point-min))
     (while (search-forward-regexp "->\\w+" nil t)  ;; ->method
-      (put-text-property (match-beginning 0) (match-end 0) 'face font-lock-function-name-face)) ;   ;;TODO: Move to config variable
+      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-current-class-method-face))
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\\\>\\w+" nil t)  ;; \>method
-      (put-text-property (match-beginning 0) (match-end 0) 'face 'font-lock-keyword-face)) ;   ;;TODO: Move to config variable
+      (put-text-property (match-beginning 0) (match-end 0) 'face 'font-lock-keyword-face))
 
     (goto-char (point-min))
-    (while (search-forward-regexp ".>new\\b" nil t)  ;; ->new
-      (put-text-property (match-beginning 0) (match-end 0) 'face cperl-array-face))    ;; TODO fix proper bold, so it retains the color
+    (while (search-forward-regexp "->new\\b" nil t)  ;; ->new
+      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-current-new-method-face))
+
+    (goto-char (point-min))
+    (while (search-forward-regexp "\\\\>new\\b" nil t)  ;; \>new
+      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-current-new-method-face))
 
 
-;;font-lock-function-name-face
-;;grep-context-face
-;;     (goto-char (point-min))
-;;     (while (search-forward-regexp "\\* \\w+ +\\*" nil t)
-;;       (put-text-property (match-beginning 0) (match-end 0) 'face cperl-hash-face))
-;;     )
+
+    (goto-char (point-min))
+    (while (search-forward-regexp "\\* \\w+ +\\*" nil t)
+      (let
+          ((heading-beginning (match-beginning 0) )
+           (heading-end (match-end 0) ))
+        (put-text-property heading-beginning heading-end 'face perly-sense-heading-face)
+        (add-text-properties heading-beginning (+ heading-beginning 2) '(invisible t))
+        (add-text-properties (- heading-end 2) heading-end '(invisible t))
+      ))
     )
   )
 
@@ -653,7 +788,7 @@ return t, or return nil if no method could be found at point."
              )
            )
          )
-  
+
   )
 
 
@@ -880,8 +1015,8 @@ or go to the Bookmark at point"
 (define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
 (define-key perly-sense-class-mode-map (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-class-goto-at-point)
 
-(define-key perly-sense-class-mode-map "c" 'perly-sense-class-class-overview-at-point)
-(define-key perly-sense-class-mode-map (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-class-class-overview-at-point)
+(define-key perly-sense-class-mode-map "o" 'perly-sense-class-class-overview-at-point)
+(define-key perly-sense-class-mode-map (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-class-overview-at-point)
 
 
 
@@ -945,7 +1080,7 @@ or go to the Bookmark at point"
 
 (global-set-key (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-smart-docs-at-point)
 (global-set-key (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-smart-go-to-at-point)
-(global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
+(global-set-key (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-display-api-for-class-at-point)
 
 (global-set-key (format "%s\C-r" perly-sense-key-prefix) 'perly-sense-run-file)

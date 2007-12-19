@@ -5,7 +5,8 @@ Devel::PerlySense - IntelliSense for Perl
 
 =head1 DESCRIPTION
 
-PerlySense is an IntelliSense style utility for editors.
+PerlySense is a Perl IDE back-end that integrates with editor
+front-ends, currently Emacs.
 
 Conveniently navigate and browse the code and documentation of your
 project and Perl installation.
@@ -23,15 +24,15 @@ source while editing.
 
 =head2 From Emacs
 
-C-o C-c -- Class Overview -- Show information about the Class at point
-or the current Class.
+C-o C-o -- Overview -- Show information about the Class at point or
+the current Class.
 
-C-o C-d -- Smart Docs -- Show docs (POD/signature/etc) for the symbol
+C-o C-d -- Docs -- Show docs (POD/signature/etc) for the symbol
 (module/method/sub) at point. A doc hint is displayed in the message
 area (for methods and subs), or a new POD buffer is created (for
 modules).
 
-C-o C-g -- Smart Go to -- Open file at proper location for module,
+C-o C-g -- Go To -- Open file at proper location for module,
 method/sub declaration for the symbol (module/method/sub) at point. If
 no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
@@ -67,6 +68,9 @@ programmable by the authors, if not by the users.
 
 =head2 From the command line
 
+=over 4
+
+=item Create Project
 
   perly_sense create_project [--dir=DIR]
 
@@ -76,12 +80,14 @@ If there is already a project.yml file, back it up with a datestamp
 first.
 
 
+=item Process Project Source Files
 
   perly_sense process_project
 
 Cache all modules in the project. (not implemented)
 
 
+=item Process Source Files in @INC
 
   perly_sense process_inc
 
@@ -91,18 +97,27 @@ This is a useful thing to do after installation (and after each
 upgrade), but it will take a wile so put it in the background and let
 it churn away at those modules.
 
+=over 4
 
+=item Unix
+
+perly_sense process_inc &        # (well, you knew that already)
+
+=item  Windows
+
+  start /MIN perly_sense process_inc
+
+=back
+
+
+=item Get Info
 
   perly_sense info
 
 Display useful information about what the current project directory,
 user home directory, etc. is.
 
-
-
-=head2 From Perl
-
-See the source of the L<bin/perly_sense> script, or the t directory.
+=back
 
 
 
@@ -247,7 +262,7 @@ C-o m f -- Go to Class (will be changed to C-o g c) at point.
 
 =head2 Class Overview
 
-Pressing C-o C-c will bring up the Class Overview of the Class name at
+Pressing C-o C-o will bring up the Class Overview of the Class name at
 point (not yet implemented), or otherwise the current Class (the
 active Package).
 
@@ -644,9 +659,7 @@ L<CPANXR> - also uses PPI for cross referencing the CPAN
 L<http://www.DarSerMan.com/Perl/Oasis/> - Win32 class
 browser/IDE. Earlier (a lot) work by me.
 
-L<http://c2.com/doc/SignatureSurvey/> - The idea behind Signature
-Surveys. Introduced in this article about Software Archeology
-(L<http://www.pragmaticprogrammer.com/articles/mar_02_archeology.pdf>).
+L<http://www.perl.com/lpt/a/955> - Article "Perl Needs Better Tools"
 
 
 
@@ -702,7 +715,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0134';
+our $VERSION = '0.0135';
 
 
 

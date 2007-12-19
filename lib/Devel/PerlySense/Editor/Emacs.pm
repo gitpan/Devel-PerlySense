@@ -139,7 +139,7 @@ sub classOverview {
             . $self->textClassApi(oClass => $oClass);
 
 
-    my $textOverview = join(
+    my $textOverview = $self->stripTrailingWhitespace(join(
         "\n",
         $textInheritance,
         $textApi,
@@ -147,7 +147,7 @@ sub classOverview {
         $textUses,
         $textNeighbourhood,
 #        $textStructure,
-    );
+    ));
 
     #Highlight the current class
     my $leftBracket = "[[]";
@@ -158,6 +158,8 @@ sub classOverview {
 
     return $textOverview;
 }
+
+
 
 
 
@@ -592,6 +594,24 @@ sub escapeValue {
     $value =~ s| ([\\"]) |\\$1|gsmx;
 
     return $value;
+}
+
+
+
+
+
+=head2 stripTrailingWhitespace($string)
+
+Return $string with each line in $string stripped of trailing
+whitespace.
+
+=cut
+sub stripTrailingWhitespace {
+    my ($string) = @_;
+    return join(
+        "\n",
+        map { $_ =~ s/\s+$//; $_ } split("\n", $string), ## no critic
+    );
 }
 
 

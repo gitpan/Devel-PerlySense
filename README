@@ -2,7 +2,8 @@ NAME
     Devel::PerlySense - IntelliSense for Perl
 
 DESCRIPTION
-    PerlySense is an IntelliSense style utility for editors.
+    PerlySense is a Perl IDE back-end that integrates with editor
+    front-ends, currently Emacs.
 
     Conveniently navigate and browse the code and documentation of your
     project and Perl installation.
@@ -15,18 +16,18 @@ DESCRIPTION
 
 SYNOPSIS
   From Emacs
-    C-o C-c -- Class Overview -- Show information about the Class at point
-    or the current Class.
+    C-o C-o -- Overview -- Show information about the Class at point or the
+    current Class.
 
-    C-o C-d -- Smart Docs -- Show docs (POD/signature/etc) for the symbol
+    C-o C-d -- Docs -- Show docs (POD/signature/etc) for the symbol
     (module/method/sub) at point. A doc hint is displayed in the message
     area (for methods and subs), or a new POD buffer is created (for
     modules).
 
-    C-o C-g -- Smart Go to -- Open file at proper location for module,
-    method/sub declaration for the symbol (module/method/sub) at point. If
-    no sub declaration is available (like for generated getters/setters),
-    any appropriate POD is used instead.
+    C-o C-g -- Go To -- Open file at proper location for module, method/sub
+    declaration for the symbol (module/method/sub) at point. If no sub
+    declaration is available (like for generated getters/setters), any
+    appropriate POD is used instead.
 
     C-o C-r -- Run file -- Run the current file using the Compilation mode
     and the settings appropriate for the source type (Test, Module, etc.).
@@ -50,32 +51,39 @@ SYNOPSIS
     programmable by the authors, if not by the users.
 
   From the command line
-      perly_sense create_project [--dir=DIR]
+    Create Project
+          perly_sense create_project [--dir=DIR]
 
-    Create a PerlySense project in DIR (default is current dir).
+        Create a PerlySense project in DIR (default is current dir).
 
-    If there is already a project.yml file, back it up with a datestamp
-    first.
+        If there is already a project.yml file, back it up with a datestamp
+        first.
 
-      perly_sense process_project
+    Process Project Source Files
+          perly_sense process_project
 
-    Cache all modules in the project. (not implemented)
+        Cache all modules in the project. (not implemented)
 
-      perly_sense process_inc
+    Process Source Files in @INC
+          perly_sense process_inc
 
-    Cache all the modules in @INC.
+        Cache all the modules in @INC.
 
-    This is a useful thing to do after installation (and after each
-    upgrade), but it will take a wile so put it in the background and let it
-    churn away at those modules.
+        This is a useful thing to do after installation (and after each
+        upgrade), but it will take a wile so put it in the background and
+        let it churn away at those modules.
 
-      perly_sense info
+        Unix
+            perly_sense process_inc & # (well, you knew that already)
 
-    Display useful information about what the current project directory,
-    user home directory, etc. is.
+        Windows
+              start /MIN perly_sense process_inc
 
-  From Perl
-    See the source of the "perly_sense" in bin script, or the t directory.
+    Get Info
+          perly_sense info
+
+        Display useful information about what the current project directory,
+        user home directory, etc. is.
 
 INSTALLATION
   perly_sense installation
@@ -194,7 +202,7 @@ GETTING STARTED WITH EMACS
     C-o m f -- Go to Class (will be changed to C-o g c) at point.
 
   Class Overview
-    Pressing C-o C-c will bring up the Class Overview of the Class name at
+    Pressing C-o C-o will bring up the Class Overview of the Class name at
     point (not yet implemented), or otherwise the current Class (the active
     Package).
 
@@ -518,9 +526,7 @@ SEE ALSO
     <http://www.DarSerMan.com/Perl/Oasis/> - Win32 class browser/IDE.
     Earlier (a lot) work by me.
 
-    <http://c2.com/doc/SignatureSurvey/> - The idea behind Signature
-    Surveys. Introduced in this article about Software Archeology
-    (<http://www.pragmaticprogrammer.com/articles/mar_02_archeology.pdf>).
+    <http://www.perl.com/lpt/a/955> - Article "Perl Needs Better Tools"
 
 AUTHOR
     Johan Lindström, "<johanl[ÄT]DarSerMan.com>"

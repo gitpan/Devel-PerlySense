@@ -132,7 +132,7 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 [ Game::Object::Worm  ] [ Game::Object::Worm::Shaitan   ]/;
     eq_or_diff
 #    is
-            (stripWs($textShai), $textExpected, "  And got correct output");
+            ($textShai, $textExpected, "  And got correct output");
 
 # * Structure *
 # ==;"";;;;===;==S{;;;;";;;;}=S{;;{;'{;;";};}";}=S{;{";";";;'
@@ -189,7 +189,7 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 
     eq_or_diff
     #is
-    (stripWs($textShai), $textExpected, "  And got correct output");
+    ($textShai, $textExpected, "  And got correct output");
 
 # * Structure *
 # ==;;;;;==;=;=;=;=;=;==S{;;;;";;;;;;;}=S{;;{;;}";;};
@@ -198,15 +198,6 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 }
 
 
-
-sub stripWs {
-    my ($string) = @_;
-
-    return join(
-        "\n",
-        map { $_ =~ s/\s+$//; $_ } split("\n", $string), ## no critic
-    );
-}
 
 
 

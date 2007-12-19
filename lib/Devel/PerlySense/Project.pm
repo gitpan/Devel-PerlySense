@@ -66,7 +66,7 @@ sub dirProject {
 
 =head2 dirProjectExplicitDir
 
-If known, the root dir made explicit by the existance of a project
+If known, the root dir made explicit by the existence of a project
 directory and config, else ""
 
 Default: ""
