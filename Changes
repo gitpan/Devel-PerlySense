@@ -1,6 +1,13 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0137
+
+* Debug diagnostics for the failing test that doesn't appear on
+  Windows.
+
+
+
 = 0.0136
 
 * In Class Overview, don't display private methods in base classes

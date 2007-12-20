@@ -38,6 +38,7 @@ use Perl::Critic;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
+use Devel::PerlySense::Util::Log;
 use Devel::PerlySense::Config::Project::Default;
 
 
@@ -389,23 +390,22 @@ Test logically/structurally, not whether the file actually exists.
 =cut
 sub isFileInProject {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
-#warn("TESTING WHETHER FILE\n($file) IS IN PROJECT\n(" . $self->dirProject . ")\n");
-    my @aDirProjectRegex =
-            map { qr/^ \Q$_\E /x }
-            map { dir($_)->absolute }
-                    (
-                        $self->dirProject,
-                        map
-                                { dir($self->dirProject, $_) }
-                                @{ $self->oPerlySense->rhConfig->{project}->{inc_dir} || [] },
-                    );
+
+    my @aDirInc =
+            map { dir($self->dirProject, $_) }
+            @{ $self->oPerlySense->rhConfig->{project}->{inc_dir} || [] };
+    my @aDirSourceAbsolute = map { dir($_)->absolute } ($self->dirProject, @aDirInc);
+
+###TODO: Comment out  debug statements when that failing test in t/PerlySense-Project-file-in-project.t is fixed
+debug("\nTESTING WHETHER FILE\n($file) IS IN PROJECT\n(" . $self->dirProject . "),\ni.e.\n(" . join(")\n(", @aDirSourceAbsolute) . ")\n");
+    my @aDirProjectRegex = map { qr/^ \Q$_\E /x } @aDirSourceAbsolute;
 
     my $fileAbsolute = file($file)->absolute . "";
     for my $dirProjectRegex (@aDirProjectRegex) {
-#        warn("Comparing\n(" . quotemeta($fileAbsolute) . ") with\n($dirProjectRegex)\n");
-        $fileAbsolute =~ /$dirProjectRegex/x and return 1;
+debug("Comparing file\n'" . quotemeta($fileAbsolute) . "' with regex\n'$dirProjectRegex'\n");
+        $fileAbsolute =~ /$dirProjectRegex/x and debug("Found it"), return 1;
     }
-#warn("FILE ($file) is NOT in the Project (" . $self->dirProject . ")\n");
+debug("FILE ($file) is NOT in the Project (" . $self->dirProject . ")\n");
     return 0;
 }
 

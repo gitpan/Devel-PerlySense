@@ -6,7 +6,9 @@ use Test::Exception;
 
 use Data::Dumper;
 
-use lib "../lib";
+use lib ("lib", "../lib");
+
+use Devel::PerlySense::Util::Log;
 
 use_ok("Devel::PerlySense::Project");
 use_ok("Devel::PerlySense");
@@ -58,7 +60,7 @@ diag("Test inc_dir");
 ok(
     $oProject->isFileInProject(file => "data/project/with-dir/source/lib/Game/Lawn.pm"),
     "Missing file that could be in project is. It does not have to exist",
-);
+) or warn( Devel::PerlySense::Util::Log->_textTailDebug() . "\n\nTEST FAILED, THIS ABOVE TEXT IS THE RECENT DEBUG LOG FOR DIAGNOSTICS PURPOSES.\nSORRY ABOUT SPAMMING LIKE THIS, BUT I NEED THE OUTPUT TO FIGURE OUT WHAT'S WRONG\n" );
 
 
 

@@ -29,7 +29,6 @@ use File::Basename;
 use File::Path;
 use Path::Class;
 
-use Devel::PerlySense;
 use Devel::PerlySense::Util;
 
 

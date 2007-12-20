@@ -207,7 +207,8 @@ If you want to use flymake to do background syntax and Perl::Critic
 checks, set perly-sense-load-flymake to t (this is a very nifty thing,
 so yes you want to do this) and configure the colors to your liking.
 
-Note: This also needs to be enabled on a per-project basis.
+Note: This also needs to be enabled on a per-project basis (see
+below).
 
 
 
@@ -318,6 +319,21 @@ $self->{hash_ref_keys}):
 
   ->method_in_this_class
   \>method_in_base_class  (note the arrow coming from above)
+
+Private methods (named with a leading _) are displayed as regular
+methods. Same goes for private methods in base classes, except when
+the base class is outside of your Project (like for CPAN modules).
+
+Why is this?
+
+If it's your code base you're interested in everything, but if you
+inherit from a CPAN module, you don't care (you even shouldn't care)
+about the implementation of that module.
+
+Note that you can still see the private methods of those modules by
+doing a Class Overview on them, or any of the modules outside your
+current Project (thereby changing the current Project to the directory
+where those modules are installed).
 
 
 When in the Class Overview buffer:
@@ -502,21 +518,30 @@ to see which directory is actually being used.
 
 PerlySense has the concept of a Project root directory.
 
-If you follow the standard directory structure for CPAN modules, the
-Project directory is typically the one which contains the Makefile.PL,
-the lib, bin, and t directory, etc.
-
 Basically, this is where all the source lives, and where your program
 can go to find modules that are used. This is from where tests are run
 and files are found.
+
+You can specify the Project root dir explicitly for your
+applications. But if you don't, PerlySense will try and figure out
+what the Project root directory is from the context of the surrounding
+code.
+
+This means you can browse source code anywhere on your hard drive
+(e.g. @INC) without any special setup or configuration. Most things
+will just work, without any hassle.
+
+If you follow the standard directory structure for CPAN modules, the
+Project directory is typically the one which contains the Makefile.PL,
+the lib, bin, and t directory, etc.
 
 
 
 =head2 Identifying a Project root directory
 
 The fastest and most solid way for PerlySense to know which is the
-Project directory is to create a .PerlySenseProject directory with a
-config file in it. This is highly recommended for all of your own
+Project directory is to create a C<.PerlySenseProject> directory with
+a config file in it. This is highly recommended for all of your own
 projects.
 
 The complete project identification strategy is as follows:
@@ -527,7 +552,7 @@ The complete project identification strategy is as follows:
 =item *
 
 First, if there is any directory upwards in the dirctory path with a
-.PerlySenseProject dir in it, that is the Project directory.
+C<.PerlySenseProject> dir in it, that is the Project directory.
 
 
 =item *
@@ -539,7 +564,7 @@ modules.
 
 =item *
 
-Third, if that doesn't work, PerlySense will look for lib and t
+Third, if that doesn't work, PerlySense will look for C<lib> and C<t>
 directories.
 
 =back
@@ -547,12 +572,20 @@ directories.
 If that doesn't work, PerlySense is lost and you really do need to
 create an explicit Project directory by running the following command
 in your intended Project root directory (that would typically be the
-directory which has a "lib" directory in it):
+directory which has a C<lib> directory in it):
 
   perly_sense create_project
 
-Any existing .PerlySenseProject/project.yml config file will be
+Any existing C<.PerlySenseProject/project.yml> config file will be
 renamed.
+
+Note that this all means that the current Project depends on which
+file you are looking at. If it's a file within the directory tree
+under a C<.PerlySenseProject> directory, that's what the current
+Project is. But if you from that file do a Class Overview on an
+installed CPAN module, the current Project is deduced from that .pm
+file, typically leading the current Project to be the C<lib> or
+C<site_lib> of your local CPAN installation.
 
 
 
@@ -715,7 +748,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0136';
+our $VERSION = '0.0137';
 
 
 

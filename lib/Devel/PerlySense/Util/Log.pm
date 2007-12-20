@@ -44,21 +44,41 @@ Return 1.
 
 =cut
 my $fileDebug;
+my @aHistoryMessage;
+my $maxCountHistory = 200;
 sub debug {
 	my ($message) = @_;
 
+    my $messageLog = localtime() . ": $message\n";
+
+    #Keep recent messages in memory for test diagnostics
+    push(@aHistoryMessage, $messageLog);
+    @aHistoryMessage > $maxCountHistory and shift(@aHistoryMessage);
+
+    
     $0 =~ /\.t$/ and return 1;  #Don't log when running tests
 
     $fileDebug ||= do {
         my $oHome = Devel::PerlySense::Home->new();
-        $fileDebug = file($oHome->dirHomeLog, "debug.log");
+        file($oHome->dirHomeLog, "debug.log");
         
     } or return 0;
-    
+
     open(my $fh, ">>", $fileDebug) or return 0;
-    $fh->print(localtime() . ": $message\n");
+    $fh->print($messageLog);
     
     return(1);
+}
+
+
+
+
+
+#Debugging aid during CPAN testers failures
+#This is a hack, please ignore
+sub _textTailDebug {
+    my $class = shift;
+    return join("\n", @aHistoryMessage);
 }
 
 
