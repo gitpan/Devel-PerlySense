@@ -1,6 +1,17 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0136
+
+* In Class Overview, don't display private methods in base classes
+  outside the current Project. TBD: config setting for this
+
+* Made headings in Class Overview less huge
+
+* Fixed bug with missing face dependency loaded from another Emacs package
+
+
+
 = 0.0135
 
 * Changed key binding for Class Overview from C-o C-c (focusing on

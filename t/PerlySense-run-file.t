@@ -153,6 +153,7 @@ diag("Run test .pm file inside dir with config");
         [
             "glib/perl5lib",
             "deps/perl5lib",
+            "../../with-dir/source/lib",
         ],
         "Correct project config with inc dir found",
     );
@@ -160,7 +161,7 @@ diag("Run test .pm file inside dir with config");
     is($rhRun->{type_source_file}, "Test", "    type_source_file");
     like(
         $rhRun->{command_run},
-        qr|prove -v "-Iglib.perl5lib" "-Ideps.perl5lib" "-I." "-Ilib" "bogus.t.Game-Lawn.t"|,
+        qr|prove -v "-Iglib.perl5lib" "-Ideps.perl5lib" "-I......with-dir.source.lib" "-I." "-Ilib" "bogus.t.Game-Lawn.t"|,
         "    command_run",
     );
     like(
@@ -195,13 +196,14 @@ diag("Run test .pl file inside dir with config");
         [
             "glib/perl5lib",
             "deps/perl5lib",
+            "../../with-dir/source/lib",
         ],
         "Correct project config with inc dir found",
     );
     is($rhRun->{type_source_file}, "Script", "    type_source_file");
     like(
         $rhRun->{command_run},
-        qr|perl "-I${up}.${up}.glib.perl5lib" "-I${up}.${up}.deps.perl5lib" "-I${up}.${up}" "-I${up}.${up}.lib" "worms.pl"|,
+        qr|perl "-I${up}.${up}.glib.perl5lib" "-I${up}.${up}.deps.perl5lib" "-I${up}.${up}.${up}.${up}.with-dir.source.lib" "-I${up}.${up}" "-I${up}.${up}.lib" "worms.pl"|,
         "    command_run has relative paths for includes",
     );
     like(

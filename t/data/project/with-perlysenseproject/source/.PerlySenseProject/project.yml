@@ -11,6 +11,7 @@ project:
   inc_dir:
     - glib/perl5lib
     - deps/perl5lib
+    - ../../with-dir/source/lib
 
 
 #These are evaluated in order to find a way to run a file. First

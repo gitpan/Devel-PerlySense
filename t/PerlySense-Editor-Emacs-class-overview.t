@@ -127,9 +127,10 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 [ Carp ] [ Class::MethodMaker ] [ Data::Dumper ]
 
 * NeighbourHood *
-[ Game::Object::Prize ] [ Game::Object::Worm::Bot       ] -none-
-[ Game::Object::Wall  ] [<Game::Object::Worm::ShaiHulud>]
-[ Game::Object::Worm  ] [ Game::Object::Worm::Shaitan   ]/;
+[ Game::Object::Prize       ] [ Game::Object::Worm::Bot       ] -none-
+[ Game::Object::Wall        ] [<Game::Object::Worm::ShaiHulud>]
+[ Game::Object::Worm        ] [ Game::Object::Worm::Shaitan   ]
+[ Game::Object::WormVisible ]/;
     eq_or_diff
 #    is
             ($textShai, $textExpected, "  And got correct output");
@@ -179,13 +180,14 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 [ Data::Dumper       ] [ Game::Location     ]
 
 * NeighbourHood *
--none- [ Game::Application ] [ Game::Object::Prize ]
-       [ Game::Controller  ] [ Game::Object::Wall  ]
-       [ Game::Direction   ] [ Game::Object::Worm  ]
-       [ Game::Lawn        ]
-       [ Game::Location    ]
-       [<Game::Object     >]
-       [ Game::UI          ]/;
+-none- [ Game::Application   ] [ Game::Object::Prize       ]
+       [ Game::Controller    ] [ Game::Object::Wall        ]
+       [ Game::Direction     ] [ Game::Object::Worm        ]
+       [ Game::Lawn          ] [ Game::Object::WormVisible ]
+       [ Game::Location      ]
+       [<Game::Object       >]
+       [ Game::ObjectVisible ]
+       [ Game::UI            ]/;
 
     eq_or_diff
     #is

@@ -50,6 +50,8 @@ field "rhSub" => {};
 
 
 
+
+
 =head1 API METHODS
 
 =head2 new()
@@ -64,6 +66,46 @@ sub new(@) {
     my $self = bless {}, $pkg;
 
     return($self);
+}
+
+
+
+
+
+=head2 aNameSubVisible(oPerlySense => $oPs, fileDocumentCurrent => $file)
+
+Return array with the method/sub names in the interface that are
+visible.
+
+A method is invisible if it's a private method in a base class of
+$fileDocumentCurrent, outside the current Project, according to
+$oPerlySense.
+
+=cut
+sub aNameSubVisible {
+    my ($oPerlySense, $fileDocumentCurrent) = Devel::PerlySense::Util::aNamedArg(["oPerlySense", "fileDocumentCurrent"], @_);
+    
+    my @aNameSubVisible =
+            sort
+            grep {
+                my $file = $self->rhSub->{$_}->file;
+
+                my $isInvisible =
+                        #Is it a base class (file ne current file)?
+                        $file ne $fileDocumentCurrent
+                        #Is it a private method?   ###TODO: Extract to method, then class *::Method->isPrivate
+                        && $_ =~ /^_/
+                        #Is it outside the project?
+                        && ! $oPerlySense->isFileInProject(
+                            file => $file,
+                            fileProjectOf => $fileDocumentCurrent,
+                        );
+
+                ! $isInvisible;
+            }
+            keys %{$self->rhSub};
+
+    return(@aNameSubVisible);
 }
 
 

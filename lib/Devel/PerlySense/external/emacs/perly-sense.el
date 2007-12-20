@@ -9,10 +9,10 @@
 
 
 
-;; for the faces
+;; For the faces
 (require 'compile)
 (require 'cperl-mode)
-
+(require 'cus-edit)
 
 
 
@@ -42,7 +42,7 @@
 
 
 (defface perly-sense-heading
-  `((t (:inherit 'custom-face-tag :height 1.1 )))
+  `((t (:inherit 'custom-face-tag)))
 ;  `((t (:inherit 'bold)))  ;
   "Face for headings."
   :group 'perly-sense-faces)
@@ -476,7 +476,7 @@ t on success, else nil"
             )
           )
       (progn
-        (message "Could not find method (%s) (it could be declared in sub classes, or in XS)" method)
+        (message "Could not find method (%s) (it may be created dynamically, or in XS, or in a subclass)" method)
         nil
         )
       )
@@ -652,7 +652,7 @@ t on success, else nil"
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\\\>new\\b" nil t)  ;; \>new
-      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-current-new-method-face))
+      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-base-new-method-face))
 
 
 

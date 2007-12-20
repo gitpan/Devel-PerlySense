@@ -353,8 +353,8 @@ sub rhConfigTypeForFile {
 
 =head2 aDirIncProject(dirRelativeTo => $dirRelativeTo)
 
-Return array wirth dir objects which are the inc_dir directories in
-the config, plus the usual inc directories. They are all relative to
+Return array with dir objects which are the inc_dir directories in the
+config, plus the usual inc directories. They are all relative to
 $dirRelativeTo.
 
 =cut
@@ -364,6 +364,7 @@ sub aDirIncProject {
     my $dirProject = dir($self->dirProject)->absolute;
     my $dirProjectRelativeTo = $dirProject->relative( $dirRelativeTo );
 
+    ###TODO: extract method for the inc_dir config entry aIncDirConfig
     my @aDirIncProject = @{ $self->oPerlySense->rhConfig->{project}->{inc_dir} || [] };
     my @aDirInc = (@aDirIncProject, ".", "lib");
 
@@ -372,6 +373,40 @@ sub aDirIncProject {
             @aDirInc;
 
     return(@aDirIncRelative);
+}
+
+
+
+
+
+=head2 isFileInProject(file => $file)
+
+Return true if $file is within the project root, or in any of the INC
+directories, else false. Die on errors.
+
+Test logically/structurally, not whether the file actually exists.
+
+=cut
+sub isFileInProject {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+#warn("TESTING WHETHER FILE\n($file) IS IN PROJECT\n(" . $self->dirProject . ")\n");
+    my @aDirProjectRegex =
+            map { qr/^ \Q$_\E /x }
+            map { dir($_)->absolute }
+                    (
+                        $self->dirProject,
+                        map
+                                { dir($self->dirProject, $_) }
+                                @{ $self->oPerlySense->rhConfig->{project}->{inc_dir} || [] },
+                    );
+
+    my $fileAbsolute = file($file)->absolute . "";
+    for my $dirProjectRegex (@aDirProjectRegex) {
+#        warn("Comparing\n(" . quotemeta($fileAbsolute) . ") with\n($dirProjectRegex)\n");
+        $fileAbsolute =~ /$dirProjectRegex/x and return 1;
+    }
+#warn("FILE ($file) is NOT in the Project (" . $self->dirProject . ")\n");
+    return 0;
 }
 
 
@@ -411,10 +446,10 @@ sub flymakeFile {
         my $fileConfigCritic = file(
             dir($self->dirProject)->absolute, ".PerlySenseProject", ".perlcritic",
         );
-        
+
         my @aOption = (-profile => $fileConfigCritic . "");
         -e $fileConfigCritic or @aOption = ();
-        
+
         my $oCritic = Perl::Critic->new(@aOption);
 
         my @aViolation = $oCritic->critique($file);

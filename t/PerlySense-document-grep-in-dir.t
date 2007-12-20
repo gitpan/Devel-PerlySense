@@ -37,6 +37,8 @@ is_deeply(
               Game::Lawn
               Game::Location
               Game::Object
+              Game::ObjectVisible
+              Game::Object::WormVisible
               Game::Object::Prize
               Game::Object::Wall
               Game::Object::Worm

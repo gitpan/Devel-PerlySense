@@ -47,6 +47,8 @@ t/data/project-lib/Game/Object/Worm.pm
 t/data/project-lib/Game/Object/Worm/Bot.pm
 t/data/project-lib/Game/Object/Worm/ShaiHulud.pm
 t/data/project-lib/Game/Object/Worm/Shaitan.pm
+t/data/project-lib/Game/Object/WormVisible.pm
+t/data/project-lib/Game/ObjectVisible.pm
 t/data/project-lib/Game/UI.pm
 t/data/project-lib/Game/UI/None.pm
 t/data/project/with-dir/source/lib/Game/Lawn.pm
@@ -59,6 +61,7 @@ t/data/project/with-use/source/lib/modules/Game/Lawn.pm
 t/data/simple-lib/lib/Game/Event/Timed.pm
 t/data/simple-lib/lib/Win32/Word/Writer.pm
 t/data/simple-lib/lib/Win32/Word/Writer/Table.pm
+t/data/simple-lib/lib/Win32/Word/Writer/TableVisible.pm
 t/PerlySense-Bookmark-match.t
 t/PerlySense-BookmarkConfig.t
 t/PerlySense-cache-methods.t
@@ -72,6 +75,7 @@ t/PerlySense-Document-Api-consists-supported.t
 t/PerlySense-Document-api-likely.t
 t/PerlySense-Document-api-match.t
 t/PerlySense-Document-Api-merge.t
+t/PerlySense-Document-api-visible.t
 t/PerlySense-Document-Api.t
 t/PerlySense-Document-base-class.t
 t/PerlySense-Document-cache.t
@@ -109,6 +113,7 @@ t/PerlySense-go-to-object-method-file.t
 t/PerlySense-go-to-self-method-file.t
 t/PerlySense-module-pod.t
 t/PerlySense-project-config.t
+t/PerlySense-Project-file-in-project.t
 t/PerlySense-Project-find.t
 t/PerlySense-run-file.t
 t/PerlySense-smart-doc-module-method.t

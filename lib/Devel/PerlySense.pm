@@ -715,7 +715,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0135';
+our $VERSION = '0.0136';
 
 
 
@@ -1330,6 +1330,30 @@ sub oDocumentFindModule {
     my $oDocument = $self->oDocumentParseFile($fileModule) or return(undef);
 
     return($oDocument);
+}
+
+
+
+
+
+=head2 isFileInProject(file => $fileSource, fileProjectOf => $fileProjectOf)
+
+Determine whether $fileSource is located within the current Project.
+
+If there is no current Project, figure it out using $fileProjectOf
+(that file should be located in the current project).
+
+Return true if $fileSource is in the project, else false. Die on
+errors.
+
+=cut
+sub isFileInProject {
+    my ($file, $fileProjectOf) = Devel::PerlySense::Util::aNamedArg(["file", "fileProjectOf"], @_);
+
+    $self->setFindProject(file => $fileProjectOf)
+            or die("Could not identify any PerlySense Project\n");
+
+    return $self->oProject->isFileInProject(file => $file);
 }
 
 

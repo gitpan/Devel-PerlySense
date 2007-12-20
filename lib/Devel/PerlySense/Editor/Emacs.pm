@@ -432,7 +432,10 @@ sub textClassApi {
         my $oLocation = $oApi->rhSub->{$_};
         my $fileSub = $oLocation->file;
         $oDocument->file eq $fileSub ? "->$_" : "\\>$_"
-    } sort keys %{$oApi->rhSub};
+    } sort $oApi->aNameSubVisible(
+        oPerlySense => $self->oPerlySense,
+        fileDocumentCurrent => $oDocument->file,
+    );
 
     my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config    
     return( $self->textTable(\@aColText, $columnsToFitWithin) );

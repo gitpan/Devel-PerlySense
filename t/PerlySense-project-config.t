@@ -58,6 +58,7 @@ diag("Look for a .PerlySenseProject indicate a project");
             inc_dir => [
                 "glib/perl5lib",
                 "deps/perl5lib",
+                "../../with-dir/source/lib",
             ],
         },
         "The project config looks right",

@@ -37,6 +37,7 @@ is_deeply(
     [ sort $oClassOject->aNameClassInDir(dir => $dirOrigin) ],
     [ sort qw/
               Game::Object::Worm
+              Game::Object::WormVisible
               Game::Object::Prize
               Game::Object::Wall
               /],
@@ -57,6 +58,7 @@ is_deeply(
     [ sort @{$rhDirClass->{current}} ],
     [ sort qw/
               Game::Object::Worm
+              Game::Object::WormVisible
               Game::Object::Prize
               Game::Object::Wall
               /],
@@ -66,6 +68,7 @@ is_deeply(
 is_deeply(
     [ sort @{$rhDirClass->{up}} ],
     [ sort qw/
+              Game::ObjectVisible
               Game::Application
               Game::Controller
               Game::Direction

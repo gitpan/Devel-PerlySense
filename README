@@ -743,6 +743,14 @@ API METHODS
     Return a parsed PerlySense::Document, or undef if none could be found.
     Die on errors.
 
+  isFileInProject(file => $fileSource, fileProjectOf => $fileProjectOf)
+    Determine whether $fileSource is located within the current Project.
+
+    If there is no current Project, figure it out using $fileProjectOf (that
+    file should be located in the current project).
+
+    Return true if $fileSource is in the project, else false. Die on errors.
+
 IMPLEMENTATION METHODS
   fileFindLookingAround($fileModuleBase, $dirOrigin)
     Find the file containing the $fileModuleBase given the $dirOrigin.
