@@ -14,7 +14,7 @@ WriteMakefile
                            'PPI' => '1.003',
                            'Pod::Usage' => 0,
                            'Pod::Text' => 0,
-                           'File::Spec' => '0.87',
+                           'File::Spec' => '3.25',
                            'App::Ack' => 0,
                            'File::chdir' => 0,
                            'Cache::Cache' => 0,

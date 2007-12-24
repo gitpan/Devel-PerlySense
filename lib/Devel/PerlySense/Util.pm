@@ -17,10 +17,10 @@ our @EXPORT = (
        slurp
        spew
        textRenderTemplate
+       filePathNormalize
        /);
 
 our $VERSION = '0.01';
-
 
 
 
@@ -29,6 +29,7 @@ use Carp;
 use Data::Dumper;
 use File::Basename;
 use Path::Class;
+use File::Spec::Functions qw/ splitdir /;
 
 
 
@@ -90,6 +91,35 @@ sub spew {
     open(my $fh, ">", $file) or return 0;
     print $fh $text or return 0;
     return 1;
+}
+
+
+
+
+
+=head2 filePathNormalize($file)
+
+Return the normalized path of $file, i.e. with "dir/dir2/../dir3"
+becoming "dir/dir3".
+
+The path doesn't have to exist.
+
+=cut
+sub filePathNormalize {
+	my ($filePath) = @_;
+
+    my @aDirNew;
+    for my $dir (splitdir($filePath)) {
+        if($dir eq "..") {
+            ###TODO: @aDirNew or die("Malformed file ($filePath). Too many parent dirs ('sample_dir/../..')\n");
+            pop(@aDirNew);
+        }
+        else {
+            push(@aDirNew, $dir);
+        }
+    }
+    
+    return file(@aDirNew) . "";
 }
 
 

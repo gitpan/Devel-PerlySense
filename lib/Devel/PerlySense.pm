@@ -748,7 +748,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0137';
+our $VERSION = '0.0138';
 
 
 

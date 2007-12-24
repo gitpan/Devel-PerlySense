@@ -394,18 +394,23 @@ sub isFileInProject {
     my @aDirInc =
             map { dir($self->dirProject, $_) }
             @{ $self->oPerlySense->rhConfig->{project}->{inc_dir} || [] };
-    my @aDirSourceAbsolute = map { dir($_)->absolute } ($self->dirProject, @aDirInc);
+    my @aDirSourceAbsolute =
+            map { dir($_)->absolute }
+            ($self->dirProject, @aDirInc);
 
-###TODO: Comment out  debug statements when that failing test in t/PerlySense-Project-file-in-project.t is fixed
-debug("\nTESTING WHETHER FILE\n($file) IS IN PROJECT\n(" . $self->dirProject . "),\ni.e.\n(" . join(")\n(", @aDirSourceAbsolute) . ")\n");
+    ###TODO: Comment out  debug statements when that failing test in t/PerlySense-Project-file-in-project.t is fixed
+    debug("\nTESTING WHETHER FILE\n($file) IS IN PROJECT\n(" . $self->dirProject . "),\ni.e.\n(" . join(")\n(", @aDirSourceAbsolute) . ")\n");
     my @aDirProjectRegex = map { qr/^ \Q$_\E /x } @aDirSourceAbsolute;
 
-    my $fileAbsolute = file($file)->absolute . "";
-    for my $dirProjectRegex (@aDirProjectRegex) {
-debug("Comparing file\n'" . quotemeta($fileAbsolute) . "' with regex\n'$dirProjectRegex'\n");
-        $fileAbsolute =~ /$dirProjectRegex/x and debug("Found it"), return 1;
+    my $dirFileAbsolute = dir( filePathNormalize( file($file)->absolute->dir ) );
+    debug("DIR ABSOLUTE ($dirFileAbsolute)\n");    
+
+    for my $dirProject (grep { dir(filePathNormalize($_)) } @aDirSourceAbsolute) {
+        debug("Checking whether ($dirFileAbsolute) is within\n($dirProject)\n");
+        $dirProject->subsumes($dirFileAbsolute) and debug("Found it"), return 1;
     }
-debug("FILE ($file) is NOT in the Project (" . $self->dirProject . ")\n");
+    
+    debug("FILE ($file) is NOT in the Project (" . $self->dirProject . ")\n");
     return 0;
 }
 

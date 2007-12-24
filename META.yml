@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.0137
+version: 0.0138
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: IntelliSense for Perl
@@ -15,7 +15,7 @@ requires:
   File::Basename: 0
   File::Find::Rule: 0
   File::Slurp: 0
-  File::Spec: 0.87
+  File::Spec: 3.25
   File::chdir: 0
   Getopt::Long: 0
   Graph::Easy: 0.57
@@ -36,7 +36,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.0137
+    version: 0.0138
   Devel::PerlySense::Bookmark::Definition:
     file: lib/Devel/PerlySense/Bookmark/Definition.pm
     version: 0.01

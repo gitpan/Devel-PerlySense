@@ -1,6 +1,12 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0138
+
+* Tried fixing test which failed on some platforms.
+
+
+
 = 0.0137
 
 * Debug diagnostics for the failing test that doesn't appear on

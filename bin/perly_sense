@@ -23,15 +23,32 @@ use YAML::Tiny;
 use Data::Dumper;
 use Devel::TimeThis;
 
+local $SIG{__WARN__} = sub { debug(@_); };
 
-{
+my $countCommand = 0;
+if (($ARGV[0] || "") eq "--shell") {
+    while(1) {
+        $countCommand++;
+        print 'PerlySense (' . $countCommand . ')$ ';
+        my $command = <STDIN>;
+        $command =~ /^(quit)|(exit)$/ and exit(0);
+
+        ###TODO: parse into tokens according to shell rules (what about spaces in embedded strings for one thing?)
+        local @ARGV = split(/\s+/, $command);
+
+        print "---START OF PERLYSENSE OUTPUT ($countCommand)---\n";
+        eval { main_perly_sense() };
+        $@ and print $@;
+        print "\n---END OF PERLYSENSE OUTPUT ($countCommand)---\n";
+    }
+}
+else {
 #     my $total = Devel::TimeThis->new("Total loop");
 #      for (1..5) {
 #          my $iteration = Devel::TimeThis->new("Iteration");
 #          local @ARGV = @ARGV;
 #          sleep(5);
-         local $SIG{__WARN__} = sub { debug(@_); };
-         caller() or main_perly_sense();
+    caller() or main_perly_sense();
 #      }
 }
 
@@ -41,7 +58,7 @@ use Devel::TimeThis;
 sub main_perly_sense {
     my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $nameMethod, $clearCache, $widthDisplay);
     debug("ARGV: (" . join(" ", "perly_sense",  @ARGV) . ")");
-    
+
     GetOptions(
         "module:s" => \$module,
         "file:s" => \$file,
@@ -60,7 +77,7 @@ sub main_perly_sense {
     $command or syntax("Missing command");
 
     my $oPs = Devel::PerlySense->new();
-    
+
     my $oHome = $oPs->oHome;
     my $dirHomeCache = $oHome->dirHomeCache
             or warn(
@@ -68,6 +85,7 @@ sub main_perly_sense {
                 join(":", $oHome->aDirHomeCandidate) . "\n",
             );
     if($dirHomeCache && $clearCache) {
+        warn("Clearing cache directory ($dirHomeCache)\n");
         rmtree([$dirHomeCache]); -d $dirHomeCache and die("Could not clear cache ($dirHomeCache)\n");
         mkpath([$dirHomeCache]); -d $dirHomeCache or die("Could not re-create cache dir ($dirHomeCache)\n");
     }
@@ -197,7 +215,7 @@ sub main_perly_sense {
         $nameClass or syntax("Missing option --class_name");
         $nameMethod or syntax("Missing option --method_name");
         $dirOrigin or syntax("Missing option --dir_origin");
-        
+
         eval {
             my $oClass = $oPs->classByName(
                 name => $nameClass,
@@ -211,12 +229,12 @@ sub main_perly_sense {
             };
             $@ and warn("Error: $@\n");
         }
-        
+
     } elsif($command eq "method_go_to") {
         $nameClass or syntax("Missing option --class_name");
         $nameMethod or syntax("Missing option --method_name");
         $dirOrigin or syntax("Missing option --dir_origin");
-        
+
         eval {
             my $oClass = $oPs->classByName(
                 name => $nameClass,
@@ -228,7 +246,7 @@ sub main_perly_sense {
             };
             $@ and warn("Error: $@\n");
         }
-        
+
     } elsif($command eq "run_file") {
         $file or syntax("Missing option --file");
 
@@ -311,7 +329,7 @@ sub main_perly_sense {
     } elsif($command eq "info") {
         $dir ||= ".";
         $oPs->setFindProject(dir => $dir);
-        
+
 #        print "PROJECT CONFIG: " . YAML::Tiny::Dump($oPs->rhConfig);
         print "VERSION: (" . Devel::PerlySense->VERSION . ")\n";
         print "PROJECT: (" . $oPs->oProject->dirProject . ")\n";
@@ -330,7 +348,8 @@ sub main_perly_sense {
 sub syntax {
     my ($message) = @_;
     print "Error: $message\n\n";    #pod2usage -msg doesn't do this for me... :(
-    pod2usage(-verbose => 2);
+    pod2usage(-verbose => 2, exitval => "NOEXIT");
+    die("\n");
 }
 
 

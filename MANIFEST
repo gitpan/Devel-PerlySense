@@ -121,5 +121,6 @@ t/PerlySense-smart-doc-object-method.t
 t/PerlySense-smart-doc-pod.t
 t/PerlySense-user-home.t
 t/PerlySense-Util-arg.t
+t/PerlySense-Util-normalize-file-name.t
 t/PerlySense.t
 t/pod-coverage.t
