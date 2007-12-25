@@ -405,8 +405,8 @@ sub isFileInProject {
     my $dirFileAbsolute = dir( filePathNormalize( file($file)->absolute->dir ) );
     debug("DIR ABSOLUTE ($dirFileAbsolute)\n");    
 
-    for my $dirProject (grep { dir(filePathNormalize($_)) } @aDirSourceAbsolute) {
-        debug("Checking whether ($dirFileAbsolute) is within\n($dirProject)\n");
+    for my $dirProject (map { dir(filePathNormalize($_)) } @aDirSourceAbsolute) {
+        debug("Checking whether\n($dirFileAbsolute) is within\n($dirProject)\n");
         $dirProject->subsumes($dirFileAbsolute) and debug("Found it"), return 1;
     }
     
