@@ -81,39 +81,65 @@ my $sNone = "       ";
         " render classOverview ok",
     );
     #warn("-----\n$textShai\n-----\n");
-    my $textExpected = qq/* Inheritance *
+    my $textExpected = q/* Inheritance *
 [ Game::Object                  ] <-----+
 [ Game::Object::Worm            ]       |
 [<Game::Object::Worm::ShaiHulud>] --> [ Game::Lawn ]
 
 * API *
-\\>END                               \\>oLocation
-\\>awardScorePoints                  \\>oLocationRandom
-\\>buildBodyRight                    \\>oPlacePrize
-\\>checkTick                         \\>oPlaceWorm
-\\>color                             \\>oUI
-\\>crash                             \\>oValidLocationAfterMove
-\\>grow                              \\>objectHasMoved
-\\>height                            ->oppositeDirection
-\\>isAnythingAt                      \\>placeObjectAt
-\\>isAnythingBlockingAt              \\>placeObjectBodyPartAt
-\\>isBlocking                        ->possiblyTurnRandomly
-\\>isLocationOnLawn                  ->possiblyTurnTowardsPrize
-\\>isLocationValidForMove            \\>prizeWasClaimedBy
-\\>isLocationValidForPlacement       ->probabilityTurnRandomly
-\\>isObjectAt                        ->probabilityTurnTowardsPrize
-\\>isObjectLocationValidForPlacement \\>raBodyChar
-\\>isRealPlayer                      \\>raBodyLocation
-\\>lengthActual                      ->randomDirection
-\\>lengthIdeal                       \\>removeObject
-\\>loadFile                          \\>removeObjectBodyPartAt
-\\>moveForward                       \\>rhGrid
-->new                               \\>rhPrize
-\\>oController                       \\>score
-\\>oDirection                        \\>turn
-\\>oDirectionToPrize                 \\>width
-\\>oEventMove                        \\>wormHasCrashed
-\\>oLawn
+\>color
+\>height
+\>isBlocking
+\>isRealPlayer
+\>lengthIdeal
+\>oController
+\>oDirection
+\>oEventMove
+\>oLawn
+\>oLocation, $value)
+->oppositeDirection
+\>oUI
+->probabilityTurnRandomly
+->probabilityTurnTowardsPrize
+\>raBodyChar
+\>raBodyLocation
+->randomDirection
+\>rhGrid
+\>rhPrize
+\>score
+\>width
+\>awardScorePoints($points)
+\>buildBodyRight($length, $oLocation, $rcChar)
+\>checkTick($timeWorld)
+\>crash()
+\>END
+\>grow([$sizeIncrease = 1])
+\>isAnythingAt($oLocation)
+\>isAnythingBlockingAt($oLocation)
+\>isLocationOnLawn($oLocation)
+\>isLocationValidForMove($oObject, $oLocation)
+\>isLocationValidForPlacement($oLocation)
+\>isObjectAt($oObject, $left, $top)
+\>isObjectLocationValidForPlacement($oObject)
+\>lengthActual
+\>loadFile($file)
+\>moveForward()
+->new([$left = 11], [$top = 12], [$direction = "left"], [$length = 3)
+\>objectHasMoved($oObject)
+\>oDirectionToPrize($oLocation)
+\>oLocationRandom()
+\>oPlacePrize($oLocation, $value)
+\>oPlaceWorm($left, $top)
+\>oValidLocationAfterMove()
+\>placeObjectAt($oObject)
+\>placeObjectBodyPartAt($oObject, $oLocation, $char)
+->possiblyTurnRandomly()
+->possiblyTurnTowardsPrize()
+\>prizeWasClaimedBy($oPrize, $oObject)
+\>removeObject($oObject)
+\>removeObjectBodyPartAt($oObject, $oLocation)
+\>turn($direction)
+\>wormHasCrashed($oObject)
 
 * Bookmarks *
 - Todo
@@ -166,12 +192,14 @@ ShaiHulud.pm:96:         #XXX fix before checkin
     #warn("-----\n$textShai\n-----\n");
 
     my $textGameObjectSpace = "                       ";
-    my $textExpected = qq/* Inheritance *
+    my $textExpected = q/* Inheritance *
 [<Game::Object>]
 
 * API *
-->buildBodyRight ->isBlocking ->oLawn     ->raBodyChar
-->color          ->new        ->oLocation ->raBodyLocation
+->color      ->raBodyChar
+->isBlocking ->raBodyLocation
+->oLawn      ->buildBodyRight($length, $oLocation, $rcChar)
+->oLocation  ->new($oLocation)
 
 * Bookmarks *
 

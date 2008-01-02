@@ -20,13 +20,12 @@ our $VERSION = '0.01';
 
 
 
-
 use Spiffy -Base;
 use Data::Dumper;
 use File::Basename;
 use Graph::Easy;
 use Text::Table;
-use List::Util qw/ max /;
+use List::Util qw/ max first /;
 use POSIX qw/ ceil /;
 use Path::Class;
 
@@ -34,6 +33,7 @@ use Devel::PerlySense;
 use Devel::PerlySense::Class;
 use Devel::PerlySense::Util;
 use Devel::PerlySense::Util::Log;
+use Devel::PerlySense::Document::Api::Method;
 
 
 
@@ -429,12 +429,18 @@ sub textClassApi {
     };
 
     my @aColText = map {
-        my $oLocation = $oApi->rhSub->{$_};
-        my $fileSub = $oLocation->file;
-        $oDocument->file eq $fileSub ? "->$_" : "\\>$_"
-    } sort $oApi->aNameSubVisible(
+        my $nameMethod = $_;
+
+        my $oMethod = Devel::PerlySense::Document::Api::Method->new(
+            name => $nameMethod,
+            oDocument => $oDocument,
+        );
+        
+        my $oLocationDeclaration = $oApi->rhSub->{$nameMethod};
+        $oMethod->signatureCall($oLocationDeclaration);
+    } $oApi->aNameSubVisible(
         oPerlySense => $self->oPerlySense,
-        fileDocumentCurrent => $oDocument->file,
+        fileCurrent => $oDocument->file,
     );
 
     my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config    

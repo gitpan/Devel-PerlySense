@@ -96,19 +96,19 @@ BEGIN { -d "t" and chdir("t"); }
                        /],
               " API raSub ok");
 
-    ok($oLocation = $oApi->rhSub->{_buildBodyRight}, " Got location");
+    ok($oLocation = $oApi->rhSub->{_buildBodyRight}, " Got location for _buildBodyRight");
     like($oLocation->file, $rexFileObject, "   Correct file name");
     is($oLocation->row, 153, "   row");
     is($oLocation->col, 1, "   col");
     is($oLocation->rhProperty->{sub}, "_buildBodyRight", "   rhProperty->sub");
 
-    ok($oLocation = $oApi->rhSub->{new}, " Got location");
+    ok($oLocation = $oApi->rhSub->{new}, " Got location for new");
     like($oLocation->file, $rexFileWorm, "   Correct file name");
     is($oLocation->row, 142, "   row");
     is($oLocation->col, 1, "   col");
     is($oLocation->rhProperty->{sub}, "new", "   rhProperty->sub");
 
-    ok($oLocation = $oApi->rhSub->{_privateTableMethod}, " Got location");
+    ok($oLocation = $oApi->rhSub->{_privateTableMethod}, " Got location for _privateTableMethod");
     like($oLocation->file, $rexFileTable, "   Correct file name");
     is($oLocation->row, 122, "   row");
     is($oLocation->col, 1, "   col");
@@ -117,7 +117,7 @@ BEGIN { -d "t" and chdir("t"); }
     is_deeply(
         [sort $oApi->aNameSubVisible(
             oPerlySense => $oPs,
-            fileDocumentCurrent => $fileOrigin,
+            fileCurrent => $fileOrigin,
         )],
         [sort qw/
                     isRealPlayer

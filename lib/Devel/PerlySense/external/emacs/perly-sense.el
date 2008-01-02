@@ -796,7 +796,7 @@ return t, or return nil if no method could be found at point."
 (defun perly-sense-class-method-at-point ()
   "Return the method name at (or very near) point, or nil if none was found."
   (save-excursion
-    (if (looking-at "[ \n]") (backward-char)) ;; if at end of method name, move into it
+    (if (looking-at "[ \n(]") (backward-char)) ;; if at end of method name, move into it
     (if (looking-at "\\w")                ;; we may be on a method name
         (while (looking-at "\\w") (backward-char))   ;; position at beginning of word
       )

@@ -28,6 +28,7 @@ use Spiffy -Base;
 use Carp;
 use Data::Dumper;
 
+use Devel::PerlySense::Document;
 use Devel::PerlySense::Document::Location;
 
 
@@ -72,40 +73,88 @@ sub new(@) {
 
 
 
-=head2 aNameSubVisible(oPerlySense => $oPs, fileDocumentCurrent => $file)
+=head2 aNameSubVisible(oPerlySense => $oPs, fileCurrent => $file)
 
 Return array with the method/sub names in the interface that are
 visible.
 
 A method is invisible if it's a private method in a base class of
-$fileDocumentCurrent, outside the current Project, according to
+$fileCurrent, outside the current Project, according to
 $oPerlySense.
 
 =cut
 sub aNameSubVisible {
-    my ($oPerlySense, $fileDocumentCurrent) = Devel::PerlySense::Util::aNamedArg(["oPerlySense", "fileDocumentCurrent"], @_);
-    
+    my ($oPerlySense, $fileCurrent) = Devel::PerlySense::Util::aNamedArg(["oPerlySense", "fileCurrent"], @_);
+
+    my $rsSortSub = $self->rsSortSub($fileCurrent);
     my @aNameSubVisible =
-            sort
-            grep {
-                my $file = $self->rhSub->{$_}->file;
-
-                my $isInvisible =
-                        #Is it a base class (file ne current file)?
-                        $file ne $fileDocumentCurrent
-                        #Is it a private method?   ###TODO: Extract to method, then class *::Method->isPrivate
-                        && $_ =~ /^_/
-                        #Is it outside the project?
-                        && ! $oPerlySense->isFileInProject(
-                            file => $file,
-                            fileProjectOf => $fileDocumentCurrent,
-                        );
-
-                ! $isInvisible;
-            }
+            sort $rsSortSub
+            grep { ! $self->isSubVisible($oPerlySense, $fileCurrent, $_) }
             keys %{$self->rhSub};
 
     return(@aNameSubVisible);
+}
+
+
+
+
+
+=head2 isSubVisible($oPerlySense, $fileCurrent, $nameSub)
+
+Return true if the Sub name is visibl, else false.
+
+A sub/method is invisible if it's a private method in a base class of
+$fileCurrent, outside the current Project, according to $oPerlySense.
+
+=cut
+sub isSubVisible {
+    my ($oPerlySense, $fileCurrent, $nameMethod) = @_;
+
+    my $file = $self->rhSub->{$_}->file;
+    my $isInvisible =
+            #Is it a base class (file ne current file)?
+            $file ne $fileCurrent
+            #Is it a private method?   ###TODO: Extract to method, then class *::Method->isPrivate
+            && $_ =~ /^_/
+            #Is it outside the project?
+            && ! $oPerlySense->isFileInProject(
+                file => $file,
+                fileProjectOf => $fileCurrent,
+            );
+
+    return $isInvisible;
+}
+
+
+
+
+
+=head2 rsSortSub($fileCurrent)
+
+Return sub ref for sorting sub names of this Api, using the rhSub
+property and given the $fileCurrent.
+
+=cut
+sub rsSortSub {
+    my ($fileCurrent) = @_;
+
+    my $rhSub = $self->rhSub();
+    return sub {
+        (
+            #If unknown location, display it first no matter what
+            ( ! $rhSub->{$b}->row ) <=> ( ! $rhSub->{$a}->row)
+                    or # Then alphabetically (case insensitive)
+             uc($a) cmp uc($b)
+         )
+                || #Display the current file's methods first
+         ($rhSub->{$a}->file eq $fileCurrent) <=> ($rhSub->{$b}->file eq $fileCurrent)
+                 || #then alphabetically
+         $rhSub->{$a}->file cmp $rhSub->{$b}->file   ###TODO: inheritance tree
+                 || # Then the order in the file
+         $rhSub->{$a}->row <=> $rhSub->{$b}->row
+                 || # Then method name alphabetically (case insensitive) (if on the same row)
+         uc($a) cmp uc($b)
+     };
 }
 
 
@@ -148,6 +197,8 @@ Return 1 or die on errors.
 =cut
 sub parseSourceSetSub {
     my ($source, $oDocument) = Devel::PerlySense::Util::aNamedArg(["source", "oDocument"], @_);
+
+    ###TODO: ignore comments, POD
 
     #Look for $self->method calls
     my @aSelfMethod = $source =~ / \$self \s* -> \s* (\w+) /gsx;

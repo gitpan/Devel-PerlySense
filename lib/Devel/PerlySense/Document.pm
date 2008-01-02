@@ -614,6 +614,7 @@ sub oLocationPod {
     my $rexName = quotemeta($name);
     for my $oLocationCur (@{$self->oMeta->raLocationPod}) {
 
+        ###TODO: ignore name if it has a sigil, i.e "$name"/"%name"/"@name"
         #First match, this may have to be refined (go for the earliest occurence on the line, or the shortest line)
         if($oLocationCur->rhProperty->{pod} =~ /^= \w+ \s+ [^\n]*? \b $rexName \b /x) {
             my $oLocation = $oLocationCur->clone;
@@ -693,7 +694,7 @@ sub aMethodCallOf {
 
 Look in the document for sub declarations, $self->method calls, and
 $self->{hash_key} in order to determine what is the likely API of the
-packages of this document. Focus on the $nameModule and it's base
+packages of this document. Focus on the $nameModule and its base
 classes.
 
 Set the rhPackageApiLikely property with new

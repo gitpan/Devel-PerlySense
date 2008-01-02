@@ -748,7 +748,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0139';
+our $VERSION = '0.0140';
 
 
 
@@ -763,6 +763,8 @@ use Pod::Text;
 use IO::String;
 use Cache::Cache;
 use Storable qw/freeze thaw/;
+
+use Devel::TimeThis;
 
 use Devel::PerlySense::Util;
 use Devel::PerlySense::Util::Log;
@@ -910,14 +912,20 @@ Parse $file into a new PerlySense::Document object.
 
 Return the new object.
 
+If $file was already parsed by this PerlySense object, cache that
+instance of the Document and return that instead of parsing it again.
+
 Die on errors (like if the file wasn't found).
 
 =cut
 sub oDocumentParseFile {
 	my ($file) = @_;
 
-    my $oDocument = Devel::PerlySense::Document->new(oPerlySense => $self);
-    $oDocument->parse(file => $file);
+    my $oDocument = $self->{_rhFileDocumentCache}->{$file} ||= do {
+        my $oDocumentNew = Devel::PerlySense::Document->new(oPerlySense => $self);
+        $oDocumentNew->parse(file => $file);
+        $oDocumentNew;
+    };
 
     return($oDocument);
 }
@@ -936,7 +944,7 @@ Die if $file doesn't exist.
 sub podFromFile {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
 
-    open(my $fhIn, $file) or die("Could not open file ($file): $!\n");
+    open(my $fhIn, "<", $file) or die("Could not open file ($file): $!\n");
 
     my $textPod = "";
     my $fhOut = IO::String->new($textPod);

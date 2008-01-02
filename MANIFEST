@@ -14,6 +14,7 @@ lib/Devel/PerlySense/Config/Project/Default.pm
 lib/Devel/PerlySense/Cookbook.pod
 lib/Devel/PerlySense/Document.pm
 lib/Devel/PerlySense/Document/Api.pm
+lib/Devel/PerlySense/Document/Api/Method.pm
 lib/Devel/PerlySense/Document/Location.pm
 lib/Devel/PerlySense/Document/Meta.pm
 lib/Devel/PerlySense/Editor/Emacs.pm
@@ -34,6 +35,8 @@ reinstall.sh
 t/00-load.t
 t/data/inc-lib/Game/Event/Timed.pm
 t/data/inc-lib/SubClass.pm
+t/data/overview/api/lib/Game/Object.pm
+t/data/overview/api/lib/Game/Object/Worm.pm
 t/data/project-lib/Game/Application.pm
 t/data/project-lib/Game/Controller.pm
 t/data/project-lib/Game/Direction.pm
@@ -75,6 +78,7 @@ t/PerlySense-Document-Api-consists-supported.t
 t/PerlySense-Document-api-likely.t
 t/PerlySense-Document-api-match.t
 t/PerlySense-Document-Api-merge.t
+t/PerlySense-Document-Api-Method.t
 t/PerlySense-Document-api-visible.t
 t/PerlySense-Document-Api.t
 t/PerlySense-Document-base-class.t

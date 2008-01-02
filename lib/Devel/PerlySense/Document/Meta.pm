@@ -190,12 +190,12 @@ Return 1 or die on errors.
 =cut
 sub _setRowColNodeModule(%$$$) {
     my ($rhRowCol, $row, $col, $oNode, $module) = @_;
-    
+
     $rhRowCol->{$row}->{$col} = {
         oNode => $oNode,
         module => $module,
     };
-    
+
     return;
 }
 
@@ -264,7 +264,7 @@ sub parse {
                         for my $module (grep { $_ ne "qw" } $modules =~ /([\w:]+)/gs) {
                             $hNameModuleBase{$module}++ ;
                         }
-                        
+
                     }
                 }
 
@@ -272,6 +272,8 @@ sub parse {
                 ## fragile: stuff to the right...
                 if($pkgNode eq "PPI::Token::Symbol" && $oNode eq '@ISA') {
                     my $oStatement = $oNode->statement;
+                    
+                    ###TODO: ignore module names with interpolated variables
                     if($oStatement =~ /\@ISA \s* = \s* (.+);$/xs) {
                         my $modules = $1;
                         for my $module (grep { $_ ne "qw" } $modules =~ /([\w:]+)/gs) {
@@ -322,7 +324,7 @@ sub parse {
                         }
                     }
                 }
-                
+
 
 
 
@@ -396,7 +398,7 @@ sub parse {
     $self->rhRowColModule(\%hRowColModule);
     $self->rhRowColMethod(\%hRowColMethod);
     $self->raLocationPod(\@aLocationPod);
-    
+
     return(1);
 }
 
@@ -495,7 +497,7 @@ sub parsePod {
             my $podSection = "";
             my $level = 0;
             for my $heading (@$raPodHeadingCurrent) {
-                ($level < $headingLevel - 1) || ($headingLevel == 0)  and $podSection .= "$heading\n\n";
+                ($level < $headingLevel - 1) || ($headingLevel == 0) and $podSection .= "$heading\n\n";
                 $level++;
             }
 

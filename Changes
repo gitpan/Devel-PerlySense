@@ -3,7 +3,15 @@
 
 = 0.0139
 
-* 
+* In Class Overview, display documentation for each method, or the
+  method name if no doc is found. This is taken from the POD for each
+  method.
+
+
+
+= 0.0139
+
+* Fiddled with failing test, fixed typo.
 
 
 

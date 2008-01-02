@@ -642,6 +642,9 @@ API METHODS
 
     Return the new object.
 
+    If $file was already parsed by this PerlySense object, cache that
+    instance of the Document and return that instead of parsing it again.
+
     Die on errors (like if the file wasn't found).
 
   podFromFile(file => $file)
