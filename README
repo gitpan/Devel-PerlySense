@@ -51,7 +51,8 @@ SYNOPSIS
     programmable by the authors, if not by the users.
 
   From the command line
-    Create Project
+    *   Create Project
+
           perly_sense create_project [--dir=DIR]
 
         Create a PerlySense project in DIR (default is current dir).
@@ -59,12 +60,17 @@ SYNOPSIS
         If there is already a project.yml file, back it up with a datestamp
         first.
 
-    Process Project Source Files
+        (Note that you don't need to create a project before start using
+        PerlySense. Read more below).
+
+    *   Process Project Source Files
+
           perly_sense process_project
 
         Cache all modules in the project. (not implemented)
 
-    Process Source Files in @INC
+    *   Process Source Files in @INC
+
           perly_sense process_inc
 
         Cache all the modules in @INC.
@@ -73,13 +79,16 @@ SYNOPSIS
         upgrade), but it will take a wile so put it in the background and
         let it churn away at those modules.
 
-        Unix
-            perly_sense process_inc & # (well, you knew that already)
+        *   Unix
 
-        Windows
+              perly_sense process_inc &        # (well, you knew that already)
+
+        *   Windows
+
               start /MIN perly_sense process_inc
 
-    Get Info
+    *   Get Info
+
           perly_sense info
 
         Display useful information about what the current project directory,
@@ -101,6 +110,7 @@ INSTALLATION
         (global-unset-key "\C-o")
         (setq perly-sense-key-prefix "\C-o")
 
+
         ;; ** Flymake **
         ;; Load flymake if t
         ;; Flymake must be installed.
@@ -109,6 +119,7 @@ INSTALLATION
         ;; Put flymake.el somewhere in your load-path.
         (setq perly-sense-load-flymake t)
         ;; Note: more flymake config below, after loading PerlySense
+
 
         ;; *** PerlySense load (don't touch) ***
         (setq perly-sense-external-dir (shell-command-to-string "perly_sense external_dir"))
@@ -129,6 +140,7 @@ INSTALLATION
         Does 'perly_sense external_dir' give you a proper directory? (%s)" perly-sense-external-dir)
           )
 
+
         ;; ** Flymake Config **
 
         ;; If you only want syntax check whenever you save, not continously
@@ -140,6 +152,7 @@ INSTALLATION
         ;; that great on a console with the default color scheme.
         (set-face-background 'flymake-errline "antique white")
         (set-face-background 'flymake-warnline "lavender")
+
 
         ;; *** PerlySense End ***
 
@@ -366,7 +379,7 @@ GETTING STARTED WITH EMACS
 
   Enabling Flymake
     First off, flymake itself needs to be enabled. Refer to the Emacs
-    Installation description.
+    Installation description above.
 
     This will enable Flymake for all cperl-mode buffers, causing Emacs to
     call perly_sense for each check.
@@ -409,6 +422,39 @@ GETTING STARTED WITH EMACS
     C-o s p -- Go to the previous Source error/warning.
 
     C-o s s -- Display the error/warning text of the current line.
+
+  Assist With -- Regex
+    Hit C-o a r to bring up the Regex Tool which will let you compose a Perl
+    regular expression interactively with matching text highlighed.
+
+    The Regex Tool appears in a new frame with three buffers: *Regex*,
+    *Text* and *Groups*.
+
+    If point is on a regular expression in the source code, that regex will
+    be used to pre-populate the *Regex* buffer. (Not yet implemented)
+
+    If there is a comment block just above the regex, it will be used to
+    pre-populate the *Text* buffer. Note that it is very handy to document
+    the regex with some sample input, so this is a good idea in general.
+    (Not yet implemented)
+
+    The contents of the *Regex* buffer should look e.g. like this:
+
+      / part \s (\w+) \s no:(\d) /xgm
+
+    *   You can use all the usual delimiters, such as / | {} () ", etc.
+
+    *   You can put Perl comments below the regex to temporarily store
+        chunks of regex code during prototyping.
+
+    *   The modifiers work as expected, including /x and /g .
+
+    The results in the *Groups* buffer are updated as you type in either the
+    *Regex* or *Text* buffer.
+
+    Use C-c C-c to force an update.
+
+    Use C-c C-k to quit all the regex-tool buffers and remove the frame.
 
 THE PERLYSENSE USER DIRECTORY
     PerlySense keeps a per-user directory to store cache files, logs, etc.
@@ -479,8 +525,8 @@ PROJECTS
     you are looking at. If it's a file within the directory tree under a
     ".PerlySenseProject" directory, that's what the current Project is. But
     if you from that file do a Class Overview on an installed CPAN module,
-    the current Project is deduced from that .pm file, typically leading the
-    current Project to be the "lib" or "site_lib" of your local CPAN
+    the current Project is deduced from that .pm file, typically making the
+    current Project be the "lib" or "site_lib" of your local CPAN
     installation.
 
   Project Configuration
@@ -513,9 +559,12 @@ BOOKMARKS
 
     This can be anything you like, but things that come to mind are:
 
-    * TODO comments
-    * FIXME/XXX/HACK comments
-    * Things you don't want left in the code, like
+    *   TODO comments
+
+    *   FIXME/XXX/HACK comments
+
+    *   Things you don't want left in the code, like
+
         Breakpoints ($DB::single = 1)
 
         Debugging warn/print statements
@@ -559,6 +608,11 @@ SEE ALSO
     Earlier (a lot) work by me.
 
     <http://www.perl.com/lpt/a/955> - Article "Perl Needs Better Tools"
+
+    <http://media.pragprog.com/articles/mar_02_archeology.pdf> - Article
+    "Software Archeology"
+
+    <http://www.newartisans.com/downloads_files/regex-tool.el> - Regex Tool
 
 AUTHOR
     Johan Lindström, "<johanl[ÄT]DarSerMan.com>"
@@ -717,6 +771,18 @@ API METHODS
     Return undef if no declaration could be found.
 
     Die on errors.
+
+  rhRegexExample(file => $fileOrigin, row => $row, col => $row)
+    Look in $file at location $row/$col and find the regex located there,
+    and possibly the example comment preceeding it.
+
+    Return hash ref with (keys: regex, example; values: source string). The
+    source string is an empty string if nothing found.
+
+    If there is an example string in a comment, return the example without
+    the comment #
+
+    Die if $file doesn't exist, or on other errors.
 
   rhRunFile(file => $fileSource)
     Figure out what type of source file $fileSource is, and how it should be

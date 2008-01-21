@@ -20,6 +20,7 @@ lib/Devel/PerlySense/Document/Meta.pm
 lib/Devel/PerlySense/Editor/Emacs.pm
 lib/Devel/PerlySense/external/emacs/perly-sense-flymake.el
 lib/Devel/PerlySense/external/emacs/perly-sense.el
+lib/Devel/PerlySense/external/emacs/regex-tool.el
 lib/Devel/PerlySense/Home.pm
 lib/Devel/PerlySense/Project.pm
 lib/Devel/PerlySense/Project/Unknown.pm

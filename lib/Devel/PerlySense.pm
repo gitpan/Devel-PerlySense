@@ -70,7 +70,7 @@ programmable by the authors, if not by the users.
 
 =over 4
 
-=item Create Project
+=item * Create Project
 
   perly_sense create_project [--dir=DIR]
 
@@ -79,15 +79,18 @@ Create a PerlySense project in DIR (default is current dir).
 If there is already a project.yml file, back it up with a datestamp
 first.
 
+(Note that you don't need to create a project before start using
+PerlySense. Read more below).
 
-=item Process Project Source Files
+
+=item * Process Project Source Files
 
   perly_sense process_project
 
 Cache all modules in the project. (not implemented)
 
 
-=item Process Source Files in @INC
+=item * Process Source Files in @INC
 
   perly_sense process_inc
 
@@ -99,18 +102,18 @@ it churn away at those modules.
 
 =over 4
 
-=item Unix
+=item * Unix
 
-perly_sense process_inc &        # (well, you knew that already)
+  perly_sense process_inc &        # (well, you knew that already)
 
-=item  Windows
+=item * Windows
 
   start /MIN perly_sense process_inc
 
 =back
 
 
-=item Get Info
+=item * Get Info
 
   perly_sense info
 
@@ -443,7 +446,7 @@ Perl Critic violations use the warning face.
 =head2 Enabling Flymake
 
 First off, flymake itself needs to be enabled. Refer to the Emacs
-Installation description.
+Installation description above.
 
 This will enable Flymake for all cperl-mode buffers, causing Emacs to
 call perly_sense for each check.
@@ -489,6 +492,52 @@ it. (not implemented)
 C-o s p -- Go to the previous Source error/warning.
 
 C-o s s -- Display the error/warning text of the current line.
+
+
+
+=head2 Assist With -- Regex
+
+Hit C-o a r to bring up the Regex Tool which will let you compose a
+Perl regular expression interactively with matching text highlighed.
+
+The Regex Tool appears in a new frame with three buffers: *Regex*,
+*Text* and *Groups*.
+
+If point is on a regular expression in the source code, that regex
+will be used to pre-populate the *Regex* buffer. (Not yet implemented)
+
+If there is a comment block just above the regex, it will be used to
+pre-populate the *Text* buffer. Note that it is very handy to document
+the regex with some sample input, so this is a good idea in
+general. (Not yet implemented)
+
+The contents of the *Regex* buffer should look e.g. like this:
+
+  / part \s (\w+) \s no:(\d) /xgm
+
+=over 4
+
+=item *
+
+You can use all the usual delimiters, such as / | {} () ", etc.
+
+=item *
+
+You can put Perl comments below the regex to temporarily store chunks
+of regex code during prototyping.
+
+=item *
+
+The modifiers work as expected, including /x and /g .
+
+=back
+
+The results in the *Groups* buffer are updated as you type in either
+the *Regex* or *Text* buffer.
+
+Use C-c C-c to force an update.
+
+Use C-c C-k to quit all the regex-tool buffers and remove the frame.
 
 
 
@@ -584,7 +633,7 @@ file you are looking at. If it's a file within the directory tree
 under a C<.PerlySenseProject> directory, that's what the current
 Project is. But if you from that file do a Class Overview on an
 installed CPAN module, the current Project is deduced from that .pm
-file, typically leading the current Project to be the C<lib> or
+file, typically making the current Project be the C<lib> or
 C<site_lib> of your local CPAN installation.
 
 
@@ -694,6 +743,11 @@ browser/IDE. Earlier (a lot) work by me.
 
 L<http://www.perl.com/lpt/a/955> - Article "Perl Needs Better Tools"
 
+L<http://media.pragprog.com/articles/mar_02_archeology.pdf> - Article "Software Archeology"
+
+L<http://www.newartisans.com/downloads_files/regex-tool.el> - Regex Tool
+
+
 
 
 =head1 AUTHOR
@@ -748,7 +802,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0140';
+our $VERSION = '0.0141';
 
 
 
@@ -1178,6 +1232,32 @@ sub oLocationMethodDefinitionFromDocument {
 
 
 
+=head2 rhRegexExample(file => $fileOrigin, row => $row, col => $row)
+
+Look in $file at location $row/$col and find the regex located there,
+and possibly the example comment preceeding it.
+
+Return hash ref with (keys: regex, example; values: source
+string). The source string is an empty string if nothing found.
+
+If there is an example string in a comment, return the example without
+the comment #
+
+Die if $file doesn't exist, or on other errors.
+
+=cut
+sub rhRegexExample {
+    my ($file, $row, $col) = Devel::PerlySense::Util::aNamedArg(["file", "row", "col"], @_);
+
+    my $oDocument = $self->oDocumentParseFile($file);
+
+    return $oDocument->rhRegexExampleAt(row => $row, col => $col);
+}
+
+
+
+
+
 =head2 rhRunFile(file => $fileSource)
 
 Figure out what type of source file $fileSource is, and how it should
@@ -1597,7 +1677,10 @@ sub aDocumentFindModuleWithInterface {
     my @aDocument;
     for my $nameModule (@$raNameModule) {
 #print "module: $nameModule\n";
-        my $oDocument = $self->oDocumentFindModule(nameModule => $nameModule, dirOrigin => $dirOrigin) or next;
+        my $oDocument = $self->oDocumentFindModule(
+            nameModule => $nameModule,
+            dirOrigin => $dirOrigin,
+        ) or next;
         $oDocument->determineLikelyApi(nameModule => $nameModule) or next;
         my $score = $oDocument->scoreInterfaceMatch(nameModule => $nameModule, raMethodRequired => $raMethodRequired, raMethodNice => $raMethodNice) or next;
 

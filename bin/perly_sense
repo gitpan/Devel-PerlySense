@@ -326,6 +326,21 @@ sub main_perly_sense {
             debug(sprintf("%0.6f : $file", $hFileTime{$file}));
         }
 
+    } elsif($command eq "regex") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
+
+        eval {
+            print $oEditor->formatOutputDataStructure(
+                %{ $oPs->rhRegexExample(file => $file, row => $row, col => $col) },
+            );
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
+
     } elsif($command eq "info") {
         $dir ||= ".";
         $oPs->setFindProject(dir => $dir);

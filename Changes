@@ -1,7 +1,15 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
-= 0.0139
+= 0.0141
+
+* Bundle regex-tool 1.2
+
+  C-o a r - Assist-with Regex
+
+
+
+= 0.0140
 
 * In Class Overview, display documentation for each method, or the
   method name if no doc is found. This is taken from the POD for each

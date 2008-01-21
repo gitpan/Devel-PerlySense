@@ -499,6 +499,30 @@ sub aObjectMethodCallAt {
 
 
 
+=head2 rhRegexExample(row => $row, col => $col)
+
+Look in $file at location $row/$col and find the regex located there,
+and possibly the example comment preceeding it.
+
+Return hash ref with (keys: regex, example; values: source
+string). The source string is an empty string if nothing found.
+
+If there is an example string in a comment, return the example without
+the comment #
+
+Die if $file doesn't exist, or on other errors.
+
+=cut
+sub rhRegexExample {
+    my ($row, $col) = Devel::PerlySense::Util::aNamedArg(["row", "col"], @_);
+    
+    return { regex => "", example => "" };
+}
+
+
+
+
+
 =head2 oLocationSub(name => $name, [package => "main"])
 
 Return a Devel::PerlySense::Document::Location object with the
@@ -551,7 +575,8 @@ sub oLocationSubDefinition {
 
     if(! $package) {
         if($row) {
-            $package = $self->packageAt(row => $row) or warn("Could not find active package at row ($row)\n"), return(undef);
+            $package = $self->packageAt(row => $row)
+                    or warn("Could not find active package at row ($row)\n"), return(undef);
         } else {
             $package = "main";
         }
@@ -568,7 +593,10 @@ sub oLocationSubDefinition {
 
     #Fail to base classes
     for my $moduleBase ($self->aNameBase) {
-        my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(nameModule => $moduleBase, dirOrigin => dirname($self->file)) or debug("Could not find module ($moduleBase)\n"), next;
+        my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(
+            nameModule => $moduleBase,
+            dirOrigin => dirname($self->file),
+        ) or debug("Could not find module ($moduleBase)\n"), next;
         $oLocation = $oDocumentBase->oLocationSubDefinition(name => $name, package => $moduleBase);
         $oLocation and return($oLocation);
     }
@@ -632,8 +660,14 @@ sub oLocationPod {
     #Fail to base classes, maybe
 
     for my $moduleBase ($self->aNameBase) {
-        my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(nameModule => $moduleBase, dirOrigin => dirname($self->file)) or warn("Could not find module ($moduleBase)\n"), next;
-        if(my $oLocation = $oDocumentBase->oLocationPod(name => $name, lookFor => $lookFor)) {
+        my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(
+            nameModule => $moduleBase,
+            dirOrigin => dirname($self->file),
+        ) or warn("Could not find module ($moduleBase)\n"), next;
+        if(my $oLocation = $oDocumentBase->oLocationPod(
+            name => $name,
+            lookFor => $lookFor,
+        )) {
 
             if( $oLocation->rhProperty->{pod} !~ /\n=head1 From <[\w:]+>\n$/) {
                 $oLocation->rhProperty->{pod} .= "\n=head1 From <$moduleBase>\n";
@@ -765,7 +799,7 @@ sub determineLikelyApi0 {
     for my $nameBase ($self->aNameBase) {
         my $oDocumentBase = $self->oPerlySense->oDocumentFindModule(
             nameModule => $nameBase,
-            dirOrigin => dirname($self->file)
+            dirOrigin => dirname($self->file),
         ) or next;
 
         $oDocumentBase->determineLikelyApi(nameModule => $nameBase);
@@ -774,7 +808,7 @@ sub determineLikelyApi0 {
             nameModule => $nameModule,
             rhPackageApi => $rhPackageApi,
             nameModuleBase => $nameBase,
-            rhPackageApiBase => $oDocumentBase->rhPackageApiLikely
+            rhPackageApiBase => $oDocumentBase->rhPackageApiLikely,
         );
 
     }

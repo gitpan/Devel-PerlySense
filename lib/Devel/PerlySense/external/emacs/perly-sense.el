@@ -9,7 +9,46 @@
 
 
 
-;; For the faces
+
+;;;; Other modules
+
+;; Regex Tool
+(require 'regex-tool)
+
+
+
+(defun regex-render-perl (regex sample)
+  (with-temp-buffer
+    (let*
+        ((g-statement      ;; If /g modifier, loop over all matches
+          (if (string-match "[|#!?\"'/)>}][cimosx]*?g[cimosxg]*$" regex) "while" "if"))
+         (regex-line (format "%s ($line =~ 
+m%s
+) {" g-statement regex)))  ;; Insert regex spec on a separate line so it can contain Perl comments
+      (insert (format "@lines = <DATA>;
+$line = join(\" \", @lines);
+print \"(\";
+%s
+  print \"(\", length($`), \" \", length($&), \" \";
+  for $i (1 .. 20) {
+    if ($$i) {
+      print \"(\", $i, \" . \\\"\", $$i, \"\\\") \";
+    }
+  }
+  print \")\";
+}
+print \")\";
+__DATA__
+%s" regex-line sample))
+      (call-process-region (point-min) (point-max) "perl" t t)
+      (goto-char (point-min))
+      (read (current-buffer)))))
+
+
+
+
+
+;; For their faces
 (require 'compile)
 (require 'cperl-mode)
 (require 'cus-edit)
@@ -562,6 +601,23 @@ t on success, else nil"
 
 
 
+(defun perly-sense-regex-tool ()
+  "Bring up the Regex Tool"
+  (interactive)
+  (setq regex-tool-backend "Perl")
+  (regex-tool)
+  (set-buffer "*Regex*")
+  (if (= (point-min) (point-max))
+      (progn
+        (insert "//msi")
+        (goto-char 2)
+        )
+    
+    )
+  )
+
+
+
 ;; PerlySense Class major mode
 
 ;;;
@@ -1087,6 +1143,8 @@ or go to the Bookmark at point"
 (global-set-key (format "%srr" perly-sense-key-prefix) 'perly-sense-rerun-file)
 
 (global-set-key (format "%sge" perly-sense-key-prefix) 'perly-sense-compile-goto-error-file-line)
+
+(global-set-key (format "%sar" perly-sense-key-prefix) 'perly-sense-regex-tool)
 
 
 
