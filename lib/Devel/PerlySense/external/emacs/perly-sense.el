@@ -211,7 +211,10 @@ __DATA__
   (interactive)
   (let ((module (cperl-word-at-point)))
     (if module
-        (perly-sense-find-source-for-module module)
+        (progn
+          (message "Going to module %s..." module)
+          (perly-sense-find-source-for-module module)
+          )
       )
     )
   )
@@ -490,6 +493,93 @@ __DATA__
     )
   )
 
+
+
+
+(defun perly-sense-go-to-base-class-at-point ()
+  "Go to the Base Class of the Class at point. If ambigous, let
+the the user choose a Class."
+  (interactive)
+  (message "Goto Base Class...")
+  (let ((result (shell-command-to-string
+               (format "perly_sense base_class_go_to --file=%s --row=%s --col=%s"
+                       (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
+                       )
+               ))
+        )
+    (let* (
+           (result-hash (perly-sense-parse-sexp result))
+           (message-string (cdr (assoc "message" result-hash)))
+           (class-list (cdr (assoc "class-list" result-hash)))
+           (first-class-alist (car class-list))
+           (second-class-alist (cdr class-list))
+           )
+      (if (not first-class-alist)
+          (message "No Base Class found")
+        (if (not second-class-alist)
+            (perly-sense-go-to-class-alist first-class-alist)
+          (let (
+                (chosen-class-alist
+                 (perly-sense-choose-class-alist-from-class-list "Base Class" class-list)))
+            (perly-sense-go-to-class-alist chosen-class-alist)
+            )
+          )
+        )
+      (if message-string
+          (message message-string)
+        )
+      )    
+    )
+  )
+
+
+
+(defun perly-sense-go-to-class-alist (class-alist)
+  "Go to the Class class-alist (keys: class-name, file, row)"
+  (let ((class-name (cdr (assoc "class-name" class-alist)))
+        (file (cdr (assoc "file" class-alist)))
+        (row (string-to-number (cdr (assoc "row" class-alist)))))
+    (perly-sense-find-file-location file row 1)
+    (message "Went to Class %s" class-name)
+    )
+  )
+
+
+
+(defun perly-sense-choose-class-alist-from-class-list (what-text class-list)
+  "Let the user choose a class-alist from the lass-list of Class definitions. Return class-alist with (keys: class-name, file, row)"
+  (let* ((class-name-list (mapcar (lambda (class-alist)
+                                    (cdr (assoc "class-name" class-alist))
+                                    )
+                                  class-list))
+         (chosen-class-name (completing-read
+                             (format "Select %s: " what-text)
+                             class-name-list
+                             nil
+                             "force"
+                             nil
+                             nil
+                             (car class-name-list)
+                             ))
+         )
+    (perly-sense-get-alist-from-list class-list "class-name" chosen-class-name)
+    )
+  )
+
+
+
+(defun perly-sense-get-alist-from-list (list-of-alist key value)
+  "Return the first alist in list which aliast's key is value, or
+nil if none was found"
+  (catch 'found
+    (dolist (alist list-of-alist)
+      (let ((alist-value (cdr (assoc key alist))))
+;;         (message "CURRENT ALIST: %s,
+;; looking for |%s|
+;; matching key |%s|, value |%s|" (prin1-to-string alist) value key alist-value)
+        (if (string= alist-value value)
+            (throw 'found alist)
+          nil)))))
 
 
 
@@ -1136,6 +1226,8 @@ or go to the Bookmark at point"
 
 (global-set-key (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-smart-docs-at-point)
 (global-set-key (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-smart-go-to-at-point)
+(global-set-key (format "%sgb" perly-sense-key-prefix) 'perly-sense-go-to-base-class-at-point)
+(global-set-key (format "%sgm" perly-sense-key-prefix) 'perly-sense-find-source-for-module-at-point)
 (global-set-key (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-display-api-for-class-at-point)
 

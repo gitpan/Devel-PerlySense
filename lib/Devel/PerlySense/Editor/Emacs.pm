@@ -555,24 +555,47 @@ sub formatOutputDataStructure {
 
 #    return q|'(("class-overview" . "Hej baberiba\n [ Class::Accessor ]") ("class-name" . "Class::Accessor") ("message" . "Whatever2"))|;
 
+    my $keysValues = $self->formatOutputItem($rhData);
+    
+    return qq|'$keysValues|;
+}
 
-    my $keysValues = join(
-        " ",
-        map {
+
+
+
+
+=head2 formatOutputItem($item)
+
+Return stringification of $item suited for the Editor. $item can be a
+scalar, array ref or hash ref.
+
+=cut
+sub formatOutputItem {
+    my ($value) =  @_;
+
+    my $output = "";
+    if(ref($value) eq "ARRAY") {
+        $output = "(" . join(" ", map { $self->formatOutputItem($_) } @$value) . ")"
+    }
+    elsif(ref($value) eq "HASH") {
+        $output = "(" . join(" ", map {
             my $key = $_;
-            my $value = $rhData->{$_};
+            my $item_value = $value->{$_};
+            $item_value = $self->formatOutputItem($item_value);
 
             $key = $self->renameIdentifier($key);
             $key = $self->escapeValue($key);
 
-            $value = $self->escapeValue($value);
-
-            qq|("$key"| . " . " . qq|"$value")|;
-        }
-        sort keys %$rhData
-    );
-
-    return qq|'($keysValues)|;
+            qq|("$key" . $item_value)|;
+            
+        } sort keys %$value) . ")";
+    }
+    else {
+        $output = $self->escapeValue($value);
+        $output = qq|"$output"|;
+    }
+    
+    return $output;
 }
 
 

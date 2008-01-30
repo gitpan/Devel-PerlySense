@@ -132,6 +132,25 @@ sub clone {
 
 
 
+=head2 rhInfo()
+
+Return a hash ref with the complete attributes of the class, i.e. both
+the file and the properties in rhProperty.
+
+=cut
+sub rhInfo {
+    my $rhInfo = dclone($self->rhProperty);
+    for my $field (qw/ file row col /) {
+        $rhInfo->{$field} = $self->$field;
+    }
+    
+    return($rhInfo);
+}
+
+
+
+
+
 1;
 
 

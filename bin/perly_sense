@@ -247,6 +247,45 @@ sub main_perly_sense {
             $@ and warn("Error: $@\n");
         }
 
+    } elsif($command eq "base_class_go_to") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
+
+        eval {
+#             [
+#                 {
+#                     class_name => "Game::Object::Worm",
+#                     file => "lib/Game/Object/Worm.pm",
+#                     row => 0,
+#                 },
+#                 {
+#                     class_name => "Game::Location",
+#                     file => "lib/Game/Location.pm",
+#                     row => 22,
+#                 },
+#             ]
+            my $oClass = $oPs->classAt(file => $file, row => $row, col => $col);
+            if($oClass) {
+                my $raClassInfo = [
+                    map {
+                        {
+                            class_name => $_->name,
+                            file => $_->raDocument->[0]->file,
+                            row => 1,
+                        }
+                    } values %{$oClass->rhClassBase()}
+                ];
+                print $oEditor->formatOutputDataStructure(
+                    rhData => { class_list => $raClassInfo },
+                );
+            }
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
+
     } elsif($command eq "run_file") {
         $file or syntax("Missing option --file");
 

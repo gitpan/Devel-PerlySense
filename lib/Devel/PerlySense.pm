@@ -37,6 +37,10 @@ method/sub declaration for the symbol (module/method/sub) at point. If
 no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
 
+C-o g b -- Go To Base Class -- Open the file of the base class of the
+current class. This will take you up one level in the inheritance
+hierarchy.
+
 C-o C-r -- Run file -- Run the current file using the Compilation mode
 and the settings appropriate for the source type (Test, Module,
 etc.). Highlight errors and jump to source with C-c C-c.
@@ -257,6 +261,16 @@ autoloaded subs etc), the POD documentation for the sub.
 
 Before you go anywhere the mark is set. Go back to earlier marks
 globally with C-x C-SPC, or locally with C-u C-SPC.
+
+
+=head2 Go to Base Class
+
+C-o g b takes you up one level in the inheritance hierarchy. If the
+current class has many base classes, you'll have to choose which one
+to go to.
+
+(If the current sub/method is implemented in that base class, go to
+the sub definition. (Not implemented)).
 
 
 =head2 Go to Class
@@ -802,7 +816,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0141';
+our $VERSION = '0.0142';
 
 
 

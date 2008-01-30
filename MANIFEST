@@ -108,6 +108,7 @@ t/PerlySense-Editor-Emacs-class-overview.t
 t/PerlySense-Editor-Emacs-external-dir.t
 t/PerlySense-Editor-Emacs-item-in-groups.t
 t/PerlySense-Editor-Emacs-line-wrap.t
+t/PerlySense-Editor-Emacs-output.t
 t/PerlySense-Editor-fit-columns.t
 t/PerlySense-find-file-inc.t
 t/PerlySense-find-file-up-down.t

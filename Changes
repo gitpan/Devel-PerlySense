@@ -1,6 +1,13 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0142
+
+* C-o g b - Goto Base Class. Basic functionality, but can handle MI,
+  letting you choose which class to go to.
+
+
+
 = 0.0141
 
 * Bundle regex-tool 1.2
