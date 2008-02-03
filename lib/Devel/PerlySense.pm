@@ -41,12 +41,12 @@ C-o g b -- Go To Base Class -- Open the file of the base class of the
 current class. This will take you up one level in the inheritance
 hierarchy.
 
+C-o g m -- Go To Module -- Open the source file of the module at
+point.
+
 C-o C-r -- Run file -- Run the current file using the Compilation mode
 and the settings appropriate for the source type (Test, Module,
 etc.). Highlight errors and jump to source with C-c C-c.
-
-C-o m f -- Perl Module open File -- Open the source file of the module
-at point.
 
 Flymake may be used to highlight syntax errors and warnings in the
 source while editing (continously or at every save).
@@ -269,13 +269,13 @@ C-o g b takes you up one level in the inheritance hierarchy. If the
 current class has many base classes, you'll have to choose which one
 to go to.
 
-(If the current sub/method is implemented in that base class, go to
-the sub definition. (Not implemented)).
+If the current method is implemented in that base class, go to the sub
+definition.
 
 
-=head2 Go to Class
+=head2 Go to Module
 
-C-o m f -- Go to Class (will be changed to C-o g c) at point.
+C-o g m -- Go to Module at point.
 
 
 =head2 Class Overview
@@ -816,7 +816,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0142';
+our $VERSION = '0.0143';
 
 
 

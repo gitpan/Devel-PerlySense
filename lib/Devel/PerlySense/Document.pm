@@ -552,6 +552,37 @@ sub oLocationSub {
 
 
 
+=head2 oLocationSubAt(row => $row, col => $col)
+
+Return a Devel::PerlySense::Document::Location object with the
+location of the sub definition at $row/$col, or undef if it row/col
+isn't inside a sub definition.
+
+Note: Currently, col is ignored, and the sub is presumed to occupy the
+entire row.
+
+Die on errors.
+
+=cut
+sub oLocationSubAt {
+    my ($row, $col) = Devel::PerlySense::Util::aNamedArg(["row", "col"], @_);
+
+    for my $oLocation (@{$self->oMeta->raLocationSub}) {
+        if(           $row >= $oLocation->row
+                   && $row <= $oLocation->rhProperty->{oLocationEnd}->row
+               ) {
+            debug("Sub found at ($row/$col): (" . Dumper($oLocation) . ")");
+            return($oLocation->clone);
+        }
+    }
+    
+    return(undef);
+}
+
+
+
+
+
 =head2 oLocationSubDefinition(name => $name, [row => $row], [package => $package])
 
 Return a Devel::PerlySense::Document::Location object with the

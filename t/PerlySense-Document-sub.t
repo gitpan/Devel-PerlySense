@@ -1,8 +1,10 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 46;
+use Test::More tests => 57;
 use Test::Exception;
+
+use Data::Dumper;
 
 use File::Basename;
 use File::Spec::Functions;
@@ -22,6 +24,10 @@ my $dirData = "data/simple-lib";
 my $fileOrigin = "$dirData/lib/Win32/Word/Writer.pm";
 my $oLocation;
 
+
+
+diag("Find sub by name");
+
 ok($oDocument->parse(file => $fileOrigin), "Parsed file ok");
 is(my $package = $oDocument->packageAt(row => 429), "Win32::Word::Writer", "Correct package Table ok");
 
@@ -40,6 +46,36 @@ ok($oLocation = $oDocument->oLocationSub(name => "NewParagraph", package => $pac
 is($oLocation->file, $fileOrigin, " Got file");
 is($oLocation->row, 446, "  row");
 is($oLocation->col, 1, "  col");
+
+
+
+
+
+diag("Find the sub at row/col");
+$oLocation =  $oDocument->oLocationSubAt(row => 2, col => 1);
+ok( ! $oLocation, "Missing sub returned undef") or warn(Dumper($oLocation));
+
+ok(
+    ! $oDocument->oLocationSubAt(row => 395, col => 1),
+    "Missing sub (edge case: just before) returned undef",
+);
+ok( $oLocation = $oDocument->oLocationSubAt(row => 396, col => 1), "Found sub on start line");
+is($oLocation->row, 396, "  Got correct sub start row");
+is($oLocation->col, 1, "  Got correct sub start col");
+is($oLocation->rhProperty->{nameSub}, "Write", "  Got correct sub name");
+ok(my $oLocationEnd = $oLocation->rhProperty->{oLocationEnd}, "  Got and end oLocation");
+is($oLocationEnd->row, 404, "  Got correct sub end row");
+is($oLocationEnd->col, 2, "  Got correct sub end col");
+
+ok( $oLocation = $oDocument->oLocationSubAt(row => 404, col => 1), "Found sub on end line");
+ok(
+    ! $oDocument->oLocationSubAt(row => 405, col => 1),
+    "Missing sub (edge case: just after) returned undef",
+);
+
+#is($oLocation->file
+
+
 
 
 

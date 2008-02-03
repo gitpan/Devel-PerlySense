@@ -9,6 +9,18 @@
 
 
 
+;;;; Utilities
+
+(defun alist-value (alist key)
+  "Return the value of KEY in ALIST" ;; Surely there must be an existing defun to do this that I haven't found...
+  (cdr (assoc key alist)))
+
+(defun alist-num-value (alist key)
+  "Return the numeric value of KEY in ALIST"
+  (string-to-number (alist-value alist key)))
+
+
+
 
 ;;;; Other modules
 
@@ -22,7 +34,7 @@
     (let*
         ((g-statement      ;; If /g modifier, loop over all matches
           (if (string-match "[|#!?\"'/)>}][cimosx]*?g[cimosxg]*$" regex) "while" "if"))
-         (regex-line (format "%s ($line =~ 
+         (regex-line (format "%s ($line =~
 m%s
 ) {" g-statement regex)))  ;; Insert regex spec on a separate line so it can contain Perl comments
       (insert (format "@lines = <DATA>;
@@ -175,6 +187,12 @@ __DATA__
 
 
 ;;;; Defuns
+
+
+
+;;;; Defuns
+
+
 
 (defun perly-sense-log (msg)
   "log msg in a message and return msg"
@@ -347,10 +365,10 @@ __DATA__
              ))
         (let* (
                (result-hash (perly-sense-parse-sexp result))
-               (dir-run-from (cdr (assoc "dir-run-from" result-hash)))
-               (command-run (cdr (assoc "command-run" result-hash)))
-               (type-source-file (cdr (assoc "type-source-file" result-hash)))
-               (message-string (cdr (assoc "message" result-hash)))
+               (dir-run-from (alist-value result-hash "dir-run-from"))
+               (command-run (alist-value result-hash "command-run"))
+               (type-source-file (alist-value result-hash "type-source-file"))
+               (message-string (alist-value result-hash "message"))
                )
           (if command-run
               (perly-sense-run-file-run-command
@@ -460,13 +478,17 @@ __DATA__
 
 
 (defun perly-sense-find-file-location (file row col)
-  "Find the file and go to the row col location"
+  "Find the file and go to the row/col location. If row and/or
+col is 0, the point isn't moved in that dimension."
   (push-mark (point))
   (find-file file)
-  (goto-line row)
-  (beginning-of-line)
-  (forward-char (- col 1))
-  )
+  (if (> row 0) (goto-line row))
+  (if (> col 0)
+      (progn
+        (beginning-of-line)
+        (forward-char (- col 1))
+        )
+    ))
 
 
 
@@ -501,68 +523,75 @@ __DATA__
 the the user choose a Class."
   (interactive)
   (message "Goto Base Class...")
-  (let ((result (shell-command-to-string
-               (format "perly_sense base_class_go_to --file=%s --row=%s --col=%s"
-                       (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
-                       )
-               ))
-        )
-    (let* (
-           (result-hash (perly-sense-parse-sexp result))
-           (message-string (cdr (assoc "message" result-hash)))
-           (class-list (cdr (assoc "class-list" result-hash)))
-           (first-class-alist (car class-list))
-           (second-class-alist (cdr class-list))
-           )
-      (if (not first-class-alist)
-          (message "No Base Class found")
-        (if (not second-class-alist)
-            (perly-sense-go-to-class-alist first-class-alist)
-          (let (
-                (chosen-class-alist
-                 (perly-sense-choose-class-alist-from-class-list "Base Class" class-list)))
-            (perly-sense-go-to-class-alist chosen-class-alist)
-            )
+  (let* ((result-alist (perly-sense-command-on-current-file-location "base_class_go_to"))
+         (message-string (alist-value result-alist "message"))
+         (class-list (alist-value result-alist "class-list"))
+         (first-class-alist (car class-list))
+         (second-class-alist (cdr class-list))
+         )
+    (if (not first-class-alist)
+        (message "No Base Class found")
+      (if (not second-class-alist)
+          (perly-sense-go-to-class-alist first-class-alist)
+        (let ((chosen-class-alist
+               (perly-sense-choose-class-alist-from-class-list "Base Class" class-list)))
+          (perly-sense-go-to-class-alist chosen-class-alist)
           )
         )
-      (if message-string
-          (message message-string)
-        )
-      )    
+      )
+    (if message-string
+        (message message-string)
+      )
     )
   )
 
 
 
+(defun perly-sense-command-on-current-file-location (command)
+  "Call perly_sense COMMAND with the current file and row/col,
+and return the parsed result as a sexp"
+  (perly-sense-parse-sexp
+   (shell-command-to-string
+    (format "perly_sense %s --file=%s --row=%s --col=%s"
+            command
+            (buffer-file-name)
+            (perly-sense-current-line)
+            (+ 1 (current-column))))))
+
+
+
 (defun perly-sense-go-to-class-alist (class-alist)
   "Go to the Class class-alist (keys: class-name, file, row)"
-  (let ((class-name (cdr (assoc "class-name" class-alist)))
-        (file (cdr (assoc "file" class-alist)))
-        (row (string-to-number (cdr (assoc "row" class-alist)))))
+  (let ((class-name (alist-value class-alist "class-name"))
+        (class-inheritance (alist-value class-alist "class-inheritance"))
+        (file (alist-value class-alist "file"))
+        (row (alist-num-value class-alist "row")))
     (perly-sense-find-file-location file row 1)
-    (message "Went to Class %s" class-name)
+    (message "%s" class-inheritance)
     )
   )
 
 
 
 (defun perly-sense-choose-class-alist-from-class-list (what-text class-list)
-  "Let the user choose a class-alist from the lass-list of Class definitions. Return class-alist with (keys: class-name, file, row)"
-  (let* ((class-name-list (mapcar (lambda (class-alist)
-                                    (cdr (assoc "class-name" class-alist))
-                                    )
-                                  class-list))
-         (chosen-class-name (completing-read
-                             (format "Select %s: " what-text)
-                             class-name-list
+  "Let the user choose a class-alist from the lass-list of Class
+definitions.
+
+Return class-alist with (keys: class-name, file, row)"
+  (let* ((class-description-list (mapcar (lambda (class-alist)
+                                    (alist-value class-alist "class-description")
+                                    ) class-list))
+         (chosen-class-description (completing-read
+                             (format "%s: " what-text)
+                             class-description-list
                              nil
                              "force"
                              nil
                              nil
-                             (car class-name-list)
+                             (car class-description-list)
                              ))
          )
-    (perly-sense-get-alist-from-list class-list "class-name" chosen-class-name)
+    (perly-sense-get-alist-from-list class-list "class-description" chosen-class-description)
     )
   )
 
@@ -573,11 +602,8 @@ the the user choose a Class."
 nil if none was found"
   (catch 'found
     (dolist (alist list-of-alist)
-      (let ((alist-value (cdr (assoc key alist))))
-;;         (message "CURRENT ALIST: %s,
-;; looking for |%s|
-;; matching key |%s|, value |%s|" (prin1-to-string alist) value key alist-value)
-        (if (string= alist-value value)
+      (let ((alist-item-value (alist-value alist key)))
+        (if (string= alist-item-value value)
             (throw 'found alist)
           nil)))))
 
@@ -633,12 +659,11 @@ t on success, else nil"
                  (format
                   "perly_sense class_overview %s --width_display=%s"
                   argstring (- (window-width) 2) ))))
-    (let* (
-           (result-hash (perly-sense-parse-sexp result))
-           (class-name (cdr (assoc "class-name" result-hash)))
-           (class-overview (cdr (assoc "class-overview" result-hash)))
-           (message-string (cdr (assoc "message" result-hash)))
-           (dir (cdr (assoc "dir" result-hash)))
+    (let* ((result-hash (perly-sense-parse-sexp result))
+           (class-name (alist-value result-hash "class-name"))
+           (class-overview (alist-value result-hash "class-overview"))
+           (message-string (alist-value result-hash "message"))
+           (dir (alist-value result-hash "dir"))
            )
 ;;      (perly-sense-log msg)
       (if class-name
@@ -702,7 +727,7 @@ t on success, else nil"
         (insert "//msi")
         (goto-char 2)
         )
-    
+
     )
   )
 

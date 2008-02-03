@@ -451,6 +451,44 @@ sub oLocationMethodGoTo {
 
 
 
+=head2 oLocationSubAt(row => $row, col => $col)
+
+Return a Devel::PerlySense::Document::Location object with the
+location of the sub definition at $row/$col, or undef if it row/col
+isn't inside a sub definition.
+
+Die on errors.
+
+=cut
+sub oLocationSubAt {
+    my ($row, $col) = Devel::PerlySense::Util::aNamedArg(["row", "col"], @_);
+    my $oDocument = $self->raDocument->[0] or return undef;
+    return $oDocument->oLocationSubAt(row => $row, col => $col);
+}
+
+
+
+
+
+=head2 oLocationSub(name => $name)
+
+Return a Devel::PerlySense::Document::Location object with the
+location of the sub declaration called $name, or undef if it wasn't
+found.
+
+Die on errors.
+
+=cut
+sub oLocationSub {
+    my ($name) = Devel::PerlySense::Util::aNamedArg(["name"], @_);
+    my $oDocument = $self->raDocument->[0] or return undef;
+    return $oDocument->oLocationSub(name => $name, package => $self->name);
+}
+
+
+
+
+
 1;
 
 

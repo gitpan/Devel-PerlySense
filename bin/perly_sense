@@ -248,31 +248,41 @@ sub main_perly_sense {
         }
 
     } elsif($command eq "base_class_go_to") {
+        ###TODO: Too much code here, push into method in Class, tests
         $file or syntax("Missing option --file");
         $row or syntax("Missing option --row");
         $col or syntax("Missing option --col");
 
         eval {
-#             [
-#                 {
-#                     class_name => "Game::Object::Worm",
-#                     file => "lib/Game/Object/Worm.pm",
-#                     row => 0,
-#                 },
-#                 {
-#                     class_name => "Game::Location",
-#                     file => "lib/Game/Location.pm",
-#                     row => 22,
-#                 },
-#             ]
             my $oClass = $oPs->classAt(file => $file, row => $row, col => $col);
             if($oClass) {
+                my $oLocationSub = $oClass->oLocationSubAt(row => $row, col => $col);
+                my $nameSub = "";
+                $oLocationSub and $nameSub = $oLocationSub->rhProperty->{nameSub};
                 my $raClassInfo = [
                     map {
+                        my $oClassBase = $_;
+
+                        my $nameBaseSub = "";
+                        my $rowBaseSub = 0;
+                        my $description = $oClassBase->name;
+                        if($nameSub) {
+                            if( my $oLocationBaseSub = $oClassBase->oLocationSub(name => $nameSub) ) {
+                                $nameBaseSub = $oLocationBaseSub->rhProperty->{nameSub};
+                                $rowBaseSub = $oLocationBaseSub->row;
+                                $description .= "->$nameBaseSub";
+                            }
+                        }
+
+                        chomp( my $class_inheritance = $oEditor->textClassInheritance(
+                            oClass => $oClassBase,
+                        ));
                         {
-                            class_name => $_->name,
-                            file => $_->raDocument->[0]->file,
-                            row => 1,
+                            class_name => $oClassBase->name,
+                            class_description => $description,
+                            class_inheritance => $class_inheritance,
+                            file => $oClassBase->raDocument->[0]->file,
+                            row => $rowBaseSub,
                         }
                     } values %{$oClass->rhClassBase()}
                 ];
