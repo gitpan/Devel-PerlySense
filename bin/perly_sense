@@ -230,25 +230,78 @@ sub main_perly_sense {
             $@ and warn("Error: $@\n");
         }
 
-    } elsif($command eq "method_go_to") {
-        $nameClass or syntax("Missing option --class_name");
-        $nameMethod or syntax("Missing option --method_name");
-        $dirOrigin or syntax("Missing option --dir_origin");
+    } elsif($command eq "inheritance_doc") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
 
         eval {
-            my $oClass = $oPs->classByName(
-                name => $nameClass,
-                dirOrigin => $dirOrigin,
-            );
+            my $oClass = $oPs->classAt(file => $file, row => $row, col => $col);
             if($oClass) {
-                if (my $oLocation = $oClass->oLocationMethodGoTo(method => $nameMethod)) {
-                    print join("\t", $oLocation->file, $oLocation->row, $oLocation->col);                }
+                my $textInheritance = $oEditor->textClassInheritance(oClass => $oClass);
+                chomp($textInheritance);
+                print $oEditor->formatOutputDataStructure(
+                    rhData => {
+                        class_name =>  $oClass->name,
+                        class_inheritance => $textInheritance,
+                    },
+                );
+            }
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
+
+    ###TODO: unify the output to use the formatOutputDataStructure,
+    ###this is just silly and doing way too much
+    } elsif($command eq "method_go_to") {
+        if($nameClass) {
+            $dirOrigin or syntax("Missing option --dir_origin");
+        }
+        elsif ($file) {
+            $row && $col or syntax("Missing option --row, and --col");
+        }
+        else {
+            syntax("Missing option --class_name or --file");
+        }
+
+        eval {
+            my $oClass;
+            if($nameClass) {
+                $oClass = $oPs->classByName(
+                    name => $nameClass,
+                    dirOrigin => $dirOrigin,
+                );
+            }
+            else {
+                $oClass = $oPs->classAt(file => $file, row => $row, col => $col);
+            }
+
+            if($oClass) {
+                my $oLocation = $oClass->oLocationMethodGoTo(method => $nameMethod);
+
+                if($nameClass) {
+                    if ($oLocation) {
+                        print join("\t", $oLocation->file, $oLocation->row, $oLocation->col);
+                    }
+                }
+                else {
+                    print $oEditor->formatOutputDataStructure(
+                        rhData => {
+                            file =>  $oLocation->file,
+                            row => $oLocation->row,
+                            col => $oLocation->col,
+                        },
+                    );
+                }
             };
             $@ and warn("Error: $@\n");
         }
 
     } elsif($command eq "base_class_go_to") {
-        ###TODO: Too much code here, push into method in Class, tests
+        ###TODO: Too much code here, push into method in Class or
+        ###PerlySense, tests
         $file or syntax("Missing option --file");
         $row or syntax("Missing option --row");
         $col or syntax("Missing option --col");
@@ -400,6 +453,13 @@ sub main_perly_sense {
         print "HOME: (" . $oPs->oHome->dirHome . ")\n";
         print "HOME DEBUG LOG: (" . file($oPs->oHome->dirHome, "log", "debug.log") . ")\n";
 
+    } elsif($command eq "project_dir") {
+        $dir ||= ".";
+        $oPs->setFindProject(dir => $dir);
+        print $oEditor->formatOutputDataStructure(
+            rhData => { project_dir => $oPs->oProject->dirProject },
+        );
+        
     } else {
         syntax("Invalid command ($command)");
     }

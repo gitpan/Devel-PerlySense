@@ -538,8 +538,11 @@ sub oLocationSub {
     my $package = $p{package} || "main";
 
     for my $oLocation (@{$self->oMeta->raLocationSub}) {
-        if($oLocation->rhProperty->{nameSub} eq $name &&
-                   $oLocation->rhProperty->{namePackage} eq $package) {
+#        debug("JPL: " . $oLocation->rhProperty->{nameSub} . " eq $name && " . $oLocation->rhProperty->{namePackage} . " eq $package");
+#        defined $oLocation->rhProperty->{nameSub} or debug("SANITY FAILED: " . Dumper($oLocation));
+#        defined $oLocation->rhProperty->{namePackage} or debug("SANITY FAILED: " . Dumper($oLocation));
+        if(        $oLocation->rhProperty->{nameSub}     eq $name
+                && $oLocation->rhProperty->{namePackage} eq $package) {
             debug("Document->oLocation found ($name) in ($oLocation)");
             return($oLocation);
         }

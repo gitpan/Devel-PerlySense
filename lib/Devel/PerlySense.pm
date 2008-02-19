@@ -1,12 +1,12 @@
 =head1 NAME
 
-Devel::PerlySense - IntelliSense for Perl
+Devel::PerlySense - Perl IDE with Emacs frontend
 
 
 =head1 DESCRIPTION
 
-PerlySense is a Perl IDE back-end that integrates with editor
-front-ends, currently Emacs.
+PerlySense is a Perl IDE backend that integrates with editor
+frontends, currently Emacs.
 
 Conveniently navigate and browse the code and documentation of your
 project and Perl installation.
@@ -28,9 +28,11 @@ C-o C-o -- Overview -- Show information about the Class at point or
 the current Class.
 
 C-o C-d -- Docs -- Show docs (POD/signature/etc) for the symbol
-(module/method/sub) at point. A doc hint is displayed in the message
-area (for methods and subs), or a new POD buffer is created (for
-modules).
+(module/method/sub) at point. A doc hint is displayed in the echo area
+(for methods and subs), or a new POD buffer is created (for modules).
+
+C-o d i -- Document Inheritance -- Show the Inheritance hierarchy for
+the current Class in the echo area.
 
 C-o C-g -- Go To -- Open file at proper location for module,
 method/sub declaration for the symbol (module/method/sub) at point. If
@@ -41,8 +43,13 @@ C-o g b -- Go To Base Class -- Open the file of the base class of the
 current class. This will take you up one level in the inheritance
 hierarchy.
 
+C-o g n -- Go To 'new' -- Go to the 'new' method of the current class.
+
 C-o g m -- Go To Module -- Open the source file of the module at
 point.
+
+C-o g v -- Go To Version Control -- Go to the Project view of the
+current Version Control system.
 
 C-o C-r -- Run file -- Run the current file using the Compilation mode
 and the settings appropriate for the source type (Test, Module,
@@ -229,7 +236,7 @@ what's at point.
 
 Put the cursor on the "method" word of a $self->method call and press
 C-o C-d and wait until a documentation hint for the method call is
-displayed briefly in the message buffer. PerlySense will look in base
+displayed briefly in the echo area. PerlySense will look in base
 classes if the method can't be found in the current class.
 
 Put the cursor on the "method" word of an $object->method call and
@@ -247,6 +254,13 @@ feature, only a) not as good, but b) it works on Windows).
 
 Press C-o C-d with nothing under the cursor brings up a POD buffer for
 the current file.
+
+
+=head2 Document Inheritance
+
+C-o d i will briefly display the Inheritance hierarchy for the current
+Class in the echo area. This is similar to the Class Overview (see
+below).
 
 
 =head2 Smart go to
@@ -272,10 +286,53 @@ to go to.
 If the current method is implemented in that base class, go to the sub
 definition.
 
+After going to the Base Class, the Inheritance tree of that class is
+displayed in the echo area.
+
+
+=head2 Go to the 'new' method
+
+C-o g n takes you to the definition of the 'new' method of the current
+class (in this class, or a parent class).
+
 
 =head2 Go to Module
 
 C-o g m -- Go to Module at point.
+
+
+=head2 Go to Version Control
+
+C-o g v -- Go to the Project view for the current Version Control
+system, or the project dired if there is none.
+
+For Version Control systems, this typically displays the change status
+of the files in the project.
+
+If there is already an existing VC project view, display that
+immediately instead.
+
+(This is currently hard coded to SVN, and the *svn-status* buffer.)
+
+=over 4
+
+=item * Quick intro to *svn-status*
+
+_ (underscore) - display only the changed files (toggle)
+
+n, p, m, u -- next, previous, mark, unmark
+
+E -- diff the changes in the current file
+
+c -- commit file(s)
+
+r -- revert file(s)
+
+X v -- resolve conflict (or X X, I'm not sure what the difference is)
+
+etc, etc, etc, do a C-h m to see all the goodies you can perform here.
+
+=back
 
 
 =head2 Class Overview
@@ -714,6 +771,69 @@ are documented there).
 
 
 
+=head1 KEY BINDING CONVENTIONS
+
+There is a system behind the chosen key bindings in
+PerlySense. Knowing the conventions will make it easier to remember
+everything.
+
+=head2 Convention: Action based
+
+The first level after the prefix key (C-o by default) is always an
+Action, e.g. Run, or Document.
+
+(In the case of C-o C-d for Document you can either think of it as
+"Document this for me!"  or "Give me Documentation!".)
+
+With a verb at the first level rather than a noun, the Action can be
+context sensitive, "smart", or DWIMy.
+
+
+=over 4
+
+=item Smart Goto goes to whatever is under the cursor, be it a module
+name, a method call, a file name, or an error message.
+
+=item Run runs the file differently depending on what kind of file is
+open (tests are "proved", modules are syntax checked, scripts are run,
+etc).
+
+=back
+
+
+=head2 Convention: The Action as a Gateway
+
+The first level indicates the Action to perform, and has the Ctrl
+modifier as a "Smart" / DWIMy modifier. This is both so it's easy to
+type C-o C-r without releasing the Ctrl key, and to provide a gateway
+to more specific actions when typing the key without Ctrl.
+
+E.g. C-o C-r means "Run file", C-o r r means "Run - Re-run".
+
+E.g. C-o C-g means "Smart Goto", C-o g b means "Goto - Base Class", C-o
+g s means "Goto - SUPER Method".
+
+
+
+=head2 Explore Emacs key bindings
+
+Remember that you can use the usual Emacs feature to display possible
+key stroke completions by hitting C-h whenever in the key stroke
+sequence.
+
+E.g. Hitting C-o g C-h will list all available key strokes starting
+wiht C-o g.
+
+
+
+=head2 Changing key bindings
+
+Some key bindings may change over time as I figure out what works and
+what doesn't. Some key bindings may be reorganized to make more sense
+or to just work better.
+
+
+
 =head1 IN CLOSING -- ON PARSING PERL
 
 Since Perl is so dynamic, a perfect static analysis of the source is
@@ -816,7 +936,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0143';
+our $VERSION = '0.0144';
 
 
 

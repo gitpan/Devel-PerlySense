@@ -1,6 +1,20 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0144
+
+* Go To 'new': C-o g n -- Go to the 'new' method of the current class.
+
+* Go to Version Control: C-o g v -- Go to the Project view of the
+  current Version Control system.
+
+* Document Inheritance: C-o d i -- display the Inheritance hierarchy
+  for the current class.
+
+* Documentation: Key binding conventions
+
+
+
 = 0.0143
 
 * More clever Goto Base Class:

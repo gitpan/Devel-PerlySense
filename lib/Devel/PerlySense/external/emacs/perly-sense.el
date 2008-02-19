@@ -11,13 +11,31 @@
 
 ;;;; Utilities
 
+
+
 (defun alist-value (alist key)
   "Return the value of KEY in ALIST" ;; Surely there must be an existing defun to do this that I haven't found...
   (cdr (assoc key alist)))
 
+
+
 (defun alist-num-value (alist key)
   "Return the numeric value of KEY in ALIST"
   (string-to-number (alist-value alist key)))
+
+
+
+(defun perly-sense-switch-to-buffer (buffer)
+  "Switch to BUFFER (buffer object, or buffer name). If the
+buffer is already visible anywhere, re-use that visible buffer."
+  (let* ((buffer-window (get-buffer-window buffer)))
+    (when buffer-window
+      (select-window buffer-window)
+      )
+    (switch-to-buffer buffer)
+    )
+  )
+
 
 
 
@@ -448,6 +466,26 @@ __DATA__
 
 
 
+(defun perly-sense-inheritance-docs-at-point ()
+  "Display the Inheritance structure for the current Class"
+  (interactive)
+  (message "Document Inheritance...")
+  (let* ((result-alist (perly-sense-command-on-current-file-location "inheritance_doc"))
+         (message-string (alist-value result-alist "message"))
+         (class-inheritance (alist-value result-alist "class-inheritance"))
+         )
+    (if (not class-inheritance)
+        (message "No Base Class found")
+      (message "%s" class-inheritance)
+      )
+    (if message-string
+        (message message-string)
+      )
+    )
+  )
+
+
+
 ;; todo: remove duplication betweenthis defun and the one above
 (defun perly-sense-class-method-docs (class-name method)
   "Display documentation for the 'method' of 'class-name'."
@@ -480,15 +518,14 @@ __DATA__
 (defun perly-sense-find-file-location (file row col)
   "Find the file and go to the row/col location. If row and/or
 col is 0, the point isn't moved in that dimension."
-  (push-mark (point))
-  (find-file file)
-  (if (> row 0) (goto-line row))
-  (if (> col 0)
-      (progn
-        (beginning-of-line)
-        (forward-char (- col 1))
-        )
-    ))
+  (push-mark nil t)
+  (when file (find-file file))
+  (when (> row 0) (goto-line row))
+  (when (> col 0)
+    (beginning-of-line)
+    (forward-char (- col 1))
+    )
+  )
 
 
 
@@ -547,16 +584,145 @@ the the user choose a Class."
 
 
 
-(defun perly-sense-command-on-current-file-location (command)
-  "Call perly_sense COMMAND with the current file and row/col,
-and return the parsed result as a sexp"
+(defun perly-sense-go-to-vc-project ()
+  "Go to the project view of the current Version Control, or the
+project dir if there is no vc."
+  (interactive)
+  (message "Goto Version Control...")
+  (let ((vc-buffer (get-buffer "*svn-status*")))
+    (if vc-buffer
+        (perly-sense-switch-to-buffer vc-buffer)
+      (let* ((result-alist (perly-sense-command "project_dir"))
+             (project-dir (alist-value result-alist "project-dir"))
+             )
+        (perly-sense-vc-project "svn" project-dir)
+        )
+      )
+    )
+  )
+
+
+
+(defun perly-sense-vc-project (vcs project-dir)
+  "Display the Project view for the VCS (e.g. 'svn') for the
+PROJECT-DIR, e.g. run svn-status for PROJECT-DIR.
+
+Currently hard coded for SVN."
+  (message "SVN status...")
+  (svn-status project-dir)
+  )
+
+
+
+(defun perly-sense-command (command &optional options)
+  "Call perly_sense COMMAND, and return the parsed result as a
+sexp"
+  (unless options (setq options ""))
   (perly-sense-parse-sexp
    (shell-command-to-string
-    (format "perly_sense %s --file=%s --row=%s --col=%s"
+    (format "perly_sense %s %s" command options))))
+
+
+
+(defun perly-sense-command-on-current-file-location (command &optional options)
+  "Call perly_sense COMMAND with the current file and row/col,
+and return the parsed result as a sexp"
+  (unless options (setq options ""))
+  (perly-sense-parse-sexp
+   (shell-command-to-string
+    (format "perly_sense %s --file=%s --row=%s --col=%s %s"
             command
             (buffer-file-name)
             (perly-sense-current-line)
-            (+ 1 (current-column))))))
+            (+ 1 (current-column))
+            options))))
+
+
+
+(defun perly-sense-go-to-method-new ()
+  "Go to the 'new' method."
+  (interactive)
+  (message "Goto the 'new' method...")
+  (let ((new-location-alist
+         (or
+          (perly-sense-find-method-in-buffer "new")
+          (perly-sense-find-method-in-file "new"))))
+    (if new-location-alist
+        (perly-sense-go-to-location-alist new-location-alist)
+      (message "Could not find any 'new' method")
+      )
+    )
+  )
+
+
+
+(defun perly-sense-find-method-in-buffer (method-name)
+  "Find a method named METHOD-NAME in the buffer and return an
+alist with (keys: row, col), or nil if no method was found."
+  (save-excursion
+    (beginning-of-buffer)
+    (if (and
+         (search-forward-regexp (format "\\(^\\| \\)sub +%s\\($\\| \\)" method-name) nil t)
+         (search-backward-regexp "sub")
+         )
+        `(
+          ("row" . ,(number-to-string (perly-sense-current-line)))
+          ("col" . ,(number-to-string (+ 1 (current-column))))
+          )
+      nil
+      )
+    )
+  )
+
+
+
+(defun perly-sense-find-method-in-file (method-name)
+  "Find a method named METHOD-NAME given the current class in the
+buffer and return an alist with (keys: file, row, col), or nil if
+no method was found."
+  (let* ((result-alist (perly-sense-command-on-current-file-location "method_go_to" "--method_name=new"))
+         (message-string (alist-value result-alist "message"))
+         (file (alist-value result-alist "file"))
+         (row (alist-value result-alist "row"))
+         (col (alist-value result-alist "col"))
+         )
+    (if row
+        `(
+          ("file" . ,file)
+          ("row" . ,row)
+          ("col" . ,col)
+          )
+      (when message-string
+        (message "no row, message")
+        (message "%s" message-string)
+        )
+      nil
+      )
+    )
+  )
+
+
+
+
+(defun perly-sense-go-to-location-alist (location-alist)
+  "Go to the LOCATION-ALIST which may contain the (keys: file,
+row, col, class-name).
+
+If file is specified, visit that file first.
+
+If class-name is specified, display that class name in the echo
+area."
+  (let ((file (alist-value location-alist "file"))
+        (row (alist-num-value location-alist "row"))
+        (col (alist-num-value location-alist "col"))
+        (class-name (alist-value location-alist "class-name"))
+        )
+    (perly-sense-find-file-location file row col)
+    (if class-name
+        (message "Went to %s" class-name)
+      )
+    )
+  )
 
 
 
@@ -680,8 +846,13 @@ t on success, else nil"
 
 
 (defun perly-sense-parse-sexp (result)
-;;  (message "%s" result)
-  (eval (car (read-from-string result)))
+;;  (message "RESPONSE AS TEXT |%s|" result)
+  (if (string= result "")
+      '()
+    (let ((response-alist (eval (car (read-from-string result)))))
+      response-alist
+      )
+    )
   )
 
 
@@ -880,7 +1051,7 @@ returns."
 point, or an empty list () if none was found."
   (save-excursion
     (end-of-line)
-    (push-mark (point))
+    (push-mark)
     (beginning-of-line)
     (if (search-forward-regexp
          "\\(file +`\\|at +\\)\\([/a-zA-Z0-9._ ]+\\)'? +line +\\([0-9]+\\)[.,]"
@@ -1064,7 +1235,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-inheritance ()
   "Navigate to the * Inheritance * in the Class Overview"
   (interactive)
-  (push-mark (point))
+  (push-mark)
   (goto-char (point-min))
   (search-forward "* Inheritance *" nil t)
   (search-forward "[<" nil t)
@@ -1076,7 +1247,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-neighbourhood ()
   "Navigate to the * NeighbourHood * in the Class Overview"
   (interactive)
-  (push-mark (point))
+  (push-mark)
   (goto-char (point-min))
   (search-forward "* NeighbourHood *" nil t)
   (search-forward "[<" nil t)
@@ -1088,7 +1259,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-used ()
   "Navigate to the * Uses * in the Class Overview"
   (interactive)
-  (push-mark (point))
+  (push-mark)
   (goto-char (point-min))
   (search-forward "* Uses *" nil t)
   (beginning-of-line 2)
@@ -1100,7 +1271,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-bookmarks ()
   "Navigate to the * Bookmarks * in the Class Overview"
   (interactive)
-  (push-mark (point))
+  (push-mark)
   (goto-char (point-min))
   (search-forward "* Bookmarks *" nil t)
   (beginning-of-line 2)
@@ -1114,7 +1285,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-structure ()
   "Navigate to the * Structure * in the Class Overview"
   (interactive)
-  (push-mark (point))
+  (push-mark)
   (goto-char (point-min))
   (search-forward "* Structure *" nil t)
   (search-forward "-" nil t)
@@ -1126,7 +1297,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-api ()
   "Navigate to the * API * in the Class Overview"
   (interactive)
-  (push-mark (point))
+  (push-mark)
   (goto-char (point-min))
   (search-forward "* API *" nil t)
   (beginning-of-line 2)
@@ -1137,7 +1308,7 @@ or go to the Bookmark at point"
 (defun perly-sense-class-find-api-new ()
   "Navigate to the new method in the Class Overview"
   (interactive)
-  (push-mark (point))
+  (push-mark)
   (goto-char (point-min))
   (search-forward-regexp ".>new\\b" nil t)
   (backward-char 3)
@@ -1177,6 +1348,9 @@ or go to the Bookmark at point"
 (define-key perly-sense-class-mode-map "S" 'perly-sense-class-find-structure)
 (define-key perly-sense-class-mode-map "A" 'perly-sense-class-find-api)
 (define-key perly-sense-class-mode-map "N" 'perly-sense-class-find-api-new)
+
+(define-key perly-sense-class-mode-map "N" 'perly-sense-class-find-api-new)
+(define-key perly-sense-class-mode-map (format "%sgn" perly-sense-key-prefix) 'perly-sense-class-find-api-new)
 
 (define-key perly-sense-class-mode-map [return] 'perly-sense-class-class-overview-or-goto-at-point)
 
@@ -1250,9 +1424,12 @@ or go to the Bookmark at point"
 (global-set-key (format "%smp" perly-sense-key-prefix) 'perly-sense-display-pod-for-module-at-point)
 
 (global-set-key (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-smart-docs-at-point)
+(global-set-key (format "%sdi" perly-sense-key-prefix) 'perly-sense-inheritance-docs-at-point)
 (global-set-key (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-smart-go-to-at-point)
 (global-set-key (format "%sgb" perly-sense-key-prefix) 'perly-sense-go-to-base-class-at-point)
+(global-set-key (format "%sgn" perly-sense-key-prefix) 'perly-sense-go-to-method-new)
 (global-set-key (format "%sgm" perly-sense-key-prefix) 'perly-sense-find-source-for-module-at-point)
+(global-set-key (format "%sgv" perly-sense-key-prefix) 'perly-sense-go-to-vc-project)
 (global-set-key (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-display-api-for-class-at-point)
 

@@ -1,9 +1,9 @@
 ---
 name: Devel-PerlySense
-version: 0.0143
+version: 0.0144
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
-abstract: IntelliSense for Perl
+abstract: Perl IDE with Emacs frontend
 license: perl
 resources:
   license: http://dev.perl.org/licenses/
@@ -36,7 +36,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.0143
+    version: 0.0144
   Devel::PerlySense::Bookmark::Definition:
     file: lib/Devel/PerlySense/Bookmark/Definition.pm
     version: 0.01
