@@ -34,16 +34,20 @@ C-o C-d -- Docs -- Show docs (POD/signature/etc) for the symbol
 C-o d i -- Document Inheritance -- Show the Inheritance hierarchy for
 the current Class in the echo area.
 
+C-o d u -- Document 'use Module' statements in the echo area.
+
 C-o C-g -- Go To -- Open file at proper location for module,
 method/sub declaration for the symbol (module/method/sub) at point. If
 no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
 
+C-o g u -- Go to the 'use Module' section of the current buffer.
+
+C-o g n -- Go To 'new' -- Go to the 'new' method of the current class.
+
 C-o g b -- Go To Base Class -- Open the file of the base class of the
 current class. This will take you up one level in the inheritance
 hierarchy.
-
-C-o g n -- Go To 'new' -- Go to the 'new' method of the current class.
 
 C-o g m -- Go To Module -- Open the source file of the module at
 point.
@@ -54,6 +58,9 @@ current Version Control system.
 C-o C-r -- Run file -- Run the current file using the Compilation mode
 and the settings appropriate for the source type (Test, Module,
 etc.). Highlight errors and jump to source with C-c C-c.
+
+C-o e m u -- Edit - Move Use Statement -- Move the 'use Module'
+statement at point to the 'use Module' section at the top.
 
 Flymake may be used to highlight syntax errors and warnings in the
 source while editing (continously or at every save).
@@ -263,6 +270,13 @@ Class in the echo area. This is similar to the Class Overview (see
 below).
 
 
+=head2 Document Used Modules
+
+C-o d u will briefly display the list of modules used from the current
+buffer in the echo area. This is similar to the Class Overview (see
+below).
+
+
 =head2 Smart go to
 
 C-o C-g is the "Smart go to" command. It's similar to Smart Docs, but
@@ -296,6 +310,28 @@ C-o g n takes you to the definition of the 'new' method of the current
 class (in this class, or a parent class).
 
 
+=head2 Go To 'use Module' section
+
+C-o g u takes you to the line below the last 'use Module' statement in
+the the current buffer.
+
+
+=head2 Edit Move 'use Module' Statement
+
+C-o e m u -- If point is on a line with a single 'use Module' statement, set mark
+and move that statement to the end of the 'use Module' section at the
+top of the file.
+
+This is typically useful when you realize you need a module,
+e.g. Data::Dumper, in the middle of the file, but you don't want to
+leave where you are just to fiddle with adding it.
+
+So type the 'use Module' statement, hit C-o e m u to move it, see
+that it got moved to a good place and hit C-u C-SPC to return to where
+you were, and continue doing what you where doing.
+
+
+
 =head2 Go to Module
 
 C-o g m -- Go to Module at point.
@@ -304,19 +340,19 @@ C-o g m -- Go to Module at point.
 =head2 Go to Version Control
 
 C-o g v -- Go to the Project view for the current Version Control
-system, or the project dired if there is none.
+system. This typically displays the change status of the files in the
+project. A dired of the Project dir is used in lieu of a VCS.
 
-For Version Control systems, this typically displays the change status
-of the files in the project.
+First, try to go to an existing VC project buffer.
 
-If there is already an existing VC project view, display that
-immediately instead.
+If there is no VC buffer open, find out what VCS is used, and display
+the Project view.
 
-(This is currently hard coded to SVN, and the *svn-status* buffer.)
+Supported VC systems:
 
 =over 4
 
-=item * Quick intro to *svn-status*
+=item * Subversion -- Quick intro to *svn-status*
 
 _ (underscore) - display only the changed files (toggle)
 
@@ -330,7 +366,17 @@ r -- revert file(s)
 
 X v -- resolve conflict (or X X, I'm not sure what the difference is)
 
-etc, etc, etc, do a C-h m to see all the goodies you can perform here.
+etc, etc, etc, do a C-h m to see all the goodies.
+
+See also: 
+
+=over 4
+
+=item * L<http://www.credmp.org/index.php/2007/12/08/emacs-hidden-gems-version-control/>,
+
+=item * L<http://www.emacsblog.org/2007/05/17/package-faves-psvn/>
+
+=back
 
 =back
 
@@ -815,6 +861,54 @@ g s means "Goto - SUPER Method".
 
 
 
+=head2 The Main Actions Areas
+
+(some of the main areas have no implementations yet)
+
+=over 4
+
+=item * r -- Run
+
+Run files in various ways.
+
+
+=item * g -- Go to
+
+Navigate to various locations in the source.
+
+
+=item * d -- Document
+
+Bring up documentation.
+
+
+=item * f -- Find
+
+Find/search and display things in the source.
+
+
+=item * o -- Overview
+
+Bring up an overview of things.
+
+
+=item * m -- forMat
+
+Reformat source.
+
+
+=item * e -- Edit
+
+Perform smaller convenience editing task.
+
+
+=item * E -- rEfactor
+
+Perform restructuring edits that don't impact functionality/behaviour.
+
+=back
+
+
 =head2 Explore Emacs key bindings
 
 Remember that you can use the usual Emacs feature to display possible
@@ -936,7 +1030,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0144';
+our $VERSION = '0.0145';
 
 
 

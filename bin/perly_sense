@@ -253,6 +253,29 @@ sub main_perly_sense {
             print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
         }
 
+    } elsif($command eq "use_doc") {
+        $file or syntax("Missing option --file");
+        $row or syntax("Missing option --row");
+        $col or syntax("Missing option --col");
+
+        eval {
+            my $oClass = $oPs->classAt(file => $file, row => $row, col => $col);
+            if($oClass) {
+                my $textUses = $oEditor->textClassUses(oClass => $oClass);
+                chomp($textUses);
+                print $oEditor->formatOutputDataStructure(
+                    rhData => {
+                        class_name =>  $oClass->name,
+                        class_use => $textUses,
+                    },
+                );
+            }
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
+
     ###TODO: unify the output to use the formatOutputDataStructure,
     ###this is just silly and doing way too much
     } elsif($command eq "method_go_to") {
@@ -458,6 +481,16 @@ sub main_perly_sense {
         $oPs->setFindProject(dir => $dir);
         print $oEditor->formatOutputDataStructure(
             rhData => { project_dir => $oPs->oProject->dirProject },
+        );
+        
+    } elsif($command eq "vcs_dir") {
+        $dir ||= ".";
+        $oPs->setFindProject(dir => $dir);
+        print $oEditor->formatOutputDataStructure(
+            rhData => {
+                project_dir => $oPs->oProject->dirProject,
+                vcs_name => $oPs->oProject->nameVcs,
+            },
         );
         
     } else {

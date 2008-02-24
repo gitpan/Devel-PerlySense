@@ -1,6 +1,20 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0145
+
+* Go to Version Control now properly supports: svn, none
+
+* Doc Uses: C-o d u -- Display used Module in the echo area.
+
+* Go To Uses: C-o g u -- Go to the 'use Module' section of the current
+  buffer.
+
+* Edit Move Use Statement: C-o e m u -- Move 'use Module' statement to
+  the end of the 'use Module' section at the top of the file.
+
+
+
 = 0.0144
 
 * Go To 'new': C-o g n -- Go to the 'new' method of the current class.

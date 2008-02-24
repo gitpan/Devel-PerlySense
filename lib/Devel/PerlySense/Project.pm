@@ -146,6 +146,25 @@ field "oPerlySense" => undef;
 
 
 
+=head2 nameVcs
+
+The name of the Version Control system for the project.
+
+Readonly. Currently supported:
+
+  svn
+  none
+
+=cut
+sub nameVcs {
+    -d dir($self->dirProject, ".svn") and return("svn");
+    return("none");
+}
+
+
+
+
+
 =head1 CLASS METHODS
 
 =head2 newFromLocation(file => $file, dir => $dir, oPerlySense => $oPs)
@@ -403,13 +422,13 @@ sub isFileInProject {
     my @aDirProjectRegex = map { qr/^ \Q$_\E /x } @aDirSourceAbsolute;
 
     my $dirFileAbsolute = dir( filePathNormalize( file($file)->absolute->dir ) );
-    debug("DIR ABSOLUTE ($dirFileAbsolute)\n");    
+    debug("DIR ABSOLUTE ($dirFileAbsolute)\n");
 
     for my $dirProject (map { dir(filePathNormalize($_)) } @aDirSourceAbsolute) {
         debug("Checking whether\n($dirFileAbsolute) is within\n($dirProject)\n");
         $dirProject->subsumes($dirFileAbsolute) and debug("Found it"), return 1;
     }
-    
+
     debug("FILE ($file) is NOT in the Project (" . $self->dirProject . ")\n");
     return 0;
 }

@@ -486,6 +486,26 @@ __DATA__
 
 
 
+(defun perly-sense-use-docs-at-point ()
+  "Display the used modules for the current Class"
+  (interactive)
+  (message "Document Uses...")
+  (let* ((result-alist (perly-sense-command-on-current-file-location "use_doc"))
+         (message-string (alist-value result-alist "message"))
+         (class-use (alist-value result-alist "class-use"))
+         )
+    (if (not class-use)
+        (message "No use statements found")
+      (message "%s" class-use)
+      )
+    (if message-string
+        (message message-string)
+      )
+    )
+  )
+
+
+
 ;; todo: remove duplication betweenthis defun and the one above
 (defun perly-sense-class-method-docs (class-name method)
   "Display documentation for the 'method' of 'class-name'."
@@ -584,18 +604,55 @@ the the user choose a Class."
 
 
 
+(defun perly-sense-go-to-use-section ()
+  "Set mark and go to the end of the 'use Module' section."
+  (interactive)
+  (message "Goto the 'use Module' section...")
+  (let* ((use-position (perly-sense-find-use-module-section-position)))
+    (if (not use-position)
+        (message "No 'use Module' section found")
+      (push-mark)
+      (goto-char use-position)
+      (next-line-nomark)
+      (beginning-of-line)
+      )
+    )
+  )
+
+
+
+(defun perly-sense-find-use-module-section-position ()
+  "Return the position of the end of the last use Module
+statement in the file, or nil if none was found."
+  (save-excursion
+    (goto-char (point-max))
+    (if (search-backward-regexp "^ *use +[a-zA-Z][^;]+;" nil t)
+        (progn
+          (search-forward-regexp ";")
+          (point))
+      nil
+      )
+    )
+  )
+
+
+
 (defun perly-sense-go-to-vc-project ()
   "Go to the project view of the current Version Control, or the
 project dir if there is no vc."
   (interactive)
   (message "Goto Version Control...")
-  (let ((vc-buffer (get-buffer "*svn-status*")))
+  (let ((vc-buffer (get-buffer "*svn-status*")))  ;; (or *cvs-status*, etc)
     (if vc-buffer
         (perly-sense-switch-to-buffer vc-buffer)
-      (let* ((result-alist (perly-sense-command "project_dir"))
+      (let* ((result-alist (perly-sense-command "vcs_dir"))
              (project-dir (alist-value result-alist "project-dir"))
+             (vcs-name (alist-value result-alist "vcs-name"))
              )
-        (perly-sense-vc-project "svn" project-dir)
+        (if (not (string= project-dir ""))
+            (perly-sense-vc-project vcs-name project-dir)
+          (message "No Project dir found")
+          )
         )
       )
     )
@@ -604,12 +661,51 @@ project dir if there is no vc."
 
 
 (defun perly-sense-vc-project (vcs project-dir)
-  "Display the Project view for the VCS (e.g. 'svn') for the
-PROJECT-DIR, e.g. run svn-status for PROJECT-DIR.
+  "Display the Project view for the VCS (e.g. 'svn', 'none') for
+the PROJECT-DIR, e.g. run svn-status for PROJECT-DIR."
+  (cond
+   ((string= vcs "svn")
+    (message "SVN status...")
+    (svn-status project-dir))
+   (t
+    (message "No VCS...")
+    (dired project-dir))
+   )
+  )
 
-Currently hard coded for SVN."
-  (message "SVN status...")
-  (svn-status project-dir)
+
+
+(defun perly-sense-edit-move-use-statement ()
+  "If point is on a line with a single 'use Module' statement,
+set mark and move that statement to the end of the 'use
+Module' section at the top of the file."
+  (interactive)
+  (let ((message
+         (catch 'message
+           (save-excursion
+             (end-of-line)
+             (if (not (search-backward-regexp "^ *use +[a-zA-Z][^\n]*?; *?$" (point-at-bol) t))
+                 (throw 'message "No 'use Module' statement on this line.")
+               (kill-region (match-beginning 0) (match-end 0))
+               (delete-char 1)
+               (push-mark)
+               )
+             )
+           (let* ((use-position (perly-sense-find-use-module-section-position)))
+             (if (not use-position)
+                 (throw 'message "No 'use Module' section found, nowhere to put the killed use statement.")
+               (goto-char use-position)
+               (newline-and-indent)
+               (yank) (pop-mark)
+               (beginning-of-line)
+               (lisp-indent-line)
+               )
+             )
+           "Set mark and moved use statement. Hit C-u C-m to return."
+           )
+         ))
+    (if message (message "%s" message))
+    )
   )
 
 
@@ -630,12 +726,13 @@ and return the parsed result as a sexp"
   (unless options (setq options ""))
   (perly-sense-parse-sexp
    (shell-command-to-string
-    (format "perly_sense %s --file=%s --row=%s --col=%s %s"
+    (format "perly_sense %s --file=%s --row=%s --col=%s %s --width_display=%s"
             command
             (buffer-file-name)
             (perly-sense-current-line)
             (+ 1 (current-column))
-            options))))
+            options
+            (- (window-width) 2)))))
 
 
 
@@ -1425,11 +1522,19 @@ or go to the Bookmark at point"
 
 (global-set-key (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-smart-docs-at-point)
 (global-set-key (format "%sdi" perly-sense-key-prefix) 'perly-sense-inheritance-docs-at-point)
+(global-set-key (format "%sdu" perly-sense-key-prefix) 'perly-sense-use-docs-at-point)
+(global-set-key (format "%sdo" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
+
 (global-set-key (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-smart-go-to-at-point)
 (global-set-key (format "%sgb" perly-sense-key-prefix) 'perly-sense-go-to-base-class-at-point)
+(global-set-key (format "%sgu" perly-sense-key-prefix) 'perly-sense-go-to-use-section)
 (global-set-key (format "%sgn" perly-sense-key-prefix) 'perly-sense-go-to-method-new)
 (global-set-key (format "%sgm" perly-sense-key-prefix) 'perly-sense-find-source-for-module-at-point)
 (global-set-key (format "%sgv" perly-sense-key-prefix) 'perly-sense-go-to-vc-project)
+
+(global-set-key (format "%semu" perly-sense-key-prefix) 'perly-sense-edit-move-use-statement)
+
+
 (global-set-key (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-display-api-for-class-at-point)
 

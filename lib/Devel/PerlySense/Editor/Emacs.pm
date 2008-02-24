@@ -284,7 +284,7 @@ sub textClassUses {
     my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
 
     my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
-    
+
     return(
         $self->textTable(
             [ $oClass->aNameModuleUse() ],
@@ -320,7 +320,7 @@ $stringItem text.
 sub textTable {
     my ($raItemAll, $columnsToFitWithin, $rsRenderItem) = @_;
     $rsRenderItem ||= sub { $_[0] };
-    
+
     my $text = "";
     for my $columns (reverse 1 .. @$raItemAll) {
         my @aColText;
@@ -435,7 +435,7 @@ sub textClassApi {
             name => $nameMethod,
             oDocument => $oDocument,
         );
-        
+
         my $oLocationDeclaration = $oApi->rhSub->{$nameMethod};
         $oMethod->signatureCall($oLocationDeclaration);
     } $oApi->aNameSubVisible(
@@ -443,7 +443,7 @@ sub textClassApi {
         fileCurrent => $oDocument->file,
     );
 
-    my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config    
+    my $columnsToFitWithin = $self->widthDisplay || 90;  ###TODO: Move to config
     return( $self->textTable(\@aColText, $columnsToFitWithin) );
 }
 
@@ -556,7 +556,7 @@ sub formatOutputDataStructure {
 #    return q|'(("class-overview" . "Hej baberiba\n [ Class::Accessor ]") ("class-name" . "Class::Accessor") ("message" . "Whatever2"))|;
 
     my $keysValues = $self->formatOutputItem($rhData);
-    
+
     return qq|'$keysValues|;
 }
 
@@ -587,14 +587,14 @@ sub formatOutputItem {
             $key = $self->escapeValue($key);
 
             qq|("$key" . $item_value)|;
-            
+
         } sort keys %$value) . ")";
     }
     else {
         $output = $self->escapeValue($value);
         $output = qq|"$output"|;
     }
-    
+
     return $output;
 }
 
