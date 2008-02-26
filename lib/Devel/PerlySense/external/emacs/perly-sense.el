@@ -710,6 +710,125 @@ Module' section at the top of the file."
 
 
 
+;; Thanks to Jonathan Rockway at
+;; http://blog.jrock.us/articles/Increment%20test%20counter.pod
+(defun perly-sense-edit-test-count (&optional amount)
+  "Increase the Test::More test count by AMOUNT"
+  (interactive "p")
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "tests\s+=>\s*[0-9]+" nil t)
+        (progn
+          (backward-char)
+          (let ((inc-response (perly-sense-increment-number-at-point amount)))
+            (message "Test count: %s + %s = %s" (nth 0 inc-response) (nth 1 inc-response) (nth 2 inc-response))
+            )
+          )
+      (message "Could not find a test count"))))
+
+
+
+(defun perly-sense-set-test-count (current-count new-count)
+  "Set the Test::More test count from CURRENT-COUNT to NEW-COUNT."
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "tests\s+=>\s*[0-9]+" nil t)
+        (let ((amount (- new-count current-count)))
+          (backward-char)
+          (let ((inc-response (perly-sense-increment-number-at-point amount)))
+            (message "Test count: %s + %s = %s" (nth 0 inc-response) (nth 1 inc-response) (nth 2 inc-response))
+            )
+          )
+      (message "Could not find a test count"))))
+
+
+
+;; Thanks to Phil Jackson at
+;; http://www.shellarchive.co.uk/Shell.html#sec21
+(defun perly-sense-increment-number-at-point (&optional amount)
+  "Increment the number under point by AMOUNT.
+
+Return a list with the items (original number, amount, new
+number), or nil if there was no number at point."
+  (interactive "p")
+  (let ((num (number-at-point)))
+    (if (numberp num)
+      (let ((newnum (+ num amount))
+            (p (point)))
+        (save-excursion
+          (skip-chars-backward "-.0123456789")
+          (delete-region (point) (+ (point) (length (number-to-string num))))
+          (insert (number-to-string newnum)))
+        (goto-char p)
+        (list num amount newnum)
+        )
+      nil)))
+
+
+
+(defun perly-sense-assist-sync-test-count ()
+  "Synchronize Test::More test count with the one reported by the
+current test run, if any"
+  (interactive)
+  (let
+      ((message
+        (catch 'message
+          (save-excursion
+            (let ((expected-count (perly-sense-expected-test-count))
+                  (current-count (perly-sense-current-test-count)))
+              (if (eq expected-count nil)
+                  (throw 'message "No *compilation* buffer with a test run found."))
+              (if (eq current-count nil)
+                  (throw 'message "No test count found in the current buffer"))
+              (if (= expected-count current-count)
+                  (throw 'message
+                         (format
+                          "Current test count is the same as the expected count (%s)"
+                          expected-count))
+                (perly-sense-set-test-count current-count expected-count)
+                nil))))))
+    (if message (message "%s" message))))
+
+
+
+(defun perly-sense-expected-test-count ()
+  "Return the expected number of tests, or nil if that couldn't be deduced."
+  (if (not (get-buffer "*compilation*"))
+      nil
+    (catch 'count-string
+      (save-excursion
+        (set-buffer "*compilation*")
+        (goto-char (point-min))
+        (if (re-search-forward "Files=[0-9]+, Tests=\\([0-9]+\\)" nil t)
+            (throw 'count-string (string-to-number (match-string 1))))
+        (if (re-search-forward "Looks like you planned \\([0-9]+\\) tests but ran \\([0-9]+\\) extra" nil t)
+            (let* ((planned-count (string-to-number (match-string 1)))
+                   (extra-count (string-to-number (match-string 2)))
+                   (actual-count (+ planned-count extra-count))
+                   )
+              (throw 'count-string actual-count)
+              )
+          )
+        (if (re-search-forward "planned [0-9]+ tests but \\(only \\)?ran \\([0-9]+\\)" nil t)
+            (throw 'count-string (string-to-number (match-string 2))))
+        (if (re-search-forward "Failed [0-9]+/\\([0-9]+\\) tests" nil t)
+            (throw 'count-string (string-to-number (match-string 1))))
+        (throw 'count-string nil)))))
+
+
+
+(defun perly-sense-current-test-count ()
+  "Return the test count of the current buffer, or nil if that couldn't be deduced."
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "tests\s+=>\s*[0-9]+" nil t)
+        (let ((num (number-at-point)))
+          (if (numberp num)
+              num
+            nil)))))
+
+
+
 (defun perly-sense-command (command &optional options)
   "Call perly_sense COMMAND, and return the parsed result as a
 sexp"
@@ -1533,7 +1652,9 @@ or go to the Bookmark at point"
 (global-set-key (format "%sgv" perly-sense-key-prefix) 'perly-sense-go-to-vc-project)
 
 (global-set-key (format "%semu" perly-sense-key-prefix) 'perly-sense-edit-move-use-statement)
+(global-set-key (format "%setc" perly-sense-key-prefix) 'perly-sense-edit-test-count)
 
+(global-set-key (format "%sat" perly-sense-key-prefix) 'perly-sense-assist-sync-test-count)
 
 (global-set-key (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
 ;; (global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-display-api-for-class-at-point)

@@ -65,6 +65,11 @@ statement at point to the 'use Module' section at the top.
 Flymake may be used to highlight syntax errors and warnings in the
 source while editing (continously or at every save).
 
+C-o e t c -- Edit Test Count -- Increase the test count (e.g. "tests
+=> 43")
+
+C-o a t -- Assist With Test Count -- Synchronize invalid test count in
+.t file with the *compilation* buffer.
 
 
 =head2 From Vim
@@ -521,6 +526,31 @@ fixing errors and the .t file isn't visible.
 C-o r r -- If not even the *compilation* buffer is visible, issue
 Re-Run File from anywhere to bring it up and re-run.
 
+
+=head2 Edit Test Count
+
+C-o e t c -- Increase the test count number in the line resembling
+
+  use Test::More tests => 43;
+
+without moving point. The current and new test count is reported in
+the echo area.
+
+Increase with the numeric argument (C-u 18 C-o e t c), or default 1.
+
+
+=head2 Assist With Test Count
+
+C-o a t -- If the test count in a .t file is out of sync with what's
+correctly reported when running the test in the *compilation* buffer
+(see Run File), use this command to update the .t file.
+
+This updates the
+
+  use Test::More tests => 43;
+
+line in the current buffer, so be sure to only run this when the
+*compilation* buffer contains the run result of this buffer.
 
 
 =head2 Go to Error line
@@ -1010,7 +1040,11 @@ appreciated :)
 
 =head1 ACKNOWLEDGEMENTS
 
-Peter Liljenberg for his elisp fu.
+Peter Liljenberg and Phil Jackson for their elisp fu.
+
+Jonathan Rockway for cool ideas:
+L<http://blog.jrock.us/articles/Increment%20test%20counter.pod>
+
 
 
 =head1 COPYRIGHT & LICENSE
@@ -1030,7 +1064,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0145';
+our $VERSION = '0.0146';
 
 
 

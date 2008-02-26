@@ -1,6 +1,16 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0146
+
+* Edit Test Count: C-o e t c. Increase the test count specified by use
+  "Test::More tests => 42;" and the like.
+
+* Assist-with Test Count: C-o a t. Synchronize invalid test count in
+.t file with the *compilation* buffer.
+
+
+
 = 0.0145
 
 * Go to Version Control now properly supports: svn, none
