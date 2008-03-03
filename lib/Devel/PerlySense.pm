@@ -14,6 +14,8 @@ project and Perl installation.
 Run tests and scripts and syntax check source with easy navigation to
 errors/warnings/failing tests.
 
+Automate common editing tasks.
+
 Highlight syntax errors, warnings and Perl::Critic complaints in the
 source while editing.
 
@@ -62,21 +64,27 @@ etc.). Highlight errors and jump to source with C-c C-c.
 C-o e m u -- Edit - Move Use Statement -- Move the 'use Module'
 statement at point to the 'use Module' section at the top.
 
-Flymake may be used to highlight syntax errors and warnings in the
-source while editing (continously or at every save).
-
 C-o e t c -- Edit Test Count -- Increase the test count (e.g. "tests
 => 43")
 
 C-o a t -- Assist With Test Count -- Synchronize invalid test count in
 .t file with the *compilation* buffer.
 
+Flymake may be used to highlight syntax errors and warnings in the
+source while editing (continously or at every save).
+
+
 
 =head2 From Vim
 
-There is no integraton with Vim available. Well, yet.
+There is no integraton with Vim available. Well, not properly
+anyway. If you pass the option
 
-Someone may want to write it.
+ --io_type=editor_vim
+
+to perly_sense, the output format will use the Vim serializer. But not
+all commands use this format, and the Vim side of things aren't done
+quite yet.
 
 
 
@@ -1005,6 +1013,7 @@ L<http://media.pragprog.com/articles/mar_02_archeology.pdf> - Article "Software 
 
 L<http://www.newartisans.com/downloads_files/regex-tool.el> - Regex Tool
 
+L<http://vimdoc.sourceforge.net/htmldoc/eval.html#Dictionaries> - Vim native data structure
 
 
 
@@ -1064,7 +1073,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0146';
+our $VERSION = '0.0147';
 
 
 

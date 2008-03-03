@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.0146
+version: 0.0147
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: Perl IDE with Emacs frontend
@@ -36,7 +36,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.0146
+    version: 0.0147
   Devel::PerlySense::Bookmark::Definition:
     file: lib/Devel/PerlySense/Bookmark/Definition.pm
     version: 0.01
@@ -73,8 +73,14 @@ provides:
   Devel::PerlySense::Document::Meta:
     file: lib/Devel/PerlySense/Document/Meta.pm
     version: 0.01
+  Devel::PerlySense::Editor:
+    file: lib/Devel/PerlySense/Editor.pm
+    version: 0.01
   Devel::PerlySense::Editor::Emacs:
     file: lib/Devel/PerlySense/Editor/Emacs.pm
+    version: 0.01
+  Devel::PerlySense::Editor::Vim:
+    file: lib/Devel/PerlySense/Editor/Vim.pm
     version: 0.01
   Devel::PerlySense::Home:
     file: lib/Devel/PerlySense/Home.pm

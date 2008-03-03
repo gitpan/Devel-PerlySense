@@ -12,11 +12,13 @@ use Path::Class;
 use Cache::FileCache;
 use List::Util qw/ max /;
 
-use lib "../lib";
+use lib "../lib", "lib";
 use Devel::PerlySense;
 use Devel::PerlySense::Home;
 use Devel::PerlySense::Util::Log;
+use Devel::PerlySense::Editor;
 use Devel::PerlySense::Editor::Emacs;
+use Devel::PerlySense::Editor::Vim;
 use Time::HiRes qw/time/;
 use YAML::Tiny;
 
@@ -54,29 +56,45 @@ else {
 
 
 
+
 #Oh yes, this file is in serious need of a makeover...
 sub main_perly_sense {
-    my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $nameMethod, $clearCache, $widthDisplay);
+    my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $nameMethod, $clearCache, $widthDisplay, $typeIo);
     debug("ARGV: (" . join(" ", "perly_sense",  @ARGV) . ")");
 
     GetOptions(
-        "module:s" => \$module,
-        "file:s" => \$file,
-        "dir:s" => \$dir,
-        "row:i" => \$row,
-        "col:i" => \$col,
-        "file_origin:s" => \$fileOrigin,
-        "dir_origin:s" => \$dirOrigin,
-        "class_name:s" => \$nameClass,
-        "method_name:s" => \$nameMethod,
-        "clear_cache" => \$clearCache,
+        "module:s"        => \$module,
+        "file:s"          => \$file,
+        "dir:s"           => \$dir,
+        "row:i"           => \$row,
+        "col:i"           => \$col,
+        "file_origin:s"   => \$fileOrigin,
+        "dir_origin:s"    => \$dirOrigin,
+        "class_name:s"    => \$nameClass,
+        "method_name:s"   => \$nameMethod,
+        "clear_cache"     => \$clearCache,
         "width_display:s" => \$widthDisplay,
+        "io_type:s"       => \$typeIo,
         );
     my ($command) = @ARGV;
-
     $command or syntax("Missing command");
 
+
     my $oPs = Devel::PerlySense->new();
+
+
+    $typeIo ||= "editor_emacs";
+    my $rhIoClass = {
+        editor_emacs => "Devel::PerlySense::Editor::Emacs",
+        editor_vim   => "Devel::PerlySense::Editor::Vim",
+    };
+    my $classIo = $rhIoClass->{$typeIo}
+            or syntax("Invalid --io_type ($typeIo)");
+    my $oEditor = $classIo->new(
+        oPerlySense => $oPs,
+        widthDisplay => $widthDisplay,
+    );
+
 
     my $oHome = $oPs->oHome;
     my $dirHomeCache = $oHome->dirHomeCache
@@ -95,15 +113,10 @@ sub main_perly_sense {
 
 
 
-    my $oEditor = Devel::PerlySense::Editor::Emacs->new(
-        oPerlySense => $oPs,
-        widthDisplay => $widthDisplay,
-    );
-
 
 
     if($command eq "external_dir") {
-        print Devel::PerlySense::Editor::Emacs->dirExtenal;
+        print Devel::PerlySense::Editor->dirExtenal;
     } elsif($command eq "find_module_source_file") {
         $fileOrigin and $dirOrigin = dirname($fileOrigin);
         $dirOrigin ||= ".";
@@ -482,7 +495,7 @@ sub main_perly_sense {
         print $oEditor->formatOutputDataStructure(
             rhData => { project_dir => $oPs->oProject->dirProject },
         );
-        
+
     } elsif($command eq "vcs_dir") {
         $dir ||= ".";
         $oPs->setFindProject(dir => $dir);
@@ -492,11 +505,10 @@ sub main_perly_sense {
                 vcs_name => $oPs->oProject->nameVcs,
             },
         );
-        
+
     } else {
         syntax("Invalid command ($command)");
     }
-
     return(1);
 }
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Devel::PerlySense::Editor::Emacs - Integration with Emacs
+Devel::PerlySense::Editor::Vim - Integration with Vim
 
 =head1 DESCRIPTION
 
@@ -14,9 +14,10 @@ Devel::PerlySense::Editor::Emacs - Integration with Emacs
 use strict;
 use warnings;
 
-package Devel::PerlySense::Editor::Emacs;
+package Devel::PerlySense::Editor::Vim;
 use base "Devel::PerlySense::Editor";
 our $VERSION = '0.01';
+
 
 
 
@@ -54,11 +55,10 @@ Return stringification of $rhData suited for the Editor.
 sub formatOutputDataStructure {
     my ($rhData) = Devel::PerlySense::Util::aNamedArg(["rhData"], @_);
 
-#    return q|'(("class-overview" . "Hej baberiba\n [ Class::Accessor ]") ("class-name" . "Class::Accessor") ("message" . "Whatever2"))|;
-
+#    return q|{"class-overview": "Hej baberiba\n [ Class::Accessor ]", "class-name": "Class::Accessor", "message": "Whatever2"}|;
     my $keysValues = $self->formatOutputItem($rhData);
 
-    return qq|'$keysValues|;
+    return $keysValues;
 }
 
 
@@ -76,10 +76,10 @@ sub formatOutputItem {
 
     my $output = "";
     if(ref($value) eq "ARRAY") {
-        $output = "(" . join(" ", map { $self->formatOutputItem($_) } @$value) . ")"
+        $output = "[" . join(", ", map { $self->formatOutputItem($_) } @$value) . "]"
     }
     elsif(ref($value) eq "HASH") {
-        $output = "(" . join(" ", map {
+        $output = "{" . join(", ", map {
             my $key = $_;
             my $item_value = $value->{$_};
             $item_value = $self->formatOutputItem($item_value);
@@ -87,9 +87,9 @@ sub formatOutputItem {
             $key = $self->renameIdentifier($key);
             $key = $self->escapeValue($key);
 
-            qq|("$key" . $item_value)|;
+            qq|"$key": $item_value|;
 
-        } sort keys %$value) . ")";
+        } sort keys %$value) . "}";
     }
     else {
         $output = $self->escapeValue($value);
@@ -103,28 +103,11 @@ sub formatOutputItem {
 
 
 
-=head2 renameIdentifier($identifier)
-
-Return $identifier with _ replaced with - to make them more Lispish.
-
-=cut
-sub renameIdentifier {
-    my ($identifier) = (@_);
-
-    $identifier =~ s/_/-/g;
-
-    return $identifier;
-}
-
-
-
-
-
-###TODO: escape " and \ and fix newlines
 sub escapeValue {
     my ($value) = (@_);
 
     $value =~ s| ([\\"]) |\\$1|gsmx;
+    $value =~ s| \n |\\n|gsmx;
 
     return $value;
 }
