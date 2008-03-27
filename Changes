@@ -1,6 +1,15 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0148
+
+* Eye-candy release: use dropdown-list.el when choosing between
+  multiple classes.
+
+* Note that two configuration colors were added, so revisit the "Emacs
+  installation" section in the docs to set that up.
+
+
 = 0.0147
 
 * Vim serialization support

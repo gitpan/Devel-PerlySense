@@ -172,7 +172,7 @@ following in your .emacs config file:
     ;; *** PerlySense Config ***
 
     ;; ** PerlySense **
-    ;; The PerlySense prefix key (unset only if needed)
+    ;; The PerlySense prefix key (unset only if needed, like for \C-o)
     (global-unset-key "\C-o")
     (setq perly-sense-key-prefix "\C-o")
 
@@ -180,9 +180,8 @@ following in your .emacs config file:
     ;; ** Flymake **
     ;; Load flymake if t
     ;; Flymake must be installed.
-    ;; It is included in Emacs 22, or available from
-    ;;   http://flymake.sourceforge.net/
-    ;; Put flymake.el somewhere in your load-path.
+    ;; It is included in Emacs 22
+    ;;     (or http://flymake.sourceforge.net/, put flymake.el in your load-path)
     (setq perly-sense-load-flymake t)
     ;; Note: more flymake config below, after loading PerlySense
 
@@ -199,7 +198,6 @@ following in your .emacs config file:
                             (format "%s/%s" perly-sense-external-dir "emacs")
                             ) load-path))
           (load "perly-sense")
-          (if perly-sense-load-flymake (load "perly-sense-flymake"))
           )
       (message "Could not identify PerlySense install dir.
     Is Devel::PerlySense installed properly?
@@ -208,16 +206,18 @@ following in your .emacs config file:
 
 
     ;; ** Flymake Config **
-
     ;; If you only want syntax check whenever you save, not continously
     (setq flymake-no-changes-timeout 9999)
     (setq flymake-start-syntax-check-on-newline nil)
 
+    ;; ** Color Config **
     ;; Emacs named colors: http://www.geocities.com/kensanata/colors.html
     ;; These colors work fine with a white X11 background. They may not look
     ;; that great on a console with the default color scheme.
     (set-face-background 'flymake-errline "antique white")
     (set-face-background 'flymake-warnline "lavender")
+    (set-face-background 'dropdown-list-face "lightgrey")
+    (set-face-background 'dropdown-list-selection-face "grey")
 
 
     ;; *** PerlySense End ***
@@ -1054,6 +1054,10 @@ Peter Liljenberg and Phil Jackson for their elisp fu.
 Jonathan Rockway for cool ideas:
 L<http://blog.jrock.us/articles/Increment%20test%20counter.pod>
 
+John Wiegley for the regex-tool L<http://www.newartisans.com/downloads_files/regex-tool.el>
+
+Jaeyoun Chung for dropdown-list L<http://www.emacswiki.org/cgi-bin/wiki/dropdown-list.el>
+
 
 
 =head1 COPYRIGHT & LICENSE
@@ -1073,7 +1077,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0147';
+our $VERSION = '0.0148';
 
 
 

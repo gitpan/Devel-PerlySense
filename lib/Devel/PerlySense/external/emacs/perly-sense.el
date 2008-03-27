@@ -44,6 +44,7 @@ buffer is already visible anywhere, re-use that visible buffer."
 
 ;; Regex Tool
 (require 'regex-tool)
+(require 'dropdown-list)
 
 
 
@@ -592,7 +593,9 @@ the the user choose a Class."
           (perly-sense-go-to-class-alist first-class-alist)
         (let ((chosen-class-alist
                (perly-sense-choose-class-alist-from-class-list "Base Class" class-list)))
-          (perly-sense-go-to-class-alist chosen-class-alist)
+          (if chosen-class-alist
+              (perly-sense-go-to-class-alist chosen-class-alist)
+            )
           )
         )
       )
@@ -958,6 +961,40 @@ area."
 (defun perly-sense-choose-class-alist-from-class-list (what-text class-list)
   "Let the user choose a class-alist from the lass-list of Class
 definitions.
+
+Return class-alist with (keys: class-name, file, row), or nil if
+none was chosen."
+  (perly-sense-choose-class-alist-from-class-list-with-dropdown what-text class-list)
+  )
+
+
+
+(defun perly-sense-choose-class-alist-from-class-list-with-dropdown (what-text class-list)
+  "Let the user choose a class-alist from the lass-list of Class
+definitions using a dropdown list.
+
+Return class-alist with (keys: class-name, file, row), or nil if
+none was chosen."
+  (let* ((class-description-list (mapcar (lambda (class-alist)
+                                    (alist-value class-alist "class-description")
+                                    ) class-list))
+         (n (dropdown-list class-description-list))
+         )
+    (if n
+        (let ((chosen-class-description (nth n class-description-list)))
+          (perly-sense-get-alist-from-list
+           class-list "class-description" chosen-class-description)
+          )
+      nil
+      )
+    )
+  )
+
+
+
+(defun perly-sense-choose-class-alist-from-class-list-with-completing-read (what-text class-list)
+  "Let the user choose a class-alist from the lass-list of Class
+definitions using completing read.
 
 Return class-alist with (keys: class-name, file, row)"
   (let* ((class-description-list (mapcar (lambda (class-alist)
@@ -1671,6 +1708,10 @@ or go to the Bookmark at point"
 
 
 (provide 'perly-sense)
+
+
+
+(if perly-sense-load-flymake (load "perly-sense-flymake"))
 
 
 
