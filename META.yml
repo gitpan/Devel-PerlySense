@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.0148
+version: 0.0149
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: Perl IDE with Emacs frontend
@@ -22,8 +22,10 @@ requires:
   HTTP::Date: 0
   List::MoreUtils: 0
   PPI: 1.003
+  PPI::HTML: 0
   Path::Class: 0.11
   Perl::Critic: 0
+  Perl::Tidy: 0
   Pod::Text: 0
   Pod::Usage: 0
   Spiffy: 0.2
@@ -36,7 +38,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.0148
+    version: 0.0149
   Devel::PerlySense::Bookmark::Definition:
     file: lib/Devel/PerlySense/Bookmark/Definition.pm
     version: 0.01
@@ -100,7 +102,7 @@ provides:
   Devel::TimeThis:
     file: lib/Devel/TimeThis.pm
     version: 0.01
-generated_by: Module::Build version 0.2806
+generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2

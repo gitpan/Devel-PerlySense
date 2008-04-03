@@ -385,6 +385,26 @@ sub main_perly_sense {
             print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
         }
 
+    } elsif($command eq "test_other_files") {
+        $file or syntax("Missing option --file");
+
+        eval {
+            $oPs->setFindProject(file => $file);
+            my $raFileTestOther = $oPs->raFileTestOther(file => $file);
+            @$raFileTestOther or die("No related test files found\n");
+            
+            print $oEditor->formatOutputDataStructure(
+                rhData => {
+                    other_files => $raFileTestOther,
+                    project_dir => $oPs->oProject->dirProject,
+                },
+            );
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
+
     } elsif($command eq "run_file") {
         $file or syntax("Missing option --file");
 
@@ -491,7 +511,7 @@ sub main_perly_sense {
 
     } elsif($command eq "project_dir") {
         $dir ||= ".";
-        $oPs->setFindProject(dir => $dir);
+        $oPs->setFindProject(dir => $dir, file => $file);
         print $oEditor->formatOutputDataStructure(
             rhData => { project_dir => $oPs->oProject->dirProject },
         );

@@ -57,6 +57,9 @@ point.
 C-o g v -- Go To Version Control -- Go to the Project view of the
 current Version Control system.
 
+C-o g t o -- Go To Tests - Other Files -- Go to any related test or
+source files given a L<Test::CoverX::Covered> covered db.
+
 C-o C-r -- Run file -- Run the current file using the Compilation mode
 and the settings appropriate for the source type (Test, Module,
 etc.). Highlight errors and jump to source with C-c C-c.
@@ -85,6 +88,8 @@ anyway. If you pass the option
 to perly_sense, the output format will use the Vim serializer. But not
 all commands use this format, and the Vim side of things aren't done
 quite yet.
+
+It's in the works.
 
 
 
@@ -159,7 +164,21 @@ user home directory, etc. is.
 
 =head2 perly_sense installation
 
-Install required modules from CPAN.
+Install required modules from CPAN. Recommended: use a configured CPAN
+shell, like this:
+
+  cpan Devel::PerlySense
+
+and be done with it. When everything is installed, verify by running
+
+  perly_sense info
+
+
+=head2 Supporting modules
+
+This isn't needed to begin with, but may be very useful if you have a
+lot of tests to navigate: L<Devel::CoverX::Covered>.
+
 
 
 =head2 Emacs installation
@@ -381,7 +400,7 @@ X v -- resolve conflict (or X X, I'm not sure what the difference is)
 
 etc, etc, etc, do a C-h m to see all the goodies.
 
-See also: 
+See also:
 
 =over 4
 
@@ -559,6 +578,18 @@ This updates the
 
 line in the current buffer, so be sure to only run this when the
 *compilation* buffer contains the run result of this buffer.
+
+
+=head2 Go to Tests - Other Files
+
+C-o g t o -- In a test file, navigate to the source files that are
+covered by that test file. In a source file, navigate to test files
+covering the file.
+
+This requires that L<Devel::CoverX::Covered> is installed and a
+L<Devel::Cover> cover_db in the project root directory.
+
+See L<Devel::CoverX::Covered> for details.
 
 
 =head2 Go to Error line
@@ -1077,7 +1108,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0148';
+our $VERSION = '0.0149';
 
 
 
@@ -1527,6 +1558,26 @@ sub rhRegexExample {
     my $oDocument = $self->oDocumentParseFile($file);
 
     return $oDocument->rhRegexExampleAt(row => $row, col => $col);
+}
+
+
+
+
+
+=head2 raFileTestOther(file => $fileSource)
+
+Return array ref with file names of files related to $file, i.e. the
+"other" files related $file.
+
+If $file is a source file, return test files, and vice verca.
+
+Die if Devel::CoverX::Covered isn't installed.
+
+=cut
+sub raFileTestOther {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+    $self->setFindProject(file => $file) or die("Could not identify any PerlySense Project\n");
+    return $self->oProject->raFileTestOther(file => $file);
 }
 
 

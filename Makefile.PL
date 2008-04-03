@@ -16,6 +16,7 @@ WriteMakefile
                            'Pod::Text' => 0,
                            'File::Spec' => '3.25',
                            'App::Ack' => 0,
+                           'Perl::Tidy' => 0,
                            'File::chdir' => 0,
                            'Cache::Cache' => 0,
                            'Graph::Easy' => '0.57',
@@ -33,6 +34,7 @@ WriteMakefile
                            'Test::Differences' => 0,
                            'Perl::Critic' => 0,
                            'Path::Class' => '0.11',
+                           'PPI::HTML' => 0,
                            'File::Basename' => 0
                          }
         )

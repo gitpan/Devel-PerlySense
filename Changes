@@ -1,6 +1,19 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
 
+= 0.0149
+
+* Go To Tests - Other Files: C-o g t o -- If you have
+  Devel::CoverX::Covered installed and have build a cover_db in the
+  project root directory, this command will let you choose to go to
+  any related test or source files.
+
+  See Devel::CoverX::Covered for details.
+
+  Ironically, this isn't very well unit tested yet...
+
+
+
 = 0.0148
 
 * Eye-candy release: use dropdown-list.el when choosing between

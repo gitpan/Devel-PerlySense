@@ -491,6 +491,44 @@ sub flymakeFile {
 
 
 
+=head2 raFileTestOther(file => $fileSource)
+
+Return array ref with file names of files related to $file, i.e. the
+"other" files related $file.
+
+If $file is a source file, return test files, and vice verca.
+
+Die if Devel::CoverX::Covered isn't installed.
+
+=cut
+sub raFileTestOther {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+
+    eval {
+        require Devel::CoverX::Covered;
+        require Devel::CoverX::Covered::Db;
+    };
+    $@ and die("Devel::CoverX::Covered isn't installed\n");
+    
+    ###TODO: verify there is a cover_db database present
+
+    local $CWD = $self->dirProject . "";
+
+    my $db = Devel::CoverX::Covered::Db->new();
+
+    my $method = ($file =~ /\.pm$/)
+            ? "test_files_covering"
+            : "source_files_covered_by";
+    my $fileRelative = file($file)->relative( $self->dirProject );
+    my $raFileTestOther = [ $db->$method($fileRelative) ];
+
+    return($raFileTestOther);
+}
+
+
+
+
+
 1;
 
 

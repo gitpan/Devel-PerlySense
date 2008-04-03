@@ -10,7 +10,7 @@
 
 
 ;;;; Utilities
-
+;(message "%s" (prin1-to-string thing))
 
 
 (defun alist-value (alist key)
@@ -267,7 +267,7 @@ __DATA__
 
 ; should use something that fontifies
 (defun perly-sense-display-pod-for-file (file name-buffer)
-  (shell-command (format "perly_sense display_file_pod --file=%s" file)
+  (shell-command (format "perly_sense display_file_pod \"--file=%s\"" file)
                  (format "*%s POD*" name-buffer)
                  )
   )
@@ -380,7 +380,7 @@ __DATA__
       (message "Run File...")
       (let ((result
              (shell-command-to-string
-              (format "perly_sense run_file --file=%s" (buffer-file-name)))
+              (format "perly_sense run_file \"--file=%s\"" (buffer-file-name)))
              ))
         (let* (
                (result-hash (perly-sense-parse-sexp result))
@@ -443,7 +443,7 @@ __DATA__
   (message "Smart docs...")
   (let* (
          (result (shell-command-to-string
-                  (format "perly_sense smart_doc --file=%s --row=%s --col=%s"
+                  (format "perly_sense smart_doc \"--file=%s\" --row=%s --col=%s"
                           (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
                           )
                   ))
@@ -556,7 +556,7 @@ col is 0, the point isn't moved in that dimension."
   (interactive)
   (message "Smart goto...")
   (let ((result (shell-command-to-string
-               (format "perly_sense smart_go_to --file=%s --row=%s --col=%s"
+               (format "perly_sense smart_go_to \"--file=%s\" --row=%s --col=%s"
                        (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
                        )
                ))
@@ -636,6 +636,29 @@ statement in the file, or nil if none was found."
       nil
       )
     )
+  )
+
+
+
+(defun perly-sense-goto-test-other-files ()
+  "Go to other test files. When in a Perl module, let user choose
+amongst test files to go to. When in a test file, let user choose
+amongst source files to go to.
+
+You must have Devel::CoverX::Covered installed and have a
+cover_db for your project in the project dir."
+  (interactive)
+
+  (let* ((result-alist (perly-sense-command-on-current-file-location "test_other_files"))
+         (message (alist-value result-alist "message")))
+    (if message
+        (message "%s" message)
+      (let* ((other-files-list (alist-value result-alist "other-files"))
+             (project-dir (alist-value result-alist "project-dir"))
+             (n (dropdown-list other-files-list)))
+        (if n (let* ((chosen-file (nth n other-files-list)))
+                (find-file (expand-file-name chosen-file project-dir)))
+          ))))
   )
 
 
@@ -848,7 +871,7 @@ and return the parsed result as a sexp"
   (unless options (setq options ""))
   (perly-sense-parse-sexp
    (shell-command-to-string
-    (format "perly_sense %s --file=%s --row=%s --col=%s %s --width_display=%s"
+    (format "perly_sense %s \"--file=%s\" --row=%s --col=%s %s --width_display=%s"
             command
             (buffer-file-name)
             (perly-sense-current-line)
@@ -1121,7 +1144,7 @@ t on success, else nil"
   (interactive)
   (message "Class API...")
   (let* ((text (shell-command-to-string
-               (format "perly_sense class_api --file=%s --row=%s --col=%s"
+               (format "perly_sense class_api \"--file=%s\" --row=%s --col=%s"
                        (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
                        )
                ))
@@ -1620,7 +1643,6 @@ or go to the Bookmark at point"
 
 
 
-
 (defvar perly-sense-class-mode-syntax-table
   (let ((st (make-syntax-table)))
     ;; Treat _ and :: as part of a word
@@ -1700,6 +1722,7 @@ or go to the Bookmark at point"
 (global-set-key (format "%srr" perly-sense-key-prefix) 'perly-sense-rerun-file)
 
 (global-set-key (format "%sge" perly-sense-key-prefix) 'perly-sense-compile-goto-error-file-line)
+(global-set-key (format "%sgto" perly-sense-key-prefix) 'perly-sense-goto-test-other-files)
 
 (global-set-key (format "%sar" perly-sense-key-prefix) 'perly-sense-regex-tool)
 
@@ -1712,6 +1735,7 @@ or go to the Bookmark at point"
 
 
 (if perly-sense-load-flymake (load "perly-sense-flymake"))
+
 
 
 

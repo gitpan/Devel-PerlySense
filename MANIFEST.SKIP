@@ -12,4 +12,4 @@ CVS
 \.svn
 release.pl
 ^\.PerlySenseProject
-
+^cover_db

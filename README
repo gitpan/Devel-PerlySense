@@ -48,6 +48,9 @@ SYNOPSIS
     C-o g v -- Go To Version Control -- Go to the Project view of the
     current Version Control system.
 
+    C-o g t o -- Go To Tests - Other Files -- Go to any related test or
+    source files given a Test::CoverX::Covered covered db.
+
     C-o C-r -- Run file -- Run the current file using the Compilation mode
     and the settings appropriate for the source type (Test, Module, etc.).
     Highlight errors and jump to source with C-c C-c.
@@ -73,6 +76,8 @@ SYNOPSIS
     to perly_sense, the output format will use the Vim serializer. But not
     all commands use this format, and the Vim side of things aren't done
     quite yet.
+
+    It's in the works.
 
   From other editors
     Any editor that is programmable and that can call a shell script could
@@ -126,7 +131,18 @@ SYNOPSIS
 
 INSTALLATION
   perly_sense installation
-    Install required modules from CPAN.
+    Install required modules from CPAN. Recommended: use a configured CPAN
+    shell, like this:
+
+      cpan Devel::PerlySense
+
+    and be done with it. When everything is installed, verify by running
+
+      perly_sense info
+
+  Supporting modules
+    This isn't needed to begin with, but may be very useful if you have a
+    lot of tests to navigate: Devel::CoverX::Covered.
 
   Emacs installation
     Make sure the Devel::PerlySense CPAN module is installed, it contains
@@ -475,6 +491,16 @@ GETTING STARTED WITH EMACS
 
     line in the current buffer, so be sure to only run this when the
     *compilation* buffer contains the run result of this buffer.
+
+  Go to Tests - Other Files
+    C-o g t o -- In a test file, navigate to the source files that are
+    covered by that test file. In a source file, navigate to test files
+    covering the file.
+
+    This requires that Devel::CoverX::Covered is installed and a
+    Devel::Cover cover_db in the project root directory.
+
+    See Devel::CoverX::Covered for details.
 
   Go to Error line
     If you run tests in a regular shell (inside Emacs or in a terminal
@@ -1004,6 +1030,14 @@ API METHODS
     the comment #
 
     Die if $file doesn't exist, or on other errors.
+
+  raFileTestOther(file => $fileSource)
+    Return array ref with file names of files related to $file, i.e. the
+    "other" files related $file.
+
+    If $file is a source file, return test files, and vice verca.
+
+    Die if Devel::CoverX::Covered isn't installed.
 
   rhRunFile(file => $fileSource)
     Figure out what type of source file $fileSource is, and how it should be

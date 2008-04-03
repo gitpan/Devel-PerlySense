@@ -7,7 +7,7 @@ use Test::Exception;
 use Data::Dumper;
 use File::Path;
 
-use lib "../lib";
+use lib "../lib", "lib";
 
 use_ok("Devel::PerlySense::Home");
 
