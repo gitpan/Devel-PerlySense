@@ -25,7 +25,7 @@
 
 
 
-(defun perly-sense-switch-to-buffer (buffer)
+(defun ps/switch-to-buffer (buffer)
   "Switch to BUFFER (buffer object, or buffer name). If the
 buffer is already visible anywhere, re-use that visible buffer."
   (let* ((buffer-window (get-buffer-window buffer)))
@@ -91,39 +91,47 @@ __DATA__
 
 (defgroup perly-sense nil
   "PerlySense Perl IDE."
-  :prefix "perly-sense-"
+  :prefix "ps/"
   :group 'languages
   :version "1.0")
+
+
+
+(defcustom ps/dropdown-max-items-to-display '30
+  "The maximum number of items to display in a dropdown menu. Any
+more items than that, use completing read instead."
+  :type 'integer
+  :group 'perly-sense)
 
 
 
 (defgroup perly-sense-faces nil
   "Colors."
   :link '(custom-group-link :tag "Font Lock Faces group" font-lock-faces)
-  :prefix "perly-sense-"
+  :prefix "ps/"
   :group 'perly-sense)
 
 
-(defcustom perly-sense-here-face 'font-lock-string-face
+(defcustom ps/here-face 'font-lock-string-face
   "*Face for here-docs highlighting."
   :type 'face
   :group 'perly-sense-faces)
 
 
 
-(defface perly-sense-heading
+(defface ps/heading
   `((t (:inherit 'custom-face-tag)))
 ;  `((t (:inherit 'bold)))  ;
   "Face for headings."
   :group 'perly-sense-faces)
-(defvar perly-sense-heading-face 'perly-sense-heading
+(defvar ps/heading-face 'ps/heading
   "Face for headings.")
 
 
 
 
 
-(defface perly-sense-module-name
+(defface ps/module-name
   `((((class grayscale) (background light))
      (:background "Gray90"))
     (((class grayscale) (background dark))
@@ -135,10 +143,10 @@ __DATA__
     (t (:weight bold)))
   "Face for module names."
   :group 'perly-sense-faces)
-(defvar perly-sense-module-name-face 'perly-sense-module-name
+(defvar ps/module-name-face 'ps/module-name
   "Face for module names.")
 
-(defface perly-sense-highlighted-module-name
+(defface ps/highlighted-module-name
   `((((class grayscale) (background light))
      (:background "Gray90" :weight bold))
     (((class grayscale) (background dark))
@@ -150,55 +158,55 @@ __DATA__
     (t (:weight bold)))
   "Face for highlighted module names."
   :group 'perly-sense-faces)
-(defvar perly-sense-highlighted-module-name-face 'perly-sense-highlighted-module-name
+(defvar ps/highlighted-module-name-face 'ps/highlighted-module-name
   "Face for highlighted module names.")
 
-(defvar perly-sense-bookmark-file-face compilation-info-face
+(defvar ps/bookmark-file-face compilation-info-face
   "Face for Bookmark file names.")
 
-(defvar perly-sense-bookmark-line-number-face 'compilation-line-number
+(defvar ps/bookmark-line-number-face 'compilation-line-number
   "Face for Bookmark line numbers.")
 
-(defface perly-sense-current-class-method
+(defface ps/current-class-method
   `((t (:inherit 'font-lock-function-name-face)))
   "Face for methods in the current class."
   :group 'perly-sense-faces)
-(defvar perly-sense-current-class-method-face 'perly-sense-current-class-method
+(defvar ps/current-class-method-face 'ps/current-class-method
   "Face for methods in the current class.")
 
-(defface perly-sense-current-new-method
+(defface ps/current-new-method
   `((t (:inherit 'font-lock-function-name-face :weight bold)))
   "Face for new in the current class."
   :group 'perly-sense-faces)
-(defvar perly-sense-current-new-method-face 'perly-sense-current-new-method
+(defvar ps/current-new-method-face 'ps/current-new-method
   "Face for new in the current class.")
 
-(defface perly-sense-base-class-method
+(defface ps/base-class-method
   `((t (:inherit 'font-lock-keyword-face)))
   "Face for methods in the base class."
   :group 'perly-sense-faces)
-(defvar perly-sense-base-class-method-face 'perly-sense-base-class-method
+(defvar ps/base-class-method-face 'ps/base-class-method
   "Face for methods in the base class.")
 
-(defface perly-sense-base-new-method
+(defface ps/base-new-method
   `((t (:inherit 'font-lock-keyword-face :weight bold)))
   "Face for new in the base class."
   :group 'perly-sense-faces)
-(defvar perly-sense-base-new-method-face 'perly-sense-base-new-method
+(defvar ps/base-new-method-face 'ps/base-new-method
   "Face for new in the base class.")
 
-(defface perly-sense-cpan-base-class-method
+(defface ps/cpan-base-class-method
   `((t (:inherit 'font-lock-keyword-face)))
   "Face for methods in base classes outside the Project."
   :group 'perly-sense-faces)
-(defvar perly-sense-cpan-base-class-method-face 'perly-sense-cpan-base-class-method
+(defvar ps/cpan-base-class-method-face 'ps/cpan-base-class-method
   "Face for methods in base classes outside the Project.")
 
-(defface perly-sense-cpan-base-new-method
+(defface ps/cpan-base-new-method
   `((t (:inherit 'font-lock-keyword-face :weight bold)))
   "Face for new in base classes outside the Project."
   :group 'perly-sense-faces)
-(defvar perly-sense-cpan-base-new-method-face 'perly-sense-cpan-base-new-method
+(defvar ps/cpan-base-new-method-face 'ps/cpan-base-new-method
   "Face for new in base classes outside the Project.")
 
 
@@ -213,13 +221,13 @@ __DATA__
 
 
 
-(defun perly-sense-log (msg)
+(defun ps/log (msg)
   "log msg in a message and return msg"
 ;;  (message "LOG(%s)" msg)
   )
 
 
-(defun perly-sense-current-line ()
+(defun ps/current-line ()
   "Return the vertical position of point"
   (+ (count-lines 1 (point))
      (if (= (current-column) 0) 1 0)
@@ -232,7 +240,7 @@ __DATA__
 
 ;;;;
 
-(defun perly-sense-find-source-for-module (module)
+(defun ps/find-source-for-module (module)
   (let ((file (shell-command-to-string (format "perly_sense find_module_source_file --module=%s" module))))
     (if (not (string-equal file ""))
         (find-file file)
@@ -243,14 +251,14 @@ __DATA__
   )
 
 
-(defun perly-sense-find-source-for-module-at-point ()
+(defun ps/find-source-for-module-at-point ()
   "Find the source file for the module at point."
   (interactive)
   (let ((module (cperl-word-at-point)))
     (if module
         (progn
           (message "Going to module %s..." module)
-          (perly-sense-find-source-for-module module)
+          (ps/find-source-for-module module)
           )
       )
     )
@@ -259,26 +267,26 @@ __DATA__
 
 
 ; should use something that fontifies
-(defun perly-sense-display-pod-for-module (module)
+(defun ps/display-pod-for-module (module)
   (shell-command (format "perly_sense display_module_pod --module=%s" module)
                  (format "*%s POD*" module)
                  )
   )
 
 ; should use something that fontifies
-(defun perly-sense-display-pod-for-file (file name-buffer)
+(defun ps/display-pod-for-file (file name-buffer)
   (shell-command (format "perly_sense display_file_pod \"--file=%s\"" file)
                  (format "*%s POD*" name-buffer)
                  )
   )
 
 
-(defun perly-sense-display-pod-for-module-at-point ()
+(defun ps/display-pod-for-module-at-point ()
   "Display POD for the module at point."
   (interactive)
   (let ((module (cperl-word-at-point)))
     (if module
-        (perly-sense-display-pod-for-module module)
+        (ps/display-pod-for-module module)
       )
     )
   )
@@ -286,11 +294,11 @@ __DATA__
 
 
 
-(defun perly-sense-smart-docs (word)
+(defun ps/smart-docs (word)
   "Display documentation for word."
   (if word
-      (perly-sense-display-pod-for-module word)
-    (perly-sense-display-pod-for-file (buffer-file-name) (buffer-name))
+      (ps/display-pod-for-module word)
+    (ps/display-pod-for-file (buffer-file-name) (buffer-name))
     )
   )
 
@@ -299,17 +307,17 @@ __DATA__
 
 
 ; Split result into first line and the rest and return the first line
-(defun perly-sense-result-status (result)
+(defun ps/result-status (result)
   (car (split-string result "[\n]"))
 )
 
 ; Split result into first line and the rest and return the rest
-(defun perly-sense-result-text (result)
+(defun ps/result-text (result)
   (mapconcat 'identity (cdr (split-string result "[\n]")) "\n")
 )
 
 ; Split the Split result into first line and the rest and return those two
-(defun perly-sense-result-properties (result)
+(defun ps/result-properties (result)
   (split-string (car (split-string result "[\n]")) "[\t]")
   )
 
@@ -317,24 +325,24 @@ __DATA__
 
 
 
-(defun perly-sense-display-text-in-buffer (type name text)
+(defun ps/display-text-in-buffer (type name text)
   (let ((buffer-name (format "*%s %s*" type name)))
     (with-current-buffer (get-buffer-create buffer-name)
       (erase-buffer)
       (insert text)
       (goto-char 1)
-      (perly-sense-fontify-pod-buffer buffer-name)
+      (ps/fontify-pod-buffer buffer-name)
       (display-buffer (current-buffer))
       )
     )
   )
 
 
-(defun perly-sense-display-doc-message-or-buffer (doc-type name text)
+(defun ps/display-doc-message-or-buffer (doc-type name text)
   (cond ((string= doc-type "hint")
          (message "%s" text))
         ((string= doc-type "document")
-         (perly-sense-display-text-in-buffer "POD" name text)
+         (ps/display-text-in-buffer "POD" name text)
          (message nil)
          )
         )
@@ -345,7 +353,7 @@ __DATA__
 
 
 
-(defun perly-sense-fontify-pod-buffer (buffer-name)
+(defun ps/fontify-pod-buffer (buffer-name)
   "Mark up a buffer with text from pod2text."
   (interactive)
   (save-excursion
@@ -366,7 +374,7 @@ __DATA__
 
 
 
-(defun perly-sense-run-file ()
+(defun ps/run-file ()
   "Run the current file"
   (interactive)
 
@@ -383,15 +391,15 @@ __DATA__
               (format "perly_sense run_file \"--file=%s\"" (buffer-file-name)))
              ))
         (let* (
-               (result-hash (perly-sense-parse-sexp result))
+               (result-hash (ps/parse-sexp result))
                (dir-run-from (alist-value result-hash "dir-run-from"))
                (command-run (alist-value result-hash "command-run"))
                (type-source-file (alist-value result-hash "type-source-file"))
                (message-string (alist-value result-hash "message"))
                )
           (if command-run
-              (perly-sense-run-file-run-command
-               ;;             (perly-sense-run-file-get-command command-run type-source-file)
+              (ps/run-file-run-command
+               ;;             (ps/run-file-get-command command-run type-source-file)
                command-run
                dir-run-from
                )
@@ -405,7 +413,7 @@ __DATA__
     )
   )
 
-(defun perly-sense-run-file-run-command (command dir-run-from)
+(defun ps/run-file-run-command (command dir-run-from)
   "Run command from dir-run-from using the compiler function"
   (with-temp-buffer
     (cd dir-run-from)
@@ -415,7 +423,7 @@ __DATA__
 
 
 
-(defun perly-sense-rerun-file ()
+(defun ps/rerun-file ()
   "Rerun the current compilation buffer"
   (interactive)
   (let* ((compilation-buffer (get-buffer "*compilation*")))
@@ -437,27 +445,27 @@ __DATA__
 
 
 ;found   method  name    levelIndent     docType hint
-(defun perly-sense-smart-docs-at-point ()
+(defun ps/smart-docs-at-point ()
   "Display documentation for the code at point."
   (interactive)
   (message "Smart docs...")
   (let* (
          (result (shell-command-to-string
                   (format "perly_sense smart_doc \"--file=%s\" --row=%s --col=%s"
-                          (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
+                          (buffer-file-name) (ps/current-line) (+ 1 (current-column))
                           )
                   ))
-         (result-text (perly-sense-result-text result))
+         (result-text (ps/result-text result))
          )
     (if (not (string= result ""))
         (let*
             (
-             (properties (perly-sense-result-properties result))
+             (properties (ps/result-properties result))
              (found    (nth 1 properties))
              (name     (nth 3 properties))
              (doc-type (nth 5 properties))
              )
-          (perly-sense-display-doc-message-or-buffer doc-type name result-text)
+          (ps/display-doc-message-or-buffer doc-type name result-text)
           )
       (message "Nothing found")
       )
@@ -467,11 +475,11 @@ __DATA__
 
 
 
-(defun perly-sense-inheritance-docs-at-point ()
+(defun ps/inheritance-docs-at-point ()
   "Display the Inheritance structure for the current Class"
   (interactive)
   (message "Document Inheritance...")
-  (let* ((result-alist (perly-sense-command-on-current-file-location "inheritance_doc"))
+  (let* ((result-alist (ps/command-on-current-file-location "inheritance_doc"))
          (message-string (alist-value result-alist "message"))
          (class-inheritance (alist-value result-alist "class-inheritance"))
          )
@@ -487,11 +495,11 @@ __DATA__
 
 
 
-(defun perly-sense-use-docs-at-point ()
+(defun ps/use-docs-at-point ()
   "Display the used modules for the current Class"
   (interactive)
   (message "Document Uses...")
-  (let* ((result-alist (perly-sense-command-on-current-file-location "use_doc"))
+  (let* ((result-alist (ps/command-on-current-file-location "use_doc"))
          (message-string (alist-value result-alist "message"))
          (class-use (alist-value result-alist "class-use"))
          )
@@ -508,7 +516,7 @@ __DATA__
 
 
 ;; todo: remove duplication betweenthis defun and the one above
-(defun perly-sense-class-method-docs (class-name method)
+(defun ps/class-method-docs (class-name method)
   "Display documentation for the 'method' of 'class-name'."
   (interactive)
   (message "Finding docs for method (%s)..." method)
@@ -518,14 +526,14 @@ __DATA__
                           class-name method
                           )
                   ))
-         (result-text (perly-sense-result-text result))
+         (result-text (ps/result-text result))
          )
     (if (not (string= result ""))
-        (let* ((properties (perly-sense-result-properties result))
+        (let* ((properties (ps/result-properties result))
                (found    (nth 1 properties))
                (name     (nth 3 properties))
                (doc-type (nth 5 properties)))
-          (perly-sense-display-doc-message-or-buffer doc-type name result-text)
+          (ps/display-doc-message-or-buffer doc-type name result-text)
           )
       (message "Nothing found")
       )
@@ -536,7 +544,7 @@ __DATA__
 
 
 
-(defun perly-sense-find-file-location (file row col)
+(defun ps/find-file-location (file row col)
   "Find the file and go to the row/col location. If row and/or
 col is 0, the point isn't moved in that dimension."
   (push-mark nil t)
@@ -551,20 +559,20 @@ col is 0, the point isn't moved in that dimension."
 
 
 
-(defun perly-sense-smart-go-to-at-point ()
+(defun ps/smart-go-to-at-point ()
   "Go to the original symbol in the code at point."
   (interactive)
   (message "Smart goto...")
   (let ((result (shell-command-to-string
                (format "perly_sense smart_go_to \"--file=%s\" --row=%s --col=%s"
-                       (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
+                       (buffer-file-name) (ps/current-line) (+ 1 (current-column))
                        )
                ))
         )
     (if (string-match "[\t]" result)
         (let ((value (split-string result "[\t]")))
           (let ((file (pop value)))
-            (perly-sense-find-file-location file (string-to-number (pop value)) (string-to-number (pop value)))
+            (ps/find-file-location file (string-to-number (pop value)) (string-to-number (pop value)))
             (message "Went to: %s" file)
             )
           )
@@ -576,12 +584,12 @@ col is 0, the point isn't moved in that dimension."
 
 
 
-(defun perly-sense-go-to-base-class-at-point ()
+(defun ps/go-to-base-class-at-point ()
   "Go to the Base Class of the Class at point. If ambigous, let
 the the user choose a Class."
   (interactive)
   (message "Goto Base Class...")
-  (let* ((result-alist (perly-sense-command-on-current-file-location "base_class_go_to"))
+  (let* ((result-alist (ps/command-on-current-file-location "base_class_go_to"))
          (message-string (alist-value result-alist "message"))
          (class-list (alist-value result-alist "class-list"))
          (first-class-alist (car class-list))
@@ -590,11 +598,11 @@ the the user choose a Class."
     (if (not first-class-alist)
         (message "No Base Class found")
       (if (not second-class-alist)
-          (perly-sense-go-to-class-alist first-class-alist)
+          (ps/go-to-class-alist first-class-alist)
         (let ((chosen-class-alist
-               (perly-sense-choose-class-alist-from-class-list "Base Class" class-list)))
+               (ps/choose-class-alist-from-class-list "Base Class" class-list)))
           (if chosen-class-alist
-              (perly-sense-go-to-class-alist chosen-class-alist)
+              (ps/go-to-class-alist chosen-class-alist)
             )
           )
         )
@@ -607,11 +615,11 @@ the the user choose a Class."
 
 
 
-(defun perly-sense-go-to-use-section ()
+(defun ps/go-to-use-section ()
   "Set mark and go to the end of the 'use Module' section."
   (interactive)
   (message "Goto the 'use Module' section...")
-  (let* ((use-position (perly-sense-find-use-module-section-position)))
+  (let* ((use-position (ps/find-use-module-section-position)))
     (if (not use-position)
         (message "No 'use Module' section found")
       (push-mark)
@@ -624,7 +632,7 @@ the the user choose a Class."
 
 
 
-(defun perly-sense-find-use-module-section-position ()
+(defun ps/find-use-module-section-position ()
   "Return the position of the end of the last use Module
 statement in the file, or nil if none was found."
   (save-excursion
@@ -640,7 +648,7 @@ statement in the file, or nil if none was found."
 
 
 
-(defun perly-sense-goto-test-other-files ()
+(defun ps/goto-test-other-files ()
   "Go to other test files. When in a Perl module, let user choose
 amongst test files to go to. When in a test file, let user choose
 amongst source files to go to.
@@ -649,34 +657,62 @@ You must have Devel::CoverX::Covered installed and have a
 cover_db for your project in the project dir."
   (interactive)
 
-  (let* ((result-alist (perly-sense-command-on-current-file-location "test_other_files"))
+  (let* ((result-alist (ps/command-on-current-file-location "test_other_files"))
          (message (alist-value result-alist "message")))
     (if message
         (message "%s" message)
       (let* ((other-files-list (alist-value result-alist "other-files"))
              (project-dir (alist-value result-alist "project-dir"))
-             (n (dropdown-list other-files-list)))
-        (if n (let* ((chosen-file (nth n other-files-list)))
-                (find-file (expand-file-name chosen-file project-dir)))
-          ))))
+             (chosen-file (ps/choose-from-strings-alist "File: " other-files-list)))
+        (if chosen-file 
+            (find-file (expand-file-name chosen-file project-dir)))
+        )))
   )
 
 
 
-(defun perly-sense-go-to-vc-project ()
+(defun ps/choose-from-strings-alist (prompt items-alist)
+  "Let user choose amongst the strings in items-alist.
+
+If appropriate (given the number of items in items-alist), use a
+dropdown-list, otherwise a completing read with 'prompt'.
+
+Return the chosen string, or nil if the user canceled.
+"
+  (if (< (length items-alist) ps/dropdown-max-items-to-display)
+      (let* ((n (dropdown-list items-alist)))
+        (if n
+            (nth n items-alist)
+          nil
+          ))
+    (completing-read
+     (format "%s: " prompt)
+     items-alist
+     nil
+     "force"
+     nil
+     nil
+     (car items-alist)
+     )    
+    )
+  )
+
+
+
+(defun ps/go-to-vc-project ()
   "Go to the project view of the current Version Control, or the
 project dir if there is no vc."
   (interactive)
   (message "Goto Version Control...")
   (let ((vc-buffer (get-buffer "*svn-status*")))  ;; (or *cvs-status*, etc)
     (if vc-buffer
-        (perly-sense-switch-to-buffer vc-buffer)
-      (let* ((result-alist (perly-sense-command "vcs_dir"))
+        (ps/switch-to-buffer vc-buffer)
+      (let* ((result-alist (ps/command "vcs_dir"))
              (project-dir (alist-value result-alist "project-dir"))
              (vcs-name (alist-value result-alist "vcs-name"))
              )
         (if (not (string= project-dir ""))
-            (perly-sense-vc-project vcs-name project-dir)
+            (ps/vc-project vcs-name project-dir)
           (message "No Project dir found")
           )
         )
@@ -686,7 +722,7 @@ project dir if there is no vc."
 
 
 
-(defun perly-sense-vc-project (vcs project-dir)
+(defun ps/vc-project (vcs project-dir)
   "Display the Project view for the VCS (e.g. 'svn', 'none') for
 the PROJECT-DIR, e.g. run svn-status for PROJECT-DIR."
   (cond
@@ -701,7 +737,7 @@ the PROJECT-DIR, e.g. run svn-status for PROJECT-DIR."
 
 
 
-(defun perly-sense-edit-move-use-statement ()
+(defun ps/edit-move-use-statement ()
   "If point is on a line with a single 'use Module' statement,
 set mark and move that statement to the end of the 'use
 Module' section at the top of the file."
@@ -717,7 +753,7 @@ Module' section at the top of the file."
                (push-mark)
                )
              )
-           (let* ((use-position (perly-sense-find-use-module-section-position)))
+           (let* ((use-position (ps/find-use-module-section-position)))
              (if (not use-position)
                  (throw 'message "No 'use Module' section found, nowhere to put the killed use statement.")
                (goto-char use-position)
@@ -738,7 +774,7 @@ Module' section at the top of the file."
 
 ;; Thanks to Jonathan Rockway at
 ;; http://blog.jrock.us/articles/Increment%20test%20counter.pod
-(defun perly-sense-edit-test-count (&optional amount)
+(defun ps/edit-test-count (&optional amount)
   "Increase the Test::More test count by AMOUNT"
   (interactive "p")
   (save-excursion
@@ -746,7 +782,7 @@ Module' section at the top of the file."
     (if (re-search-forward "tests\s+=>\s*[0-9]+" nil t)
         (progn
           (backward-char)
-          (let ((inc-response (perly-sense-increment-number-at-point amount)))
+          (let ((inc-response (ps/increment-number-at-point amount)))
             (message "Test count: %s + %s = %s" (nth 0 inc-response) (nth 1 inc-response) (nth 2 inc-response))
             )
           )
@@ -754,14 +790,14 @@ Module' section at the top of the file."
 
 
 
-(defun perly-sense-set-test-count (current-count new-count)
+(defun ps/set-test-count (current-count new-count)
   "Set the Test::More test count from CURRENT-COUNT to NEW-COUNT."
   (save-excursion
     (goto-char (point-min))
     (if (re-search-forward "tests\s+=>\s*[0-9]+" nil t)
         (let ((amount (- new-count current-count)))
           (backward-char)
-          (let ((inc-response (perly-sense-increment-number-at-point amount)))
+          (let ((inc-response (ps/increment-number-at-point amount)))
             (message "Test count: %s + %s = %s" (nth 0 inc-response) (nth 1 inc-response) (nth 2 inc-response))
             )
           )
@@ -771,7 +807,7 @@ Module' section at the top of the file."
 
 ;; Thanks to Phil Jackson at
 ;; http://www.shellarchive.co.uk/Shell.html#sec21
-(defun perly-sense-increment-number-at-point (&optional amount)
+(defun ps/increment-number-at-point (&optional amount)
   "Increment the number under point by AMOUNT.
 
 Return a list with the items (original number, amount, new
@@ -792,7 +828,7 @@ number), or nil if there was no number at point."
 
 
 
-(defun perly-sense-assist-sync-test-count ()
+(defun ps/assist-sync-test-count ()
   "Synchronize Test::More test count with the one reported by the
 current test run, if any"
   (interactive)
@@ -800,8 +836,8 @@ current test run, if any"
       ((message
         (catch 'message
           (save-excursion
-            (let ((expected-count (perly-sense-expected-test-count))
-                  (current-count (perly-sense-current-test-count)))
+            (let ((expected-count (ps/expected-test-count))
+                  (current-count (ps/current-test-count)))
               (if (eq expected-count nil)
                   (throw 'message "No *compilation* buffer with a test run found."))
               (if (eq current-count nil)
@@ -811,13 +847,13 @@ current test run, if any"
                          (format
                           "Current test count is the same as the expected count (%s)"
                           expected-count))
-                (perly-sense-set-test-count current-count expected-count)
+                (ps/set-test-count current-count expected-count)
                 nil))))))
     (if message (message "%s" message))))
 
 
 
-(defun perly-sense-expected-test-count ()
+(defun ps/expected-test-count ()
   "Return the expected number of tests, or nil if that couldn't be deduced."
   (if (not (get-buffer "*compilation*"))
       nil
@@ -843,7 +879,7 @@ current test run, if any"
 
 
 
-(defun perly-sense-current-test-count ()
+(defun ps/current-test-count ()
   "Return the test count of the current buffer, or nil if that couldn't be deduced."
   (save-excursion
     (goto-char (point-min))
@@ -855,42 +891,42 @@ current test run, if any"
 
 
 
-(defun perly-sense-command (command &optional options)
+(defun ps/command (command &optional options)
   "Call perly_sense COMMAND, and return the parsed result as a
 sexp"
   (unless options (setq options ""))
-  (perly-sense-parse-sexp
+  (ps/parse-sexp
    (shell-command-to-string
     (format "perly_sense %s %s" command options))))
 
 
 
-(defun perly-sense-command-on-current-file-location (command &optional options)
+(defun ps/command-on-current-file-location (command &optional options)
   "Call perly_sense COMMAND with the current file and row/col,
 and return the parsed result as a sexp"
   (unless options (setq options ""))
-  (perly-sense-parse-sexp
+  (ps/parse-sexp
    (shell-command-to-string
     (format "perly_sense %s \"--file=%s\" --row=%s --col=%s %s --width_display=%s"
             command
             (buffer-file-name)
-            (perly-sense-current-line)
+            (ps/current-line)
             (+ 1 (current-column))
             options
             (- (window-width) 2)))))
 
 
 
-(defun perly-sense-go-to-method-new ()
+(defun ps/go-to-method-new ()
   "Go to the 'new' method."
   (interactive)
   (message "Goto the 'new' method...")
   (let ((new-location-alist
          (or
-          (perly-sense-find-method-in-buffer "new")
-          (perly-sense-find-method-in-file "new"))))
+          (ps/find-method-in-buffer "new")
+          (ps/find-method-in-file "new"))))
     (if new-location-alist
-        (perly-sense-go-to-location-alist new-location-alist)
+        (ps/go-to-location-alist new-location-alist)
       (message "Could not find any 'new' method")
       )
     )
@@ -898,7 +934,7 @@ and return the parsed result as a sexp"
 
 
 
-(defun perly-sense-find-method-in-buffer (method-name)
+(defun ps/find-method-in-buffer (method-name)
   "Find a method named METHOD-NAME in the buffer and return an
 alist with (keys: row, col), or nil if no method was found."
   (save-excursion
@@ -908,7 +944,7 @@ alist with (keys: row, col), or nil if no method was found."
          (search-backward-regexp "sub")
          )
         `(
-          ("row" . ,(number-to-string (perly-sense-current-line)))
+          ("row" . ,(number-to-string (ps/current-line)))
           ("col" . ,(number-to-string (+ 1 (current-column))))
           )
       nil
@@ -918,11 +954,11 @@ alist with (keys: row, col), or nil if no method was found."
 
 
 
-(defun perly-sense-find-method-in-file (method-name)
+(defun ps/find-method-in-file (method-name)
   "Find a method named METHOD-NAME given the current class in the
 buffer and return an alist with (keys: file, row, col), or nil if
 no method was found."
-  (let* ((result-alist (perly-sense-command-on-current-file-location "method_go_to" "--method_name=new"))
+  (let* ((result-alist (ps/command-on-current-file-location "method_go_to" "--method_name=new"))
          (message-string (alist-value result-alist "message"))
          (file (alist-value result-alist "file"))
          (row (alist-value result-alist "row"))
@@ -946,7 +982,7 @@ no method was found."
 
 
 
-(defun perly-sense-go-to-location-alist (location-alist)
+(defun ps/go-to-location-alist (location-alist)
   "Go to the LOCATION-ALIST which may contain the (keys: file,
 row, col, class-name).
 
@@ -959,7 +995,7 @@ area."
         (col (alist-num-value location-alist "col"))
         (class-name (alist-value location-alist "class-name"))
         )
-    (perly-sense-find-file-location file row col)
+    (ps/find-file-location file row col)
     (if class-name
         (message "Went to %s" class-name)
       )
@@ -968,31 +1004,31 @@ area."
 
 
 
-(defun perly-sense-go-to-class-alist (class-alist)
+(defun ps/go-to-class-alist (class-alist)
   "Go to the Class class-alist (keys: class-name, file, row)"
   (let ((class-name (alist-value class-alist "class-name"))
         (class-inheritance (alist-value class-alist "class-inheritance"))
         (file (alist-value class-alist "file"))
         (row (alist-num-value class-alist "row")))
-    (perly-sense-find-file-location file row 1)
+    (ps/find-file-location file row 1)
     (message "%s" class-inheritance)
     )
   )
 
 
 
-(defun perly-sense-choose-class-alist-from-class-list (what-text class-list)
+(defun ps/choose-class-alist-from-class-list (what-text class-list)
   "Let the user choose a class-alist from the lass-list of Class
 definitions.
 
 Return class-alist with (keys: class-name, file, row), or nil if
 none was chosen."
-  (perly-sense-choose-class-alist-from-class-list-with-dropdown what-text class-list)
+  (ps/choose-class-alist-from-class-list-with-dropdown what-text class-list)
   )
 
 
 
-(defun perly-sense-choose-class-alist-from-class-list-with-dropdown (what-text class-list)
+(defun ps/choose-class-alist-from-class-list-with-dropdown (what-text class-list)
   "Let the user choose a class-alist from the lass-list of Class
 definitions using a dropdown list.
 
@@ -1005,7 +1041,7 @@ none was chosen."
          )
     (if n
         (let ((chosen-class-description (nth n class-description-list)))
-          (perly-sense-get-alist-from-list
+          (ps/get-alist-from-list
            class-list "class-description" chosen-class-description)
           )
       nil
@@ -1015,7 +1051,7 @@ none was chosen."
 
 
 
-(defun perly-sense-choose-class-alist-from-class-list-with-completing-read (what-text class-list)
+(defun ps/choose-class-alist-from-class-list-with-completing-read (what-text class-list)
   "Let the user choose a class-alist from the lass-list of Class
 definitions using completing read.
 
@@ -1033,13 +1069,13 @@ Return class-alist with (keys: class-name, file, row)"
                              (car class-description-list)
                              ))
          )
-    (perly-sense-get-alist-from-list class-list "class-description" chosen-class-description)
+    (ps/get-alist-from-list class-list "class-description" chosen-class-description)
     )
   )
 
 
 
-(defun perly-sense-get-alist-from-list (list-of-alist key value)
+(defun ps/get-alist-from-list (list-of-alist key value)
   "Return the first alist in list which aliast's key is value, or
 nil if none was found"
   (catch 'found
@@ -1052,7 +1088,7 @@ nil if none was found"
 
 
 ;; todo: remove duplication between this defun and the one above
-(defun perly-sense-class-method-go-to (class-name method)
+(defun ps/class-method-go-to (class-name method)
   "Go to the original symbol of 'method' in 'class-name'. Return
 t on success, else nil"
   (interactive)
@@ -1068,7 +1104,7 @@ t on success, else nil"
     (if (string-match "[\t]" result)
         (let ((value (split-string result "[\t]")))
           (let ((file (pop value)))
-            (perly-sense-find-file-location file (string-to-number (pop value)) (string-to-number (pop value)))
+            (ps/find-file-location file (string-to-number (pop value)) (string-to-number (pop value)))
             (message "Went to: %s" file)
             )
           )
@@ -1082,18 +1118,18 @@ t on success, else nil"
 
 
 
-(defun perly-sense-class-overview-for-class-at-point ()
+(defun ps/class-overview-for-class-at-point ()
   "Display the Class Overview for the current class"
   (interactive)
-  (perly-sense-class-overview-with-argstring
+  (ps/class-overview-with-argstring
    (format
     "perly_sense class_overview --file=%s --row=%s --col=%s"
     (buffer-file-name)
-    (perly-sense-current-line)
+    (ps/current-line)
     (+ 1 (current-column)))))
 
 
-(defun perly-sense-class-overview-with-argstring (argstring)
+(defun ps/class-overview-with-argstring (argstring)
   "Call perly_sense class_overview with argstring and display Class Overview with the response"
   (interactive)
   (message "Class Overview...")
@@ -1101,15 +1137,15 @@ t on success, else nil"
                  (format
                   "perly_sense class_overview %s --width_display=%s"
                   argstring (- (window-width) 2) ))))
-    (let* ((result-hash (perly-sense-parse-sexp result))
+    (let* ((result-hash (ps/parse-sexp result))
            (class-name (alist-value result-hash "class-name"))
            (class-overview (alist-value result-hash "class-overview"))
            (message-string (alist-value result-hash "message"))
            (dir (alist-value result-hash "dir"))
            )
-;;      (perly-sense-log msg)
+;;      (ps/log msg)
       (if class-name
-          (perly-sense-display-class-overview class-name class-overview dir)
+          (ps/display-class-overview class-name class-overview dir)
         )
       (if message-string
           (message message-string)
@@ -1121,7 +1157,7 @@ t on success, else nil"
 
 
 
-(defun perly-sense-parse-sexp (result)
+(defun ps/parse-sexp (result)
 ;;  (message "RESPONSE AS TEXT |%s|" result)
   (if (string= result "")
       '()
@@ -1132,27 +1168,27 @@ t on success, else nil"
   )
 
 
-;;;(perly-sense-parse-result-into-alist "'((\"class-overview\" . \"Hej baberiba [ Class::Accessor ]\") (\"class-name\" . \"Class::Accessor\") (\"message\" . \"Whatever\"))")
-;;(perly-sense-parse-result-into-alist "'((\"class-name\" . \"alpha\"))")
+;;;(ps/parse-result-into-alist "'((\"class-overview\" . \"Hej baberiba [ Class::Accessor ]\") (\"class-name\" . \"Class::Accessor\") (\"message\" . \"Whatever\"))")
+;;(ps/parse-result-into-alist "'((\"class-name\" . \"alpha\"))")
 
 
 
 
 
-(defun perly-sense-display-api-for-class-at-point ()
+(defun ps/display-api-for-class-at-point ()
   "Display the likely API of the class at point."
   (interactive)
   (message "Class API...")
   (let* ((text (shell-command-to-string
                (format "perly_sense class_api \"--file=%s\" --row=%s --col=%s"
-                       (buffer-file-name) (perly-sense-current-line) (+ 1 (current-column))
+                       (buffer-file-name) (ps/current-line) (+ 1 (current-column))
                        )
                ))
-         (package (perly-sense-result-status text))
-         (package-doc (perly-sense-result-text text))
+         (package (ps/result-status text))
+         (package-doc (ps/result-text text))
          )
                                         ; TODO: if package eq ""
-    (perly-sense-display-text-in-buffer "API" package package-doc)
+    (ps/display-text-in-buffer "API" package package-doc)
     (other-window 1)
     (compilation-mode)
     (goto-line 2)
@@ -1163,7 +1199,7 @@ t on success, else nil"
 
 
 
-(defun perly-sense-regex-tool ()
+(defun ps/regex-tool ()
   "Bring up the Regex Tool"
   (interactive)
   (setq regex-tool-backend "Perl")
@@ -1186,7 +1222,7 @@ t on success, else nil"
 
 
 
-(defun perly-sense-display-class-overview (class-name overview-text dir)
+(defun ps/display-class-overview (class-name overview-text dir)
   (let ((buffer-name "*Class Overview*"))
     (with-current-buffer (get-buffer-create buffer-name)
 (message "dir (%s)" dir)
@@ -1194,9 +1230,9 @@ t on success, else nil"
       (toggle-read-only t)(toggle-read-only)  ; No better way?
       (erase-buffer)
       (insert overview-text)
-      (perly-sense-class-mode)
-      (perly-sense-fontify-class-overview-buffer buffer-name)
-      (perly-sense-search-current-class-name class-name)
+      (ps/class-mode)
+      (ps/fontify-class-overview-buffer buffer-name)
+      (ps/search-current-class-name class-name)
       (switch-to-buffer (current-buffer))  ;; before: display-buffer
       (toggle-read-only t)
       )
@@ -1206,7 +1242,7 @@ t on success, else nil"
 
 
 ;; Set point where class-name is mentioned in brackets
-(defun perly-sense-search-class-name (class-name)
+(defun ps/search-class-name (class-name)
   (let ((class-name-box (format "[ %s " class-name)))
     (goto-char (point-min))
     (search-forward class-name-box)
@@ -1218,7 +1254,7 @@ t on success, else nil"
 
 
 ;; Set point where class-name is mentioned in current [< xxx >]
-(defun perly-sense-search-current-class-name (class-name)
+(defun ps/search-current-class-name (class-name)
   (let ((class-name-box (format "[<%s" class-name)))
     (goto-char (point-min))
     (search-forward class-name-box nil t)
@@ -1229,7 +1265,7 @@ t on success, else nil"
 
 
 
-(defun perly-sense-fontify-class-overview-buffer (buffer-name)
+(defun ps/fontify-class-overview-buffer (buffer-name)
   "Mark up a buffer with Class Overview text."
   (interactive)
   (save-excursion
@@ -1237,11 +1273,11 @@ t on success, else nil"
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\[ \\w+ +\\]" nil t)
-      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-module-name-face))
+      (put-text-property (match-beginning 0) (match-end 0) 'face ps/module-name-face))
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\[<\\w+ *>\\]" nil t)
-      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-highlighted-module-name-face))
+      (put-text-property (match-beginning 0) (match-end 0) 'face ps/highlighted-module-name-face))
 
     (goto-char (point-min))
     (while (search-forward-regexp "^[^:\n]+:[0-9]+:" nil t)
@@ -1252,13 +1288,13 @@ t on success, else nil"
         (let
             ((file-end (match-beginning 0))
              (row-beginning (+ (match-beginning 0) 1)))
-          (put-text-property file-beginning file-end 'face perly-sense-bookmark-file-face)
-          (put-text-property row-beginning row-end 'face perly-sense-bookmark-line-number-face)
+          (put-text-property file-beginning file-end 'face ps/bookmark-file-face)
+          (put-text-property row-beginning row-end 'face ps/bookmark-line-number-face)
           )))
 
     (goto-char (point-min))
     (while (search-forward-regexp "->\\w+" nil t)  ;; ->method
-      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-current-class-method-face))
+      (put-text-property (match-beginning 0) (match-end 0) 'face ps/current-class-method-face))
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\\\>\\w+" nil t)  ;; \>method
@@ -1266,11 +1302,11 @@ t on success, else nil"
 
     (goto-char (point-min))
     (while (search-forward-regexp "->new\\b" nil t)  ;; ->new
-      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-current-new-method-face))
+      (put-text-property (match-beginning 0) (match-end 0) 'face ps/current-new-method-face))
 
     (goto-char (point-min))
     (while (search-forward-regexp "\\\\>new\\b" nil t)  ;; \>new
-      (put-text-property (match-beginning 0) (match-end 0) 'face perly-sense-base-new-method-face))
+      (put-text-property (match-beginning 0) (match-end 0) 'face ps/base-new-method-face))
 
 
 
@@ -1279,7 +1315,7 @@ t on success, else nil"
       (let
           ((heading-beginning (match-beginning 0) )
            (heading-end (match-end 0) ))
-        (put-text-property heading-beginning heading-end 'face perly-sense-heading-face)
+        (put-text-property heading-beginning heading-end 'face ps/heading-face)
         (add-text-properties heading-beginning (+ heading-beginning 2) '(invisible t))
         (add-text-properties (- heading-end 2) heading-end '(invisible t))
       ))
@@ -1289,20 +1325,20 @@ t on success, else nil"
 
 
 
-(defun perly-sense-compile-goto-error-file-line ()
+(defun ps/compile-goto-error-file-line ()
   "Go to the file + line specified on the row at point, or ask for a
 text to parse for a file + line."
   (interactive)
-  (let* ((file_row (perly-sense-compile-get-file-line-from-buffer) )
+  (let* ((file_row (ps/compile-get-file-line-from-buffer) )
          (file (nth 0 file_row))
          (row (nth 1 file_row)))
     (if file
-        (perly-sense-find-file-location file (string-to-number row) 1)
-      (let* ((file_row (perly-sense-compile-get-file-line-from-user-input) )
+        (ps/find-file-location file (string-to-number row) 1)
+      (let* ((file_row (ps/compile-get-file-line-from-user-input) )
              (file (nth 0 file_row))
              (row (nth 1 file_row)))
         (if file
-            (perly-sense-find-file-location file (string-to-number row) 1)
+            (ps/find-file-location file (string-to-number row) 1)
           (message "No 'FILE line N' found")
           )
         )
@@ -1311,18 +1347,18 @@ text to parse for a file + line."
   )
 
 
-(defun perly-sense-compile-get-file-line-from-user-input ()
+(defun ps/compile-get-file-line-from-user-input ()
   "Ask for a text to parse for a file + line, parse it using
-'perly-sense-compile-get-file-line-from-buffer'. Return what it
+'ps/compile-get-file-line-from-buffer'. Return what it
 returns."
   (with-temp-buffer
     (insert (read-string "FILE, line N text: " (current-kill 0 t)))
-    (perly-sense-compile-get-file-line-from-buffer)
+    (ps/compile-get-file-line-from-buffer)
     )
   )
 
 
-(defun perly-sense-compile-get-file-line-from-buffer ()
+(defun ps/compile-get-file-line-from-buffer ()
   "Return a two item list with (file . row) specified on the row at
 point, or an empty list () if none was found."
   (save-excursion
@@ -1348,18 +1384,18 @@ point, or an empty list () if none was found."
 ;;;;;
 
 
-(defun perly-sense-class-goto-at-point ()
+(defun ps/class-goto-at-point ()
   "Go to the class/method/bookmark at point"
   (interactive)
   (message "Goto at point")
-  (let* ((class-name (perly-sense-find-class-name-at-point)))
+  (let* ((class-name (ps/find-class-name-at-point)))
          (if class-name
              (progn
                (message (format "Going to class (%s)" class-name))
-               (perly-sense-find-source-for-module class-name)
+               (ps/find-source-for-module class-name)
                )
-           (if (not (perly-sense-class-goto-method-at-point))
-               (if (not (perly-sense-class-goto-bookmark-at-point))
+           (if (not (ps/class-goto-method-at-point))
+               (if (not (ps/class-goto-bookmark-at-point))
                    (message "No Class/Method/Bookmark at point")
                  )
              )
@@ -1369,15 +1405,15 @@ point, or an empty list () if none was found."
 
 
 
-(defun perly-sense-class-goto-method-at-point ()
+(defun ps/class-goto-method-at-point ()
   "Go to the method declaration for the method at point and
 return t, or return nil if no method could be found at point."
   (interactive)
-  (let* ((method (perly-sense-class-method-at-point))
-         (current-class (perly-sense-class-current-class)))
+  (let* ((method (ps/class-method-at-point))
+         (current-class (ps/class-current-class)))
     (if (and current-class method)
         (progn
-          (perly-sense-class-method-go-to current-class method)
+          (ps/class-method-go-to current-class method)
           t
           )
       nil
@@ -1387,20 +1423,20 @@ return t, or return nil if no method could be found at point."
 
 
 
-(defun perly-sense-class-docs-at-point ()
+(defun ps/class-docs-at-point ()
   "Display docs for the class/method at point"
   (interactive)
   (message "Docs at point")
-  (let* ((class-name (perly-sense-find-class-name-at-point)))
+  (let* ((class-name (ps/find-class-name-at-point)))
          (if class-name
              (progn
                (message (format "Finding docs for class (%s)" class-name))
-               (perly-sense-display-pod-for-module class-name)
+               (ps/display-pod-for-module class-name)
                )
-           (let* ((method (perly-sense-class-method-at-point))  ;;;'
-                  (current-class (perly-sense-class-current-class)))
+           (let* ((method (ps/class-method-at-point))  ;;;'
+                  (current-class (ps/class-current-class)))
              (if (and current-class method)
-                 (perly-sense-class-method-docs current-class method)
+                 (ps/class-method-docs current-class method)
                (message "No Class or Method at point")
                )
              )
@@ -1411,7 +1447,7 @@ return t, or return nil if no method could be found at point."
 
 
 
-(defun perly-sense-class-method-at-point ()
+(defun ps/class-method-at-point ()
   "Return the method name at (or very near) point, or nil if none was found."
   (save-excursion
     (if (looking-at "[ \n(]") (backward-char)) ;; if at end of method name, move into it
@@ -1428,7 +1464,7 @@ return t, or return nil if no method could be found at point."
 
 
 
-(defun perly-sense-class-goto-bookmark-at-point ()
+(defun ps/class-goto-bookmark-at-point ()
   "Go to the bookmark at point, if there is any.
 Return t if there was any, else nil"
   (interactive)
@@ -1438,7 +1474,7 @@ Return t if there was any, else nil"
     (if (search-forward-regexp "^\\([^:\n]+\\):\\([0-9]+\\):" (point-at-eol) t)
         (let ((file (match-string 1)) (row (string-to-number (match-string 2))))
           (message "file (%s) row (%s)" file row)
-          (perly-sense-find-file-location file row 1)
+          (ps/find-file-location file row 1)
           t
           )
       nil
@@ -1449,15 +1485,15 @@ Return t if there was any, else nil"
 
 
 
-(defun perly-sense-class-class-overview-at-point ()
+(defun ps/class-class-overview-at-point ()
   "Display Class Overview for the class/method at point"
   (interactive)
   (message "Class Overview at point")
-  (let* ((class-name (perly-sense-find-class-name-at-point)))
+  (let* ((class-name (ps/find-class-name-at-point)))
     (if class-name
         (progn
           (message (format "Class Overview for class (%s)" class-name))
-          (perly-sense-class-overview-with-argstring
+          (ps/class-overview-with-argstring
            (format "--class_name=%s --dir_origin=." class-name)))
       (message "No Class at point")
       )
@@ -1466,19 +1502,19 @@ Return t if there was any, else nil"
 
 
 
-(defun perly-sense-class-class-overview-or-goto-at-point ()
+(defun ps/class-class-overview-or-goto-at-point ()
   "Display Class Overview for the class/method at point,
 or go to the Bookmark at point"
   (interactive)
   (message "Class Overview at point")
-  (let* ((class-name (perly-sense-find-class-name-at-point)))
+  (let* ((class-name (ps/find-class-name-at-point)))
     (if class-name
         (progn
           (message (format "Class Overview for class (%s)" class-name))
-          (perly-sense-class-overview-with-argstring
+          (ps/class-overview-with-argstring
            (format "--class_name=%s --dir_origin=." class-name)))
-      (if (not (perly-sense-class-goto-method-at-point))
-          (if (not (perly-sense-class-goto-bookmark-at-point))
+      (if (not (ps/class-goto-method-at-point))
+          (if (not (ps/class-goto-bookmark-at-point))
               (message "No Class/Method/Bookmark at point")
             )
         )
@@ -1488,7 +1524,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-current-class ()
+(defun ps/class-current-class ()
   "Return the class currenlty being displayed in the Class Overview buffer."
   (save-excursion
     (goto-char (point-min))
@@ -1499,7 +1535,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-quit ()
+(defun ps/class-quit ()
   "Quit the Class Overview buffer"
   (interactive)
   (message "Quit")
@@ -1508,7 +1544,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-find-inheritance ()
+(defun ps/class-find-inheritance ()
   "Navigate to the * Inheritance * in the Class Overview"
   (interactive)
   (push-mark)
@@ -1520,7 +1556,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-find-neighbourhood ()
+(defun ps/class-find-neighbourhood ()
   "Navigate to the * NeighbourHood * in the Class Overview"
   (interactive)
   (push-mark)
@@ -1532,7 +1568,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-find-used ()
+(defun ps/class-find-used ()
   "Navigate to the * Uses * in the Class Overview"
   (interactive)
   (push-mark)
@@ -1544,7 +1580,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-find-bookmarks ()
+(defun ps/class-find-bookmarks ()
   "Navigate to the * Bookmarks * in the Class Overview"
   (interactive)
   (push-mark)
@@ -1558,7 +1594,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-find-structure ()
+(defun ps/class-find-structure ()
   "Navigate to the * Structure * in the Class Overview"
   (interactive)
   (push-mark)
@@ -1570,7 +1606,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-find-api ()
+(defun ps/class-find-api ()
   "Navigate to the * API * in the Class Overview"
   (interactive)
   (push-mark)
@@ -1581,7 +1617,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-class-find-api-new ()
+(defun ps/class-find-api-new ()
   "Navigate to the new method in the Class Overview"
   (interactive)
   (push-mark)
@@ -1592,7 +1628,7 @@ or go to the Bookmark at point"
 
 
 
-(defun perly-sense-find-class-name-at-point ()
+(defun ps/find-class-name-at-point ()
   "Return the class name at point, or nil if none was found"
   (save-excursion
     (if (looking-at "[\\[]")
@@ -1611,82 +1647,82 @@ or go to the Bookmark at point"
 
 
 
-(defvar perly-sense-class-mode-map nil
+(defvar ps/class-mode-map nil
   "Keymap for `PerlySense Class overview major mode'.")
-(if perly-sense-class-mode-map
+(if ps/class-mode-map
     ()
-  (setq perly-sense-class-mode-map (make-sparse-keymap)))
-(define-key perly-sense-class-mode-map "q" 'perly-sense-class-quit)
-(define-key perly-sense-class-mode-map "I" 'perly-sense-class-find-inheritance)
-(define-key perly-sense-class-mode-map "H" 'perly-sense-class-find-neighbourhood)
-(define-key perly-sense-class-mode-map "U" 'perly-sense-class-find-used)
-(define-key perly-sense-class-mode-map "B" 'perly-sense-class-find-bookmarks)
-(define-key perly-sense-class-mode-map "S" 'perly-sense-class-find-structure)
-(define-key perly-sense-class-mode-map "A" 'perly-sense-class-find-api)
-(define-key perly-sense-class-mode-map "N" 'perly-sense-class-find-api-new)
+  (setq ps/class-mode-map (make-sparse-keymap)))
+(define-key ps/class-mode-map "q" 'ps/class-quit)
+(define-key ps/class-mode-map "I" 'ps/class-find-inheritance)
+(define-key ps/class-mode-map "H" 'ps/class-find-neighbourhood)
+(define-key ps/class-mode-map "U" 'ps/class-find-used)
+(define-key ps/class-mode-map "B" 'ps/class-find-bookmarks)
+(define-key ps/class-mode-map "S" 'ps/class-find-structure)
+(define-key ps/class-mode-map "A" 'ps/class-find-api)
+(define-key ps/class-mode-map "N" 'ps/class-find-api-new)
 
-(define-key perly-sense-class-mode-map "N" 'perly-sense-class-find-api-new)
-(define-key perly-sense-class-mode-map (format "%sgn" perly-sense-key-prefix) 'perly-sense-class-find-api-new)
+(define-key ps/class-mode-map "N" 'ps/class-find-api-new)
+(define-key ps/class-mode-map (format "%sgn" ps/key-prefix) 'ps/class-find-api-new)
 
-(define-key perly-sense-class-mode-map [return] 'perly-sense-class-class-overview-or-goto-at-point)
+(define-key ps/class-mode-map [return] 'ps/class-class-overview-or-goto-at-point)
 
-(define-key perly-sense-class-mode-map "d" 'perly-sense-class-docs-at-point)
-(define-key perly-sense-class-mode-map (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-class-docs-at-point)
+(define-key ps/class-mode-map "d" 'ps/class-docs-at-point)
+(define-key ps/class-mode-map (format "%s\C-d" ps/key-prefix) 'ps/class-docs-at-point)
 
-(define-key perly-sense-class-mode-map "g" 'perly-sense-class-goto-at-point)
-(define-key perly-sense-class-mode-map (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-class-goto-at-point)
+(define-key ps/class-mode-map "g" 'ps/class-goto-at-point)
+(define-key ps/class-mode-map (format "%s\C-g" ps/key-prefix) 'ps/class-goto-at-point)
 
-(define-key perly-sense-class-mode-map "o" 'perly-sense-class-class-overview-at-point)
-(define-key perly-sense-class-mode-map (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-class-overview-at-point)
-
-
+(define-key ps/class-mode-map "o" 'ps/class-class-overview-at-point)
+(define-key ps/class-mode-map (format "%s\C-o" ps/key-prefix) 'ps/class-class-overview-at-point)
 
 
 
-(defvar perly-sense-class-mode-syntax-table
+
+
+(defvar ps/class-mode-syntax-table
   (let ((st (make-syntax-table)))
     ;; Treat _ and :: as part of a word
     (modify-syntax-entry ?_ "w" st)
     (modify-syntax-entry ?: "w" st)
     st)
-  "Syntax table for `perly-sense-class-mode'.")
+  "Syntax table for `ps/class-mode'.")
 
 
-;; (Defvar perly-sense-class-imenu-generic-expression
+;; (Defvar ps/class-imenu-generic-expression
 ;;   ...)
 
-;; (defvar perly-sense-class-outline-regexp
+;; (defvar ps/class-outline-regexp
 ;;   ...)
 
  ;;;###autoload
-(define-derived-mode perly-sense-class-mode fundamental-mode "PerlySense Class Overview"
+(define-derived-mode ps/class-mode fundamental-mode "PerlySense Class Overview"
   "A major mode for viewing PerlySense Class overview buffers."
-  :syntax-table perly-sense-class-mode-syntax-table
+  :syntax-table ps/class-mode-syntax-table
 ;;   (set (make-local-variable 'comment-start) "# ")
 ;;   (set (make-local-variable 'comment-start-skip) "#+\\s-*")
 
 ;;   (set (make-local-variable 'font-lock-defaults)
-;;        '(perly-sense-class-font-lock-keywords))
+;;        '(ps/class-font-lock-keywords))
 
-;;   (set (make-local-variable 'indent-line-function) 'perly-sense-class-indent-line)
+;;   (set (make-local-variable 'indent-line-function) 'ps/class-indent-line)
 ;;   (set (make-local-variable 'imenu-generic-expression)
-;;        perly-sense-class-imenu-generic-expression)
-;;   (set (make-local-variable 'outline-regexp) perly-sense-class-outline-regexp)
+;;        ps/class-imenu-generic-expression)
+;;   (set (make-local-variable 'outline-regexp) ps/class-outline-regexp)
   )
 
 ;;; Indentation
 
-;; (defun perly-sense-class-indent-line ()
-;;   "Indent current line of Perly-Sense-Class code."
+;; (defun ps/class-indent-line ()
+;;   "Indent current line of Ps/Class code."
 ;;   (interactive)
 ;;   (let ((savep (> (current-column) (current-indentation)))
-;;         (indent (condition-case nil (max (perly-sense-class-calculate-indentation) 0)
+;;         (indent (condition-case nil (max (ps/class-calculate-indentation) 0)
 ;;                   (error 0))))
 ;;     (if savep
 ;;         (save-excursion (indent-line-to indent))
 ;;       (indent-line-to indent))))
 
-;; (defun perly-sense-class-calculate-indentation ()
+;; (defun ps/class-calculate-indentation ()
 ;;   "Return the column to which the current line should be indented."
 ;;   ...)
 
@@ -1695,36 +1731,36 @@ or go to the Bookmark at point"
 ;; Key bindings
 ;;;; TODO: move some of these to cperl-mode local bindings
 
-(global-set-key (format "%smf" perly-sense-key-prefix) 'perly-sense-find-source-for-module-at-point)
-(global-set-key (format "%smp" perly-sense-key-prefix) 'perly-sense-display-pod-for-module-at-point)
+(global-set-key (format "%smf" ps/key-prefix) 'ps/find-source-for-module-at-point)
+(global-set-key (format "%smp" ps/key-prefix) 'ps/display-pod-for-module-at-point)
 
-(global-set-key (format "%s\C-d" perly-sense-key-prefix) 'perly-sense-smart-docs-at-point)
-(global-set-key (format "%sdi" perly-sense-key-prefix) 'perly-sense-inheritance-docs-at-point)
-(global-set-key (format "%sdu" perly-sense-key-prefix) 'perly-sense-use-docs-at-point)
-(global-set-key (format "%sdo" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
+(global-set-key (format "%s\C-d" ps/key-prefix) 'ps/smart-docs-at-point)
+(global-set-key (format "%sdi" ps/key-prefix) 'ps/inheritance-docs-at-point)
+(global-set-key (format "%sdu" ps/key-prefix) 'ps/use-docs-at-point)
+(global-set-key (format "%sdo" ps/key-prefix) 'ps/class-overview-for-class-at-point)
 
-(global-set-key (format "%s\C-g" perly-sense-key-prefix) 'perly-sense-smart-go-to-at-point)
-(global-set-key (format "%sgb" perly-sense-key-prefix) 'perly-sense-go-to-base-class-at-point)
-(global-set-key (format "%sgu" perly-sense-key-prefix) 'perly-sense-go-to-use-section)
-(global-set-key (format "%sgn" perly-sense-key-prefix) 'perly-sense-go-to-method-new)
-(global-set-key (format "%sgm" perly-sense-key-prefix) 'perly-sense-find-source-for-module-at-point)
-(global-set-key (format "%sgv" perly-sense-key-prefix) 'perly-sense-go-to-vc-project)
+(global-set-key (format "%s\C-g" ps/key-prefix) 'ps/smart-go-to-at-point)
+(global-set-key (format "%sgb" ps/key-prefix) 'ps/go-to-base-class-at-point)
+(global-set-key (format "%sgu" ps/key-prefix) 'ps/go-to-use-section)
+(global-set-key (format "%sgn" ps/key-prefix) 'ps/go-to-method-new)
+(global-set-key (format "%sgm" ps/key-prefix) 'ps/find-source-for-module-at-point)
+(global-set-key (format "%sgv" ps/key-prefix) 'ps/go-to-vc-project)
 
-(global-set-key (format "%semu" perly-sense-key-prefix) 'perly-sense-edit-move-use-statement)
-(global-set-key (format "%setc" perly-sense-key-prefix) 'perly-sense-edit-test-count)
+(global-set-key (format "%semu" ps/key-prefix) 'ps/edit-move-use-statement)
+(global-set-key (format "%setc" ps/key-prefix) 'ps/edit-test-count)
 
-(global-set-key (format "%sat" perly-sense-key-prefix) 'perly-sense-assist-sync-test-count)
+(global-set-key (format "%sat" ps/key-prefix) 'ps/assist-sync-test-count)
 
-(global-set-key (format "%s\C-o" perly-sense-key-prefix) 'perly-sense-class-overview-for-class-at-point)
-;; (global-set-key (format "%s\C-c" perly-sense-key-prefix) 'perly-sense-display-api-for-class-at-point)
+(global-set-key (format "%s\C-o" ps/key-prefix) 'ps/class-overview-for-class-at-point)
+;; (global-set-key (format "%s\C-c" ps/key-prefix) 'ps/display-api-for-class-at-point)
 
-(global-set-key (format "%s\C-r" perly-sense-key-prefix) 'perly-sense-run-file)
-(global-set-key (format "%srr" perly-sense-key-prefix) 'perly-sense-rerun-file)
+(global-set-key (format "%s\C-r" ps/key-prefix) 'ps/run-file)
+(global-set-key (format "%srr" ps/key-prefix) 'ps/rerun-file)
 
-(global-set-key (format "%sge" perly-sense-key-prefix) 'perly-sense-compile-goto-error-file-line)
-(global-set-key (format "%sgto" perly-sense-key-prefix) 'perly-sense-goto-test-other-files)
+(global-set-key (format "%sge" ps/key-prefix) 'ps/compile-goto-error-file-line)
+(global-set-key (format "%sgto" ps/key-prefix) 'ps/goto-test-other-files)
 
-(global-set-key (format "%sar" perly-sense-key-prefix) 'perly-sense-regex-tool)
+(global-set-key (format "%sar" ps/key-prefix) 'ps/regex-tool)
 
 
 
@@ -1734,7 +1770,7 @@ or go to the Bookmark at point"
 
 
 
-(if perly-sense-load-flymake (load "perly-sense-flymake"))
+(if ps/load-flymake (load "perly-sense-flymake"))
 
 
 

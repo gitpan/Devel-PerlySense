@@ -29,9 +29,9 @@
 
 
 
-(global-set-key (format "%ssn" perly-sense-key-prefix) 'flymake-goto-next-error)
-(global-set-key (format "%ssp" perly-sense-key-prefix) 'flymake-goto-prev-error)
-(global-set-key (format "%sss" perly-sense-key-prefix) 'flymake-display-err-menu-for-current-line)
+(global-set-key (format "%ssn" ps/key-prefix) 'flymake-goto-next-error)
+(global-set-key (format "%ssp" ps/key-prefix) 'flymake-goto-prev-error)
+(global-set-key (format "%sss" ps/key-prefix) 'flymake-display-err-menu-for-current-line)
 
 
 

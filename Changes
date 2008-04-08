@@ -1,5 +1,20 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
+= 0.0151
+
+* BIG CONFIG CHANGE! all Emacs variables are renamed from perly-sense-
+  to ps/ . Update the section in your .emacs file that loads
+  PerlySense!
+
+
+
+= 0.0150
+
+* If more than 30 items in a dropdown, use completing read instead.
+  This is customized with the
+  perly-sense-dropdown-max-items-to-display variable.
+
+
 
 = 0.0149
 

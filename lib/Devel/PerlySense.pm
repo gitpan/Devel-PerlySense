@@ -58,7 +58,7 @@ C-o g v -- Go To Version Control -- Go to the Project view of the
 current Version Control system.
 
 C-o g t o -- Go To Tests - Other Files -- Go to any related test or
-source files given a L<Test::CoverX::Covered> covered db.
+source files given a L<Devel::CoverX::Covered> covered db.
 
 C-o C-r -- Run file -- Run the current file using the Compilation mode
 and the settings appropriate for the source type (Test, Module,
@@ -193,7 +193,7 @@ following in your .emacs config file:
     ;; ** PerlySense **
     ;; The PerlySense prefix key (unset only if needed, like for \C-o)
     (global-unset-key "\C-o")
-    (setq perly-sense-key-prefix "\C-o")
+    (setq ps/key-prefix "\C-o")
 
 
     ;; ** Flymake **
@@ -201,26 +201,26 @@ following in your .emacs config file:
     ;; Flymake must be installed.
     ;; It is included in Emacs 22
     ;;     (or http://flymake.sourceforge.net/, put flymake.el in your load-path)
-    (setq perly-sense-load-flymake t)
+    (setq ps/load-flymake t)
     ;; Note: more flymake config below, after loading PerlySense
 
 
     ;; *** PerlySense load (don't touch) ***
-    (setq perly-sense-external-dir (shell-command-to-string "perly_sense external_dir"))
-    (if (string-match "Devel.PerlySense.external" perly-sense-external-dir)
+    (setq ps/external-dir (shell-command-to-string "perly_sense external_dir"))
+    (if (string-match "Devel.PerlySense.external" ps/external-dir)
         (progn
           (message
            "PerlySense elisp files  at (%s) according to perly_sense, loading..."
-           perly-sense-external-dir)
+           ps/external-dir)
           (setq load-path (cons
                            (expand-file-name
-                            (format "%s/%s" perly-sense-external-dir "emacs")
+                            (format "%s/%s" ps/external-dir "emacs")
                             ) load-path))
           (load "perly-sense")
           )
       (message "Could not identify PerlySense install dir.
     Is Devel::PerlySense installed properly?
-    Does 'perly_sense external_dir' give you a proper directory? (%s)" perly-sense-external-dir)
+    Does 'perly_sense external_dir' give you a proper directory? (%s)" ps/external-dir)
       )
 
 
@@ -257,7 +257,7 @@ ratio and so was a strong candidate for stealing for this much more
 important purpose :)
 
 If you want to use flymake to do background syntax and Perl::Critic
-checks, set perly-sense-load-flymake to t (this is a very nifty thing,
+checks, set ps/load-flymake to t (this is a very nifty thing,
 so yes you want to do this) and configure the colors to your liking.
 
 Note: This also needs to be enabled on a per-project basis (see
@@ -1108,7 +1108,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0149';
+our $VERSION = '0.0151';
 
 
 
