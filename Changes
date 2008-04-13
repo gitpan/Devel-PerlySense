@@ -1,5 +1,12 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
+= 0.0152
+
+* All actions in perly_sense now use the serialization format, which
+  means all actions can potentially work in Vim.
+
+
+
 = 0.0151
 
 * BIG CONFIG CHANGE! all Emacs variables are renamed from perly-sense-

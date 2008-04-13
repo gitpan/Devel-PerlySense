@@ -268,18 +268,22 @@ more items than that, use completing read instead."
 
 ; should use something that fontifies
 (defun ps/display-pod-for-module (module)
-  (shell-command (format "perly_sense display_module_pod --module=%s" module)
-                 (format "*%s POD*" module)
-                 )
+  (let* ((result-alist
+          (ps/command
+           "display_module_pod"
+           (format "--module=%s" module)))
+         (message-string (alist-value result-alist "message"))
+         (pod            (alist-value result-alist "pod"))
+         )
+    (if (not (string= pod ""))
+        (ps/display-text-in-buffer "POD" module pod))
+    (message "Nothing found")
+    (when message-string
+      (message "%s" message-string))
+    )
   )
 
-; should use something that fontifies
-(defun ps/display-pod-for-file (file name-buffer)
-  (shell-command (format "perly_sense display_file_pod \"--file=%s\"" file)
-                 (format "*%s POD*" name-buffer)
-                 )
-  )
-
+  
 
 (defun ps/display-pod-for-module-at-point ()
   "Display POD for the module at point."
@@ -290,38 +294,6 @@ more items than that, use completing read instead."
       )
     )
   )
-
-
-
-
-(defun ps/smart-docs (word)
-  "Display documentation for word."
-  (if word
-      (ps/display-pod-for-module word)
-    (ps/display-pod-for-file (buffer-file-name) (buffer-name))
-    )
-  )
-
-
-
-
-
-; Split result into first line and the rest and return the first line
-(defun ps/result-status (result)
-  (car (split-string result "[\n]"))
-)
-
-; Split result into first line and the rest and return the rest
-(defun ps/result-text (result)
-  (mapconcat 'identity (cdr (split-string result "[\n]")) "\n")
-)
-
-; Split the Split result into first line and the rest and return those two
-(defun ps/result-properties (result)
-  (split-string (car (split-string result "[\n]")) "[\t]")
-  )
-
-
 
 
 
@@ -443,35 +415,52 @@ more items than that, use completing read instead."
 
 
 
-
-;found   method  name    levelIndent     docType hint
 (defun ps/smart-docs-at-point ()
   "Display documentation for the code at point."
   (interactive)
   (message "Smart docs...")
-  (let* (
-         (result (shell-command-to-string
-                  (format "perly_sense smart_doc \"--file=%s\" --row=%s --col=%s"
-                          (buffer-file-name) (ps/current-line) (+ 1 (current-column))
-                          )
-                  ))
-         (result-text (ps/result-text result))
+  (let* ((result-alist (ps/command-on-current-file-location "smart_doc"))
+         (message-string (alist-value result-alist "message"))
+         (found          (alist-value result-alist "found"))
+         (name           (alist-value result-alist "name"))
+         (doc-type       (alist-value result-alist "doc-type"))
+         (text           (alist-value result-alist "text"))
          )
-    (if (not (string= result ""))
-        (let*
-            (
-             (properties (ps/result-properties result))
-             (found    (nth 1 properties))
-             (name     (nth 3 properties))
-             (doc-type (nth 5 properties))
-             )
-          (ps/display-doc-message-or-buffer doc-type name result-text)
-          )
+    (if (not (string= text ""))
+        (ps/display-doc-message-or-buffer doc-type name text)
       (message "Nothing found")
       )
+    (when message-string
+      (message "%s" message-string))
     )
   )
 
+
+
+
+;; todo: remove duplication between this defun and the one above
+(defun ps/class-method-docs (class-name method)
+  "Display documentation for the 'method' of 'class-name'."
+  (interactive)
+  (message "Finding docs for method (%s)..." method)
+  (let* ((result-alist
+          (ps/command
+           "method_doc"
+           (format "--class_name=%s --method_name=%s --dir_origin=." class-name method)))
+         (message-string (alist-value result-alist "message"))
+         (found          (alist-value result-alist "found"))
+         (name           (alist-value result-alist "name"))
+         (doc-type       (alist-value result-alist "doc-type"))
+         (text           (alist-value result-alist "text"))
+         )
+    (if (not (string= text ""))
+        (ps/display-doc-message-or-buffer doc-type name text)
+      (message "Nothing found")
+      )
+    (when message-string
+      (message "%s" message-string))
+    )
+  )
 
 
 
@@ -515,35 +504,6 @@ more items than that, use completing read instead."
 
 
 
-;; todo: remove duplication betweenthis defun and the one above
-(defun ps/class-method-docs (class-name method)
-  "Display documentation for the 'method' of 'class-name'."
-  (interactive)
-  (message "Finding docs for method (%s)..." method)
-  (let* (
-         (result (shell-command-to-string
-                  (format "perly_sense method_doc --class_name=%s --method_name=%s --dir_origin=."
-                          class-name method
-                          )
-                  ))
-         (result-text (ps/result-text result))
-         )
-    (if (not (string= result ""))
-        (let* ((properties (ps/result-properties result))
-               (found    (nth 1 properties))
-               (name     (nth 3 properties))
-               (doc-type (nth 5 properties)))
-          (ps/display-doc-message-or-buffer doc-type name result-text)
-          )
-      (message "Nothing found")
-      )
-    )
-  )
-
-
-
-
-
 (defun ps/find-file-location (file row col)
   "Find the file and go to the row/col location. If row and/or
 col is 0, the point isn't moved in that dimension."
@@ -563,21 +523,20 @@ col is 0, the point isn't moved in that dimension."
   "Go to the original symbol in the code at point."
   (interactive)
   (message "Smart goto...")
-  (let ((result (shell-command-to-string
-               (format "perly_sense smart_go_to \"--file=%s\" --row=%s --col=%s"
-                       (buffer-file-name) (ps/current-line) (+ 1 (current-column))
-                       )
-               ))
-        )
-    (if (string-match "[\t]" result)
-        (let ((value (split-string result "[\t]")))
-          (let ((file (pop value)))
-            (ps/find-file-location file (string-to-number (pop value)) (string-to-number (pop value)))
-            (message "Went to: %s" file)
-            )
-          )
-      (message nil)
+  (let* ((result-alist (ps/command-on-current-file-location "smart_go_to"))
+         (message-string (alist-value result-alist "message"))
+         (file (alist-value result-alist "file"))
+         (row (alist-value result-alist "row"))
+         (col (alist-value result-alist "col"))
+         )
+    (if file
+        (progn
+          (ps/find-file-location file (string-to-number row) (string-to-number col))
+          (message "Went to: %s:%s" file row))
+      (message "Nothing found")
       )
+    (when message-string
+      (message "%s" message-string))
     )
   )
 
@@ -664,7 +623,7 @@ cover_db for your project in the project dir."
       (let* ((other-files-list (alist-value result-alist "other-files"))
              (project-dir (alist-value result-alist "project-dir"))
              (chosen-file (ps/choose-from-strings-alist "File: " other-files-list)))
-        (if chosen-file 
+        (if chosen-file
             (find-file (expand-file-name chosen-file project-dir)))
         )))
   )
@@ -693,7 +652,7 @@ Return the chosen string, or nil if the user canceled.
      nil
      nil
      (car items-alist)
-     )    
+     )
     )
   )
 
@@ -891,16 +850,6 @@ current test run, if any"
 
 
 
-(defun ps/command (command &optional options)
-  "Call perly_sense COMMAND, and return the parsed result as a
-sexp"
-  (unless options (setq options ""))
-  (ps/parse-sexp
-   (shell-command-to-string
-    (format "perly_sense %s %s" command options))))
-
-
-
 (defun ps/command-on-current-file-location (command &optional options)
   "Call perly_sense COMMAND with the current file and row/col,
 and return the parsed result as a sexp"
@@ -912,6 +861,19 @@ and return the parsed result as a sexp"
             (buffer-file-name)
             (ps/current-line)
             (+ 1 (current-column))
+            options
+            (- (window-width) 2)))))
+
+
+
+(defun ps/command (command &optional options)
+  "Call 'perly_sense COMMAND OPTIONS' and some additional default
+options, and return the parsed result as a sexp"
+  (unless options (setq options ""))
+  (ps/parse-sexp
+   (shell-command-to-string
+    (format "perly_sense %s %s --width_display=%s"
+            command
             options
             (- (window-width) 2)))))
 
@@ -1170,30 +1132,6 @@ t on success, else nil"
 
 ;;;(ps/parse-result-into-alist "'((\"class-overview\" . \"Hej baberiba [ Class::Accessor ]\") (\"class-name\" . \"Class::Accessor\") (\"message\" . \"Whatever\"))")
 ;;(ps/parse-result-into-alist "'((\"class-name\" . \"alpha\"))")
-
-
-
-
-
-(defun ps/display-api-for-class-at-point ()
-  "Display the likely API of the class at point."
-  (interactive)
-  (message "Class API...")
-  (let* ((text (shell-command-to-string
-               (format "perly_sense class_api \"--file=%s\" --row=%s --col=%s"
-                       (buffer-file-name) (ps/current-line) (+ 1 (current-column))
-                       )
-               ))
-         (package (ps/result-status text))
-         (package-doc (ps/result-text text))
-         )
-                                        ; TODO: if package eq ""
-    (ps/display-text-in-buffer "API" package package-doc)
-    (other-window 1)
-    (compilation-mode)
-    (goto-line 2)
-    )
-  )
 
 
 

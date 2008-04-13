@@ -85,11 +85,7 @@ anyway. If you pass the option
 
  --io_type=editor_vim
 
-to perly_sense, the output format will use the Vim serializer. But not
-all commands use this format, and the Vim side of things aren't done
-quite yet.
-
-It's in the works.
+to perly_sense, the output format will use the Vim serializer.
 
 
 
@@ -1108,7 +1104,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0151';
+our $VERSION = '0.0152';
 
 
 

@@ -136,34 +136,42 @@ sub main_perly_sense {
         eval {
             if(my $file = $oPs->fileFindModule(nameModule => $module, dirOrigin => $dirOrigin)) {
                 my $pod = $oPs->podFromFile(file => $file) || "";
-                print $pod;
+                print $oEditor->formatOutputDataStructure(rhData => {pod => $pod});
             } else {
-                warn("Module ($module) not found\n");
+                print $oEditor->formatOutputDataStructure(
+                    rhData => {message => "Module ($module) not found"},
+                );
             }
         };
-        $@ and warn("Internal error: $@\n");
-
-    } elsif($command eq "display_file_pod") {
-        $file or syntax("Missing option --file");
-
-        eval {
-            my $pod = $oPs->podFromFile(file => $file) || "";
-            print $pod;
-        };
-        $@ and warn("Internal error: $@\n");
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
 
     } elsif($command eq "smart_go_to") {
         $file or syntax("Missing option --file");
         $row or syntax("Missing option --row");
         $col or syntax("Missing option --col");
-#my $tt = Devel::TimeThis->new("Entire goto");
 
         eval {
-            if(my $oLocation = $oPs->oLocationSmartGoTo(file => $file, row => $row, col => $col)) {
-                print join("\t", $oLocation->file, $oLocation->row, $oLocation->col);
+            if(my $oLocation = $oPs->oLocationSmartGoTo(
+                file => $file,
+                row => $row,
+                col => $col,
+            )) {
+                print $oEditor->formatOutputDataStructure(
+                    rhData => {
+                        file => $oLocation->file,
+                        row  => $oLocation->row,
+                        col  => $oLocation->col,
+                    },
+                );
             }
         };
-        $@ and warn("Error: $@\n");
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
 
     } elsif($command eq "smart_doc") {
         $file or syntax("Missing option --file");
@@ -171,12 +179,25 @@ sub main_perly_sense {
         $col or syntax("Missing option --col");
 
         eval {
-            if(my $oLocation = $oPs->oLocationSmartDoc(file => $file, row => $row, col => $col)) {
-                print join("\t",  map { $_ => $oLocation->rhProperty->{$_} } qw/ found name docType / ) . "\n";
-                print $oLocation->rhProperty->{text} || "";
-            }
+            if(my $oLocation = $oPs->oLocationSmartDoc(
+                file => $file,
+                row => $row,
+                col => $col,
+            )) {
+                print $oEditor->formatOutputDataStructure(
+                    rhData => {
+                        found    => $oLocation->rhProperty->{found},
+                        name     => $oLocation->rhProperty->{name},
+                        doc_type => $oLocation->rhProperty->{docType},
+                        text     => $oLocation->rhProperty->{text} || "",
+                    },
+                );
+           }
         };
-        $@ and warn("Error: $@\n");
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
 
     } elsif($command eq "class_overview") {
         $file || $nameClass or syntax("Missing option --file or --class_name");
@@ -236,11 +257,20 @@ sub main_perly_sense {
             );
             if($oClass) {
                 if (my $oLocation = $oClass->oLocationMethodDoc(method => $nameMethod)) {
-                    print join("\t",  map { $_ => $oLocation->rhProperty->{$_} } qw/ found name docType / ) . "\n";
-                    print $oLocation->rhProperty->{text} || "";
+                    print $oEditor->formatOutputDataStructure(
+                        rhData => {
+                            found    => $oLocation->rhProperty->{found},
+                            name     => $oLocation->rhProperty->{name},
+                            doc_type => $oLocation->rhProperty->{docType},
+                            text     => $oLocation->rhProperty->{text} || "",
+                        },
+                    );
                 }
-            };
-            $@ and warn("Error: $@\n");
+            }
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
         }
 
     } elsif($command eq "inheritance_doc") {
@@ -392,7 +422,7 @@ sub main_perly_sense {
             $oPs->setFindProject(file => $file);
             my $raFileTestOther = $oPs->raFileTestOther(file => $file);
             @$raFileTestOther or die("No related test files found\n");
-            
+
             print $oEditor->formatOutputDataStructure(
                 rhData => {
                     other_files => $raFileTestOther,
@@ -430,6 +460,7 @@ sub main_perly_sense {
         print "PerlySense Project Created\n";
 
     } elsif($command eq "class_api") {
+        # Experimental
         $file or syntax("Missing option --file");
         $row or syntax("Missing option --row");
         $col or syntax("Missing option --col");

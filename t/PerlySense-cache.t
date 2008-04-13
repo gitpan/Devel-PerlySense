@@ -64,6 +64,7 @@ is($$rGotten, $$rValue, "  got back same value");
 print "\nExpire file\n";
 sleep(1);
 ok(write_file($file, "whatever"), "Create test file");
+sleep(1);
 ok( ! $oPs->cacheGet(file => $file, key => "test"), "Could not get value from file with new timestamp");
 
 

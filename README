@@ -73,11 +73,7 @@ SYNOPSIS
 
      --io_type=editor_vim
 
-    to perly_sense, the output format will use the Vim serializer. But not
-    all commands use this format, and the Vim side of things aren't done
-    quite yet.
-
-    It's in the works.
+    to perly_sense, the output format will use the Vim serializer.
 
   From other editors
     Any editor that is programmable and that can call a shell script could

@@ -54,10 +54,7 @@ Return stringification of $rhData suited for the Editor.
 =cut
 sub formatOutputDataStructure {
     my ($rhData) = Devel::PerlySense::Util::aNamedArg(["rhData"], @_);
-
-#    return q|{"class-overview": "Hej baberiba\n [ Class::Accessor ]", "class-name": "Class::Accessor", "message": "Whatever2"}|;
     my $keysValues = $self->formatOutputItem($rhData);
-
     return $keysValues;
 }
 
