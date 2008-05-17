@@ -117,9 +117,9 @@ PerlySense. Read more below).
 
 =item * Process Project Source Files
 
-  perly_sense process_project
+  perly_sense process_project [--dir=.]
 
-Cache all modules in the project. (not implemented)
+Cache all modules in the project that --dir belongs to.
 
 
 =item * Process Source Files in @INC
@@ -1073,6 +1073,9 @@ PPI is kinda slow for large documents. Lots of objects being created etc.
 There are certainly edge cases. Bug reports with failing tests
 appreciated :)
 
+There is one known infinite loop.
+
+
 
 =head1 ACKNOWLEDGEMENTS
 
@@ -1104,7 +1107,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0152';
+our $VERSION = '0.0153';
 
 
 
@@ -1213,6 +1216,17 @@ field "oBookmarkConfig" => undef;
 
 
 
+=head2 rhFileDocumentCache
+
+Hash ref with (keys: absolute file names; keys: Document objects).
+
+=cut
+field "rhFileDocumentCache" => {};
+
+
+
+
+
 =head1 API METHODS
 
 =head2 new()
@@ -1277,13 +1291,29 @@ Die on errors (like if the file wasn't found).
 sub oDocumentParseFile {
 	my ($file) = @_;
 
-    my $oDocument = $self->{_rhFileDocumentCache}->{$file} ||= do {
+    my $oDocument = $self->rhFileDocumentCache->{$file} ||= do {
         my $oDocumentNew = Devel::PerlySense::Document->new(oPerlySense => $self);
         $oDocumentNew->parse(file => $file);
         $oDocumentNew;
     };
 
     return($oDocument);
+}
+
+
+
+
+
+=head2 clearInMemoryDocumentCache()
+
+Clear the rhFileDocumentCache property.
+
+Return 1.
+
+=cut
+sub clearInMemoryDocumentCache {
+    $self->rhFileDocumentCache( {} );
+    return 1;
 }
 
 

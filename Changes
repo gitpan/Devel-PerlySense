@@ -1,5 +1,16 @@
 = Feature oriented Revision history for Devel-PerlySense =
 
+= 0.0153
+
+* Fixed http://rt.cpan.org/Public/Bug/Display.html?id=35934.
+
+  "memory leak" during "perly_sense process_inc" caused by an
+  in-memory cache of Perl documents.
+
+* New feature "perly_sense process_project [--dir=.]".
+
+
+
 = 0.0152
 
 * All actions in perly_sense now use the serialization format, which

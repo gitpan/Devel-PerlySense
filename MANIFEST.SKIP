@@ -13,3 +13,4 @@ CVS
 release.pl
 ^\.PerlySenseProject
 ^cover_db
+^covered

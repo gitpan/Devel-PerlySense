@@ -484,36 +484,11 @@ sub main_perly_sense {
         $@ and warn("Error: $@\n");
 
     } elsif($command eq "process_inc") {
-        my @aFile;
-        find({ wanted => sub {
-                   /\.pm$/
-#                  && @aFile < 5
-                           and push(@aFile, file($_)->absolute . "");
-               },
-               no_chdir => 1,
-           }, @INC);
+        processFilesInDirs($oPs, \@INC);
 
-        my %hFileTime;
-        for my $file (@aFile) {
-            debug("Processing file ($file)");
-            my $timeStart = time();
-            eval {
-                use Devel::TimeThis;
-#                my $t = Devel::TimeThis->new("parse");
-                $oPs->oDocumentParseFile($file);
-            };
-            $@ and debug($@);
-            my $timeDuration = time() - $timeStart;
-            $hFileTime{$file} = $timeDuration;
-            debug(sprintf("  %0.6fs", $timeDuration));
-        }
-
-        debug("REPORT");
-        for my $file (
-            sort { $hFileTime{$a} <=> $hFileTime{$b} }
-                    keys %hFileTime) {
-            debug(sprintf("%0.6f : $file", $hFileTime{$file}));
-        }
+    } elsif($command eq "process_project") {
+        $oPs->setFindProject(dir => $dir || ".");
+        processFilesInDirs($oPs, [ $oPs->oProject->dirProject ]);
 
     } elsif($command eq "regex") {
         $file or syntax("Missing option --file");
@@ -574,6 +549,41 @@ sub syntax {
 
 
 
+###TODO: refactor: make method in PerlySense
+sub processFilesInDirs {
+    my ($oPs, $raDir) = @_;
+    
+    my @aFile;
+    find({
+        wanted => sub { /\.pm$/ and push(@aFile, file($_)->absolute . ""); },
+        no_chdir => 1,
+    }, @$raDir);
+        
+    my %hFileTime;
+    for my $file (@aFile) {
+        debug("Processing file ($file)");
+        my $timeStart = time();
+        eval {
+            $oPs->oDocumentParseFile($file);
+            $oPs->clearInMemoryDocumentCache();
+        };
+        $@ and debug($@);
+        my $timeDuration = time() - $timeStart;
+        $hFileTime{$file} = $timeDuration;
+        debug(sprintf("  %0.6fs", $timeDuration));
+    }
+
+    debug("REPORT");
+    for my $file (
+        sort { $hFileTime{$a} <=> $hFileTime{$b} }
+                keys %hFileTime) {
+        debug(sprintf("%0.6f : $file", $hFileTime{$file}));
+    }
+    
+}
+
+
+
 __END__
 
 =head1 NAME - perly_sense
@@ -613,6 +623,11 @@ On error: error.
 =head2 process_inc
 
 Process and cache all modules found in @INC
+
+
+=head2 process_project
+
+Process and cache all modules found in the current project
 
 
 =head2 --clear_cache

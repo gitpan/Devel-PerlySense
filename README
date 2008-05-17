@@ -96,9 +96,9 @@ SYNOPSIS
 
     *   Process Project Source Files
 
-          perly_sense process_project
+          perly_sense process_project [--dir=.]
 
-        Cache all modules in the project. (not implemented)
+        Cache all modules in the project that --dir belongs to.
 
     *   Process Source Files in @INC
 
@@ -870,6 +870,8 @@ BUGS AND CAVEATS
     There are certainly edge cases. Bug reports with failing tests
     appreciated :)
 
+    There is one known infinite loop.
+
 ACKNOWLEDGEMENTS
     Peter Liljenberg and Phil Jackson for their elisp fu.
 
@@ -918,6 +920,9 @@ PROPERTIES
   oBookmarkConfig
     Devel::PerlySense::BookmarkConfig object.
 
+  rhFileDocumentCache
+    Hash ref with (keys: absolute file names; keys: Document objects).
+
 API METHODS
   new()
     Create new PerlySense object.
@@ -943,6 +948,11 @@ API METHODS
     instance of the Document and return that instead of parsing it again.
 
     Die on errors (like if the file wasn't found).
+
+  clearInMemoryDocumentCache()
+    Clear the rhFileDocumentCache property.
+
+    Return 1.
 
   podFromFile(file => $file)
     Return the pod in $file as text, or die on errors.
