@@ -1,6 +1,7 @@
+
 =head1 NAME
 
-Devel::PerlySense - Perl IDE with Emacs frontend
+Devel::PerlySense - Perl IDE backend with Emacs frontend
 
 
 =head1 DESCRIPTION
@@ -14,10 +15,11 @@ project and Perl installation.
 Run tests and scripts and syntax check source with easy navigation to
 errors/warnings/failing tests.
 
-Automate common editing tasks.
+Automate common editing tasks related to source code, tests, regular
+expressions, etc.
 
-Highlight syntax errors, warnings and Perl::Critic complaints in the
-source while editing.
+Highlight syntax errors, warnings, Perl::Critic complaints, and
+Devel::Cover test coverage in the source while editing.
 
 
 
@@ -225,6 +227,11 @@ following in your .emacs config file:
     (setq flymake-no-changes-timeout 9999)
     (setq flymake-start-syntax-check-on-newline nil)
 
+    ;; ** Code Coverage Visualization **
+    ;; If you have a Devel::CoverX::Covered database handy and want to
+    ;; display the sub coverage in the source, set this to t
+    (setq ps/enable-test-coverage-visualization nil)
+
     ;; ** Color Config **
     ;; Emacs named colors: http://www.geocities.com/kensanata/colors.html
     ;; These colors work fine with a white X11 background. They may not look
@@ -250,7 +257,8 @@ The most important config you can change is the prefix key.
 
 The default, \C-o, seemed to have a rater low useful-to-keystroke
 ratio and so was a strong candidate for stealing for this much more
-important purpose :)
+important purpose :) Now, the I<proper> way of doing this is of course
+to some kind of C-c prefix. You decide.
 
 If you want to use flymake to do background syntax and Perl::Critic
 checks, set ps/load-flymake to t (this is a very nifty thing,
@@ -258,6 +266,11 @@ so yes you want to do this) and configure the colors to your liking.
 
 Note: This also needs to be enabled on a per-project basis (see
 below).
+
+Once you have restarted Emacs, you might want to browse around the
+customizations by doing
+
+  M-x customize-group perly-sense
 
 
 
@@ -615,13 +628,16 @@ load-path. [[[explain how to fix brokenness?]]] ).
 
 PerlySense uses flymake to check syntax, Perl Critic, etc.
 
+Having Perl::Critic enabled will also speed up other operations by
+caching information.
+
 Three inconveniences with vanilla Flymake are fixed: no proper @INC,
 only .pl files, and "perl -c" warns about redefined subs for
 recursively used modules (which is perfectly fine Perl).
 
 Syntax errors and warnings both use the error face.
 
-Perl Critic violations use the warning face.
+L<Perl::Critic> violations use the warning face.
 
 
 
@@ -674,6 +690,78 @@ it. (not implemented)
 C-o s p -- Go to the previous Source error/warning.
 
 C-o s s -- Display the error/warning text of the current line.
+
+
+
+=head2 Code Coverage Visualization Introduction
+
+If you have a test suite, you might like this. You should have tests.
+
+If you run Devel::Cover, you'll be happy. You should know your code
+coverage.
+
+PerlySense can display the code coverage in the source buffer.
+
+Currently supported is subroutine coverage, i.e. whether a sub is
+covered by tests or not.
+
+Covered subs are displayed with a discrete green underline, uncovered
+subs get a red underline.
+
+
+
+=head2 Code Coverage Setup
+
+PerlySense uses L<Devel::CoverX::Covered> to manage the coverage
+data. Refer to that documentation for how to run your test suite with
+L<Devel::Cover> and generate a "covered" database.
+
+The "covered" database should reside in your project root dir and
+contain files with file names relative to the project root dir (that's
+ordinarily the case).
+
+Note: Running the test suite with Devel::Cover can be very, very
+slow. A nightly build is usually a good idea.
+
+
+=head2 Using Code Coverage 
+
+You can enable Visualization of Code Coverage in the install script
+(see above).
+
+You can also toggle Visualization with C-o C-v at any time.
+
+Whenever Visualization is enabled, PerlySense will try to fetch
+coverage information just after a file is opened and highlight the
+word "sub" for each subroutine in the buffer.
+
+=over 4
+
+=item * A green underline means that the sub was entered at least
+once. This does not mean all lines in the sub was covered.
+
+=item * A red underline means the sub wasn't covered at all. Time to write
+more tests!
+
+=item * No underline means that the sub isn't in the coverage
+database. Maybe the sub was added after the test run, maybe
+Devel::Cover didn't manage to capture any coverage information for the
+sub.
+
+If you really think the sub should be covered, generate a HTML report
+with L<Devel::Cover> and investigate further.
+
+=back
+
+The point of the visualization is to provide an ambient feeling of
+what's covered or not. Too much detail and color all over the place
+and the source turns into a christmas tree! But if you browse past a
+complex method and see that it isn't tested, that should ring a bell.
+
+Note that you can hit C-o g t o -- "Go To Tests - Other Files" to see
+what test files are covering this file. If run the command with the
+cursor on a "sub" line, you'll get only the tests that cover that
+particular subroutine (not yet implemented).
 
 
 
@@ -1107,7 +1195,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0153';
+our $VERSION = '0.0154';
 
 
 
@@ -1654,6 +1742,26 @@ sub flymakeFile {
             or die("Could not identify any PerlySense Project\n");
 
     return $self->oProject->flymakeFile(file => $file);
+}
+
+
+
+
+
+=head2 rhSubCovered(file => $fileSource)
+
+Do a "covered subs" call with $fileSource in the current project.
+
+Return hash ref with (keys: sub name; keys: quality).
+
+=cut
+sub rhSubCovered {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+
+    $self->setFindProject(file => $file)
+            or die("Could not identify any PerlySense Project\n");
+
+    return $self->oProject->rhSubCovered(file => $file);
 }
 
 

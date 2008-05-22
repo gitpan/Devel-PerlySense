@@ -855,7 +855,7 @@ current test run, if any"
 and return the parsed result as a sexp"
   (unless options (setq options ""))
   (ps/parse-sexp
-   (shell-command-to-string
+   (ps/shell-command-to-string
     (format "perly_sense %s \"--file=%s\" --row=%s --col=%s %s --width_display=%s"
             command
             (buffer-file-name)
@@ -871,11 +871,21 @@ and return the parsed result as a sexp"
 options, and return the parsed result as a sexp"
   (unless options (setq options ""))
   (ps/parse-sexp
-   (shell-command-to-string
+   (ps/shell-command-to-string
     (format "perly_sense %s %s --width_display=%s"
             command
             options
             (- (window-width) 2)))))
+
+
+
+(defun ps/shell-command-to-string (command)
+  "Run command and return the response"
+  (let ((response (shell-command-to-string command)))
+;;    (message "Called (%s), got (%s)" command response)
+    response
+    )
+  )
 
 
 
@@ -1704,12 +1714,12 @@ or go to the Bookmark at point"
 
 
 
-(provide 'perly-sense)
-
-
-
+(load "perly-sense-visualize-coverage")
 (if ps/load-flymake (load "perly-sense-flymake"))
 
+
+
+(provide 'perly-sense)
 
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 $|++;
-BEGIN { unshift(@INC,  q|c:/Dokument/Project/Dev/CPAN/Devel-PerlySense/trunk/source/lib|); }
+use lib q|c:/Dokument/Project/Dev/CPAN/Devel-PerlySense/trunk/source/lib|;
+use lib "c:/Dokument/Project/Dev/CPAN/Devel-CoverX-Covered/trunk/source/lib";
 use strict;
 
 use Getopt::Long;
@@ -505,6 +506,21 @@ sub main_perly_sense {
             print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
         }
 
+    } elsif($command eq "covered_subs") {
+        $file or syntax("Missing option --file");
+
+        eval {
+            print $oEditor->formatOutputDataStructure(
+                rhData => {
+                    sub_quality => $oPs->rhSubCovered(file => $file),
+                },
+            );
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
+
     } elsif($command eq "info") {
         $dir ||= ".";
         $oPs->setFindProject(dir => $dir);
@@ -514,6 +530,13 @@ sub main_perly_sense {
         print "PROJECT: (" . $oPs->oProject->dirProject . ")\n";
         print "HOME: (" . $oPs->oHome->dirHome . ")\n";
         print "HOME DEBUG LOG: (" . file($oPs->oHome->dirHome, "log", "debug.log") . ")\n";
+
+    } elsif($command eq "log_file") {
+        $dir ||= ".";
+        $oPs->setFindProject(dir => $dir);
+
+        ###TODO: extract property of Util::Log?
+        print file($oPs->oHome->dirHome, "log", "debug.log") . "\n";
 
     } elsif($command eq "project_dir") {
         $dir ||= ".";
@@ -552,13 +575,15 @@ sub syntax {
 ###TODO: refactor: make method in PerlySense
 sub processFilesInDirs {
     my ($oPs, $raDir) = @_;
-    
+
+    print file($oPs->oHome->dirHome, "log", "debug.log") . "\n";
+
     my @aFile;
     find({
         wanted => sub { /\.pm$/ and push(@aFile, file($_)->absolute . ""); },
         no_chdir => 1,
     }, @$raDir);
-        
+
     my %hFileTime;
     for my $file (@aFile) {
         debug("Processing file ($file)");
@@ -579,7 +604,7 @@ sub processFilesInDirs {
                 keys %hFileTime) {
         debug(sprintf("%0.6f : $file", $hFileTime{$file}));
     }
-    
+
 }
 
 

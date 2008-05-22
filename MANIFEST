@@ -22,6 +22,7 @@ lib/Devel/PerlySense/Editor/Emacs.pm
 lib/Devel/PerlySense/Editor/Vim.pm
 lib/Devel/PerlySense/external/emacs/dropdown-list.el
 lib/Devel/PerlySense/external/emacs/perly-sense-flymake.el
+lib/Devel/PerlySense/external/emacs/perly-sense-visualize-coverage.el
 lib/Devel/PerlySense/external/emacs/perly-sense.el
 lib/Devel/PerlySense/external/emacs/regex-tool.el
 lib/Devel/PerlySense/Home.pm

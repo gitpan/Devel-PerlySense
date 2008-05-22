@@ -491,6 +491,49 @@ sub flymakeFile {
 
 
 
+=head2 rhSubCovered(file => $fileSource)
+
+Do a "covered subs" call with $fileSource.
+
+Die if Devel::CoverX::Covered isn't installed.
+
+Return hash ref with (keys: sub name; values: quality)), or an empty
+hash ref if no coverage info was found for $fileSource.
+
+Any subs with the same name will have their qualities combined.
+
+=cut
+sub rhSubCovered {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+
+    local $CWD = $self->dirProject;
+
+    eval {
+        require Devel::CoverX::Covered;
+        require Devel::CoverX::Covered::Db;
+    };
+    $@ and die("Devel::CoverX::Covered isn't installed\n");
+
+    ###TODO: use dir specified in config and/or on command line
+    local $CWD = $self->dirProject . "";
+
+    my $db = Devel::CoverX::Covered::Db->new();
+
+    my $fileRelative = file($file)->relative( $self->dirProject );
+
+    my %hSubQuality;
+    for my $raSubQuality ( $db->covered_subs($fileRelative) ) {
+        my ($sub, $qualitu) = @$raSubQuality;
+        $hSubQuality{$sub} += $qualitu;
+    }
+
+    return(\%hSubQuality);
+}
+
+
+
+
+
 =head2 raFileTestOther(file => $fileSource)
 
 Return array ref with file names of files related to $file, i.e. the
@@ -509,7 +552,7 @@ sub raFileTestOther {
         require Devel::CoverX::Covered::Db;
     };
     $@ and die("Devel::CoverX::Covered isn't installed\n");
-    
+
     ###TODO: verify there is a cover_db database present
 
     local $CWD = $self->dirProject . "";
