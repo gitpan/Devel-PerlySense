@@ -28,6 +28,13 @@ docs for that module for further information."
   :type 'boolean
   :group 'perly-sense)
 
+(defcustom ps/only-indicate-bad-sub-coverage nil
+  "When true, don't indicate any subs that aren't well
+covered. I.e. don't clutter up the display when there's nothing
+to do, only indicate subs that need improvements."
+  :type 'boolean
+  :group 'perly-sense)
+
 
 
 (add-hook
@@ -64,14 +71,17 @@ to fontify the current region with code coverage"
   (when ps/enable-test-coverage-visualization
     (save-excursion
       (goto-char beg)
-      (while (search-forward-regexp "\n *\\(sub\\) +\\(\\w+\\)" end t)
+      (while (search-forward-regexp "\n *\\(sub\\) +\\([_a-z]+\\)" end t)
         (let* ((sub-name (buffer-substring-no-properties (match-beginning 2) (match-end 2)))
                (sub-coverage-quality (ps/sub-coverage-quality sub-name))
-               ;;             (dummy (message "Quality for (%s) (%s)" sub-name sub-coverage-quality))
+               ;; (dummy (message "Quality for (%s) (%s)" sub-name sub-coverage-quality))
                (sub-face (cond
                           ((not sub-coverage-quality) nil)
                           ((= sub-coverage-quality 0) ps/covered-bad-face)
-                          ((> sub-coverage-quality 0) ps/covered-good-face)
+                          ((and
+                            (> sub-coverage-quality 0)
+                            (not ps/only-indicate-bad-sub-coverage))
+                           ps/covered-good-face)
                           (t nil)
                           )
                          )
@@ -123,7 +133,7 @@ Return t if coverage was loaded, else nil."
   (when (and ps/enable-test-coverage-visualization (string-equal major-mode "cperl-mode"))
     (let* ((result-alist (ps/command-on-current-file-location "covered_subs"))
            (message-string    (alist-value result-alist "message"))
-           (alist-sub-quality (alist-value result-alist "sub-quality"))
+           (alist-sub-quality (alist-value result-alist "sub_quality"))
            )
       (when message-string (message "%s" message-string))
       

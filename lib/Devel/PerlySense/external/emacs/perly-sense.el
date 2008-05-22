@@ -364,9 +364,9 @@ more items than that, use completing read instead."
              ))
         (let* (
                (result-hash (ps/parse-sexp result))
-               (dir-run-from (alist-value result-hash "dir-run-from"))
-               (command-run (alist-value result-hash "command-run"))
-               (type-source-file (alist-value result-hash "type-source-file"))
+               (dir-run-from (alist-value result-hash "dir_run_from"))
+               (command-run (alist-value result-hash "command_run"))
+               (type-source-file (alist-value result-hash "type_source_file"))
                (message-string (alist-value result-hash "message"))
                )
           (if command-run
@@ -423,7 +423,7 @@ more items than that, use completing read instead."
          (message-string (alist-value result-alist "message"))
          (found          (alist-value result-alist "found"))
          (name           (alist-value result-alist "name"))
-         (doc-type       (alist-value result-alist "doc-type"))
+         (doc-type       (alist-value result-alist "doc_type"))
          (text           (alist-value result-alist "text"))
          )
     (if (not (string= text ""))
@@ -450,7 +450,7 @@ more items than that, use completing read instead."
          (message-string (alist-value result-alist "message"))
          (found          (alist-value result-alist "found"))
          (name           (alist-value result-alist "name"))
-         (doc-type       (alist-value result-alist "doc-type"))
+         (doc-type       (alist-value result-alist "doc_type"))
          (text           (alist-value result-alist "text"))
          )
     (if (not (string= text ""))
@@ -470,7 +470,7 @@ more items than that, use completing read instead."
   (message "Document Inheritance...")
   (let* ((result-alist (ps/command-on-current-file-location "inheritance_doc"))
          (message-string (alist-value result-alist "message"))
-         (class-inheritance (alist-value result-alist "class-inheritance"))
+         (class-inheritance (alist-value result-alist "class_inheritance"))
          )
     (if (not class-inheritance)
         (message "No Base Class found")
@@ -490,7 +490,7 @@ more items than that, use completing read instead."
   (message "Document Uses...")
   (let* ((result-alist (ps/command-on-current-file-location "use_doc"))
          (message-string (alist-value result-alist "message"))
-         (class-use (alist-value result-alist "class-use"))
+         (class-use (alist-value result-alist "class_use"))
          )
     (if (not class-use)
         (message "No use statements found")
@@ -550,7 +550,7 @@ the the user choose a Class."
   (message "Goto Base Class...")
   (let* ((result-alist (ps/command-on-current-file-location "base_class_go_to"))
          (message-string (alist-value result-alist "message"))
-         (class-list (alist-value result-alist "class-list"))
+         (class-list (alist-value result-alist "class_list"))
          (first-class-alist (car class-list))
          (second-class-alist (cdr class-list))
          )
@@ -620,7 +620,7 @@ cover_db for your project in the project dir."
          (message (alist-value result-alist "message")))
     (if message
         (message "%s" message)
-      (let* ((other-files-list (alist-value result-alist "other-files"))
+      (let* ((other-files-list (alist-value result-alist "other_files"))
              (project-dir (alist-value result-alist "project-dir"))
              (chosen-file (ps/choose-from-strings-alist "File: " other-files-list)))
         (if chosen-file
@@ -667,8 +667,8 @@ project dir if there is no vc."
     (if vc-buffer
         (ps/switch-to-buffer vc-buffer)
       (let* ((result-alist (ps/command "vcs_dir"))
-             (project-dir (alist-value result-alist "project-dir"))
-             (vcs-name (alist-value result-alist "vcs-name"))
+             (project-dir (alist-value result-alist "project_dir"))
+             (vcs-name (alist-value result-alist "vcs_name"))
              )
         (if (not (string= project-dir ""))
             (ps/vc-project vcs-name project-dir)
@@ -965,7 +965,7 @@ area."
   (let ((file (alist-value location-alist "file"))
         (row (alist-num-value location-alist "row"))
         (col (alist-num-value location-alist "col"))
-        (class-name (alist-value location-alist "class-name"))
+        (class-name (alist-value location-alist "class_name"))
         )
     (ps/find-file-location file row col)
     (if class-name
@@ -978,8 +978,8 @@ area."
 
 (defun ps/go-to-class-alist (class-alist)
   "Go to the Class class-alist (keys: class-name, file, row)"
-  (let ((class-name (alist-value class-alist "class-name"))
-        (class-inheritance (alist-value class-alist "class-inheritance"))
+  (let ((class-name (alist-value class-alist "class_name"))
+        (class-inheritance (alist-value class-alist "class_inheritance"))
         (file (alist-value class-alist "file"))
         (row (alist-num-value class-alist "row")))
     (ps/find-file-location file row 1)
@@ -1007,7 +1007,7 @@ definitions using a dropdown list.
 Return class-alist with (keys: class-name, file, row), or nil if
 none was chosen."
   (let* ((class-description-list (mapcar (lambda (class-alist)
-                                    (alist-value class-alist "class-description")
+                                    (alist-value class-alist "class_description")
                                     ) class-list))
          (n (dropdown-list class-description-list))
          )
@@ -1029,7 +1029,7 @@ definitions using completing read.
 
 Return class-alist with (keys: class-name, file, row)"
   (let* ((class-description-list (mapcar (lambda (class-alist)
-                                    (alist-value class-alist "class-description")
+                                    (alist-value class-alist "class_description")
                                     ) class-list))
          (chosen-class-description (completing-read
                              (format "%s: " what-text)
@@ -1110,8 +1110,8 @@ t on success, else nil"
                   "perly_sense class_overview %s --width_display=%s"
                   argstring (- (window-width) 2) ))))
     (let* ((result-hash (ps/parse-sexp result))
-           (class-name (alist-value result-hash "class-name"))
-           (class-overview (alist-value result-hash "class-overview"))
+           (class-name (alist-value result-hash "class_name"))
+           (class-overview (alist-value result-hash "class_overview"))
            (message-string (alist-value result-hash "message"))
            (dir (alist-value result-hash "dir"))
            )

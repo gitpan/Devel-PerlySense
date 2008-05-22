@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 12;
+use Test::More tests => 7;
 use Test::Exception;
 use Test::Differences;
 
@@ -24,23 +24,6 @@ ok(
     ),
     "Created Editor ok",
 );
-
-
-
-my %identifier_input_output = (
-    "a" => "a",
-    "a_b" => "a-b",
-    "c-d" => "c-d",
-    "c*d" => "c*d",
-    "c d" => "c d",
-);
-
-for my $input (sort keys %identifier_input_output) {
-    my $output = $identifier_input_output{$input};
-    is($oEditor->renameIdentifier($input), $output, "Identifier ($input) -> ($output)");
-}
-
-
 
 
 

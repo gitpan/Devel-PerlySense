@@ -28,52 +28,53 @@ Devel::Cover test coverage in the source while editing.
 
 =head2 From Emacs
 
-C-o C-o -- Overview -- Show information about the Class at point or
+C<C-o C-o> -- Overview -- Show information about the Class at point or
 the current Class.
 
-C-o C-d -- Docs -- Show docs (POD/signature/etc) for the symbol
+C<C-o C-d> -- Docs -- Show docs (POD/signature/etc) for the symbol
 (module/method/sub) at point. A doc hint is displayed in the echo area
 (for methods and subs), or a new POD buffer is created (for modules).
 
-C-o d i -- Document Inheritance -- Show the Inheritance hierarchy for
-the current Class in the echo area.
+C<C-o d i> -- Document Inheritance -- Show the Inheritance hierarchy
+for the current Class in the echo area.
 
-C-o d u -- Document 'use Module' statements in the echo area.
+C<C-o d u> -- Document 'use Module' statements in the echo area.
 
-C-o C-g -- Go To -- Open file at proper location for module,
+C<C-o C-g> -- Go To -- Open file at proper location for module,
 method/sub declaration for the symbol (module/method/sub) at point. If
 no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
 
-C-o g u -- Go to the 'use Module' section of the current buffer.
+C<C-o g u> -- Go to the 'use Module' section of the current buffer.
 
-C-o g n -- Go To 'new' -- Go to the 'new' method of the current class.
+C<C-o g n> -- Go To 'new' -- Go to the 'new' method of the current
+class.
 
-C-o g b -- Go To Base Class -- Open the file of the base class of the
-current class. This will take you up one level in the inheritance
+C<C-o g b> -- Go To Base Class -- Open the file of the base class of
+the current class. This will take you up one level in the inheritance
 hierarchy.
 
-C-o g m -- Go To Module -- Open the source file of the module at
+C<C-o g m> -- Go To Module -- Open the source file of the module at
 point.
 
-C-o g v -- Go To Version Control -- Go to the Project view of the
+C<C-o g v> -- Go To Version Control -- Go to the Project view of the
 current Version Control system.
 
-C-o g t o -- Go To Tests - Other Files -- Go to any related test or
+C<C-o g t o> -- Go To Tests - Other Files -- Go to any related test or
 source files given a L<Devel::CoverX::Covered> covered db.
 
-C-o C-r -- Run file -- Run the current file using the Compilation mode
-and the settings appropriate for the source type (Test, Module,
+C<C-o C-r> -- Run file -- Run the current file using the Compilation
+mode and the settings appropriate for the source type (Test, Module,
 etc.). Highlight errors and jump to source with C-c C-c.
 
-C-o e m u -- Edit - Move Use Statement -- Move the 'use Module'
+C<C-o e m u> -- Edit - Move Use Statement -- Move the 'use Module'
 statement at point to the 'use Module' section at the top.
 
-C-o e t c -- Edit Test Count -- Increase the test count (e.g. "tests
-=> 43")
+C<C-o e t c> -- Edit Test Count -- Increase the test count
+(e.g. "tests => 43")
 
-C-o a t -- Assist With Test Count -- Synchronize invalid test count in
-.t file with the *compilation* buffer.
+C<C-o a t> -- Assist With Test Count -- Synchronize invalid test count
+in .t file with the *compilation* buffer.
 
 Flymake may be used to highlight syntax errors and warnings in the
 source while editing (continously or at every save).
@@ -279,50 +280,50 @@ customizations by doing
 
 =head2 Smart docs
 
-C-o C-d is the "Smart docs" command. It brings up documentation for
+C<C-o C-d> is the "Smart docs" command. It brings up documentation for
 what's at point.
 
 Put the cursor on the "method" word of a $self->method call and press
-C-o C-d and wait until a documentation hint for the method call is
+C<C-o C-d> and wait until a documentation hint for the method call is
 displayed briefly in the echo area. PerlySense will look in base
 classes if the method can't be found in the current class.
 
 Put the cursor on the "method" word of an $object->method call and
-press C-o C-d to see the docs hint. PerlySense will look through all
-your "use" modules (and their base classes) for the method call and
-try to identify the best match.
+press C<C-o C-d> to see the docs hint. PerlySense will look through
+all your "use" modules (and their base classes) for the method call
+and try to identify the best match.
 
 Note! The first time each module is parsed this will take a second or
 two, and the very first time you run the command with lots of "use"
 modules it's bound to take longer than that.
 
-Put the cursor on a module name and press C-o C-d to bring up a new
+Put the cursor on a module name and press C<C-o C-d> to bring up a new
 buffer with the POD for that module (this is similar to the cperl-mode
 feature, only a) not as good, but b) it works on Windows).
 
-Press C-o C-d with nothing under the cursor brings up a POD buffer for
-the current file.
+Press C<C-o C-d> with nothing under the cursor brings up a POD buffer
+for the current file.
 
 
 =head2 Document Inheritance
 
-C-o d i will briefly display the Inheritance hierarchy for the current
-Class in the echo area. This is similar to the Class Overview (see
-below).
+C<C-o d i> will briefly display the Inheritance hierarchy for the
+current Class in the echo area. This is similar to the Class Overview
+(see below).
 
 
 =head2 Document Used Modules
 
-C-o d u will briefly display the list of modules used from the current
-buffer in the echo area. This is similar to the Class Overview (see
-below).
+C<C-o d u> will briefly display the list of modules used from the
+current buffer in the echo area. This is similar to the Class Overview
+(see below).
 
 
 =head2 Smart go to
 
-C-o C-g is the "Smart go to" command. It's similar to Smart Docs, but
-instead of bringing the docs to you, it brings you to the definition
-of what's at point.
+C<C-o C-g> is the "Smart go to" command. It's similar to Smart Docs,
+but instead of bringing the docs to you, it brings you to the
+definition of what's at point.
 
 The definition can be either the sub declaration, or if the
 declaration can't be found (like for auto-generated getters/setters,
@@ -334,7 +335,7 @@ globally with C-x C-SPC, or locally with C-u C-SPC.
 
 =head2 Go to Base Class
 
-C-o g b takes you up one level in the inheritance hierarchy. If the
+C<C-o g b> takes you up one level in the inheritance hierarchy. If the
 current class has many base classes, you'll have to choose which one
 to go to.
 
@@ -347,27 +348,27 @@ displayed in the echo area.
 
 =head2 Go to the 'new' method
 
-C-o g n takes you to the definition of the 'new' method of the current
-class (in this class, or a parent class).
+C<C-o g n> takes you to the definition of the 'new' method of the
+current class (in this class, or a parent class).
 
 
 =head2 Go To 'use Module' section
 
-C-o g u takes you to the line below the last 'use Module' statement in
-the the current buffer.
+C<C-o g u> takes you to the line below the last 'use Module' statement
+in the the current buffer.
 
 
 =head2 Edit Move 'use Module' Statement
 
-C-o e m u -- If point is on a line with a single 'use Module' statement, set mark
-and move that statement to the end of the 'use Module' section at the
-top of the file.
+C<C-o e m u> -- If point is on a line with a single 'use Module'
+statement, set mark and move that statement to the end of the 'use
+Module' section at the top of the file.
 
 This is typically useful when you realize you need a module,
 e.g. Data::Dumper, in the middle of the file, but you don't want to
 leave where you are just to fiddle with adding it.
 
-So type the 'use Module' statement, hit C-o e m u to move it, see
+So type the 'use Module' statement, hit C<C-o e m u> to move it, see
 that it got moved to a good place and hit C-u C-SPC to return to where
 you were, and continue doing what you where doing.
 
@@ -375,12 +376,12 @@ you were, and continue doing what you where doing.
 
 =head2 Go to Module
 
-C-o g m -- Go to Module at point.
+C<C-o g m> -- Go to Module at point.
 
 
 =head2 Go to Version Control
 
-C-o g v -- Go to the Project view for the current Version Control
+C<C-o g v> -- Go to the Project view for the current Version Control
 system. This typically displays the change status of the files in the
 project. A dired of the Project dir is used in lieu of a VCS.
 
@@ -424,8 +425,8 @@ See also:
 
 =head2 Class Overview
 
-Pressing C-o C-o will bring up the Class Overview of the Class name at
-point (not yet implemented), or otherwise the current Class (the
+Pressing C-o C<C-o> will bring up the Class Overview of the Class name
+at point (not yet implemented), or otherwise the current Class (the
 active Package).
 
 Example class CatalystX::FeedMe::Controller::Feed
@@ -523,7 +524,7 @@ q -- Quit the Class Overview buffer.
 
 =head2 Run File
 
-C-o C-r -- Run the file of the current buffer using the Compilation
+C<C-o C-r> -- Run the file of the current buffer using the Compilation
 mode.
 
 Files are run according to the source type, which is determined by the
@@ -541,45 +542,46 @@ not just Perl source files.
 
 As a taste of what's possible, imagine that you have a test framework
 with .yml acceptance test data files and a corresponding yml-runner.pl
-script. With the x option (not implemented) you can edit the .yml file and
-type C-o C-r to run the acceptance test the same way as a regular
-test.)
+script. With the x option (not implemented) you can edit the .yml file
+and type C<C-o C-r> to run the acceptance test the same way as a
+regular test.)
 
 If any warnings, errors or test failures are encountered, they are
 highlighted in the *compilation* buffer. Use C-c C-c to move from one
 error to the next. Or press RET on a highlighted line.
 
 If you wish to start many runs at the same time, rename the
-compilation buffer with "M-x rename-buffer".
+compilation buffer with C<M-x rename-buffer>.
 
 
 =head2 Re-run File
 
-Invoke C-o C-r from within the *compilaton* buffer to re-run (M-x
-recompile) the file. Useful when you have skipped around the source
+Invoke C<C-o C-r> from within the *compilaton* buffer to re-run (C<M-x
+recompile>) the file. Useful when you have skipped around the source
 fixing errors and the .t file isn't visible.
 
-C-o r r -- If not even the *compilation* buffer is visible, issue
+C<C-o r r> -- If not even the *compilation* buffer is visible, issue
 Re-Run File from anywhere to bring it up and re-run.
 
 
 =head2 Edit Test Count
 
-C-o e t c -- Increase the test count number in the line resembling
+C<C-o e t c> -- Increase the test count number in the line resembling
 
   use Test::More tests => 43;
 
 without moving point. The current and new test count is reported in
 the echo area.
 
-Increase with the numeric argument (C-u 18 C-o e t c), or default 1.
+Increase with the numeric argument (C<C-u 18 C-o e t c>), or default
+1.
 
 
 =head2 Assist With Test Count
 
-C-o a t -- If the test count in a .t file is out of sync with what's
-correctly reported when running the test in the *compilation* buffer
-(see Run File), use this command to update the .t file.
+C<C-o a t> -- If the test count in a .t file is out of sync with
+what's correctly reported when running the test in the *compilation*
+buffer (see Run File), use this command to update the .t file.
 
 This updates the
 
@@ -591,7 +593,7 @@ line in the current buffer, so be sure to only run this when the
 
 =head2 Go to Tests - Other Files
 
-C-o g t o -- In a test file, navigate to the source files that are
+C<C-o g t o> -- In a test file, navigate to the source files that are
 covered by that test file. In a source file, navigate to test files
 covering the file.
 
@@ -606,8 +608,9 @@ See L<Devel::CoverX::Covered> for details.
 If you run tests in a regular shell (inside Emacs or in a terminal
 window), this may be handy.
 
-C-o g e -- If point is located on an error line from a syntax error,
-or a stack trace from the debugger or similar, go to that file+line.
+C<C-o g e> -- If point is located on an error line from a syntax
+error, or a stack trace from the debugger or similar, go to that
+file+line.
 
 If no file name can be found, prompt for a piece of text that contains
 the file+line spec. The kill ring or clipboard text is used as default
@@ -671,8 +674,8 @@ This way you can have Flymake enabled globally and still not run "perl
 =head2 Using Flymake
 
 In the Project config file there are some hints on how to customize
-Flymake, when it should run, etc. You can also customize it with "M-x
-customize-group flymake".
+Flymake, when it should run, etc. You can also customize it with C<M-x
+customize-group flymake>.
 
 (Personally I find the nagging while I type very distracting, but I
 welcome the immediate feedback whenever I save the file. YMMV.)
@@ -680,16 +683,16 @@ welcome the immediate feedback whenever I save the file. YMMV.)
 Look in the mode line for hints on whether there are any errors or
 warnings.
 
-C-o s n -- Go to the next Source error/warning.
+C<C-o s n> -- Go to the next Source error/warning.
 
 Display the error in the minibuffer. If the warning is from a
 Perl::Critic module, copy the module name into the kill-ring, so you
 easily can yank it into the .perlcritic config file to disable
 it. (not implemented)
 
-C-o s p -- Go to the previous Source error/warning.
+C<C-o s p> -- Go to the previous Source error/warning.
 
-C-o s s -- Display the error/warning text of the current line.
+C<C-o s s> -- Display the error/warning text of the current line.
 
 
 
@@ -726,10 +729,10 @@ slow. A nightly build is usually a good idea.
 
 =head2 Using Code Coverage 
 
-You can enable Visualization of Code Coverage in the install script
-(see above).
+You can toggle Visualization with C<C-o C-v> at any time when editing.
 
-You can also toggle Visualization with C-o C-v at any time.
+You can also enable Visualization in the install script (see above),
+or via customize.
 
 Whenever Visualization is enabled, PerlySense will try to fetch
 coverage information just after a file is opened and highlight the
@@ -758,16 +761,19 @@ what's covered or not. Too much detail and color all over the place
 and the source turns into a christmas tree! But if you browse past a
 complex method and see that it isn't tested, that should ring a bell.
 
-Note that you can hit C-o g t o -- "Go To Tests - Other Files" to see
-what test files are covering this file. If run the command with the
-cursor on a "sub" line, you'll get only the tests that cover that
+To increase this effect you may wan to only highlight subs with bad
+coverage (customize the variable ps/only-indicate-bad-sub-coverage)
+
+Note that you can hit C<C-o g t o> -- "Go To Tests - Other Files" to
+see what test files are covering this file. If run the command with
+the cursor on a "sub" line, you'll get only the tests that cover that
 particular subroutine (not yet implemented).
 
 
 
 =head2 Assist With -- Regex
 
-Hit C-o a r to bring up the Regex Tool which will let you compose a
+Hit C<C-o a r> to bring up the Regex Tool which will let you compose a
 Perl regular expression interactively with matching text highlighed.
 
 The Regex Tool appears in a new frame with three buffers: *Regex*,
@@ -978,10 +984,10 @@ everything.
 
 =head2 Convention: Action based
 
-The first level after the prefix key (C-o by default) is always an
+The first level after the prefix key (C<C-o> by default) is always an
 Action, e.g. Run, or Document.
 
-(In the case of C-o C-d for Document you can either think of it as
+(In the case of C<C-o C-d> for Document you can either think of it as
 "Document this for me!"  or "Give me Documentation!".)
 
 With a verb at the first level rather than a noun, the Action can be
@@ -1004,13 +1010,13 @@ etc).
 
 The first level indicates the Action to perform, and has the Ctrl
 modifier as a "Smart" / DWIMy modifier. This is both so it's easy to
-type C-o C-r without releasing the Ctrl key, and to provide a gateway
-to more specific actions when typing the key without Ctrl.
+type C<C-o C-r> without releasing the Ctrl key, and to provide a
+gateway to more specific actions when typing the key without Ctrl.
 
-E.g. C-o C-r means "Run file", C-o r r means "Run - Re-run".
+E.g. C<C-o C-r> means "Run file", C<C-o r r> means "Run - Re-run".
 
-E.g. C-o C-g means "Smart Goto", C-o g b means "Goto - Base Class", C-o
-g s means "Goto - SUPER Method".
+E.g. C<C-o C-g> means "Smart Goto", C<C-o g b> means "Goto - Base
+Class", C-o g s means "Goto - SUPER Method".
 
 
 
@@ -1068,8 +1074,8 @@ Remember that you can use the usual Emacs feature to display possible
 key stroke completions by hitting C-h whenever in the key stroke
 sequence.
 
-E.g. Hitting C-o g C-h will list all available key strokes starting
-wiht C-o g.
+E.g. Hitting C<C-o g C-h> will list all available key strokes starting
+wiht C<C-o g>.
 
 
 
@@ -1195,7 +1201,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0154';
+our $VERSION = '0.0155';
 
 
 

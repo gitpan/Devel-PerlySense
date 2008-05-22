@@ -103,23 +103,6 @@ sub formatOutputItem {
 
 
 
-=head2 renameIdentifier($identifier)
-
-Return $identifier with _ replaced with - to make them more Lispish.
-
-=cut
-sub renameIdentifier {
-    my ($identifier) = (@_);
-
-    $identifier =~ s/_/-/g;
-
-    return $identifier;
-}
-
-
-
-
-
 ###TODO: escape " and \ and fix newlines
 sub escapeValue {
     my ($value) = (@_);

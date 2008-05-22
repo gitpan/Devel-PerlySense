@@ -3,6 +3,16 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0155
+------
+
+* Fixed various Coverage fontification bugs. This didn't work at all
+  well with subs with _ in them.
+
+* New customization -- only indicate bad subroutine coverage
+
+
+
 0.0154
 ------
 
