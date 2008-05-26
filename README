@@ -64,7 +64,7 @@ SYNOPSIS
     => 43")
 
     "C-o a t" -- Assist With Test Count -- Synchronize invalid test count in
-    .t file with the *compilation* buffer.
+    .t file with the "*compilation*" buffer.
 
     Flymake may be used to highlight syntax errors and warnings in the
     source while editing (continously or at every save).
@@ -465,7 +465,7 @@ GETTING STARTED WITH EMACS
     test.)
 
     If any warnings, errors or test failures are encountered, they are
-    highlighted in the *compilation* buffer. Use C-c C-c to move from one
+    highlighted in the "*compilation*" buffer. Use C-c C-c to move from one
     error to the next. Or press RET on a highlighted line.
 
     If you wish to start many runs at the same time, rename the compilation
@@ -476,7 +476,7 @@ GETTING STARTED WITH EMACS
     recompile") the file. Useful when you have skipped around the source
     fixing errors and the .t file isn't visible.
 
-    "C-o r r" -- If not even the *compilation* buffer is visible, issue
+    "C-o r r" -- If not even the "*compilation*" buffer is visible, issue
     Re-Run File from anywhere to bring it up and re-run.
 
   Edit Test Count
@@ -487,11 +487,12 @@ GETTING STARTED WITH EMACS
     without moving point. The current and new test count is reported in the
     echo area.
 
-    Increase with the numeric argument ("C-u 18 C-o e t c"), or default 1.
+    Increase with the numeric argument (e.g. "C-u -2 C-o e t c"), or default
+    1.
 
   Assist With Test Count
     "C-o a t" -- If the test count in a .t file is out of sync with what's
-    correctly reported when running the test in the *compilation* buffer
+    correctly reported when running the test in the "*compilation*" buffer
     (see Run File), use this command to update the .t file.
 
     This updates the
@@ -499,12 +500,15 @@ GETTING STARTED WITH EMACS
       use Test::More tests => 43;
 
     line in the current buffer, so be sure to only run this when the
-    *compilation* buffer contains the run result of this buffer.
+    "*compilation*" buffer contains the run result of this buffer.
 
   Go to Tests - Other Files
     "C-o g t o" -- In a test file, navigate to the source files that are
-    covered by that test file. In a source file, navigate to test files
-    covering the file.
+    covered by that test file.
+
+    In a source file, navigate to test files covering the file. If the point
+    is on a line with a sub declaration, the list of test files is limited
+    to those that cover that particular sub.
 
     This requires that Devel::CoverX::Covered is installed and a
     Devel::Cover cover_db in the project root directory.
@@ -559,7 +563,7 @@ GETTING STARTED WITH EMACS
     project.yml file for instructions on how to configure Flymake
     activities.
 
-    Set "syntax" / "critic" to 1 to enable them.
+    Set "syntax" and/or "critic" to 1 to enable them.
 
     The primary reason "syntax" is turned off by default is that it's a
     potential security hole; running "perl -c" on a file will not only check
@@ -605,7 +609,7 @@ GETTING STARTED WITH EMACS
     Covered subs are displayed with a discrete green underline, uncovered
     subs get a red underline.
 
-  Code Coverage Setup
+  Coverage Visualization Setup
     PerlySense uses Devel::CoverX::Covered to manage the coverage data.
     Refer to that documentation for how to run your test suite with
     Devel::Cover and generate a "covered" database.
@@ -617,7 +621,7 @@ GETTING STARTED WITH EMACS
     Note: Running the test suite with Devel::Cover can be very, very slow. A
     nightly build is usually a good idea.
 
-  Using Code Coverage
+  Using Coverage Visualization
     You can toggle Visualization with "C-o C-v" at any time when editing.
 
     You can also enable Visualization in the install script (see above), or
@@ -646,12 +650,12 @@ GETTING STARTED WITH EMACS
     method and see that it isn't tested, that should ring a bell.
 
     To increase this effect you may wan to only highlight subs with bad
-    coverage (customize the variable ps/only-indicate-bad-sub-coverage)
+    coverage (customize the variable "ps/only-highlight-bad-sub-coverage")
 
     Note that you can hit "C-o g t o" -- "Go To Tests - Other Files" to see
     what test files are covering this file. If run the command with the
     cursor on a "sub" line, you'll get only the tests that cover that
-    particular subroutine (not yet implemented).
+    particular subroutine.
 
   Assist With -- Regex
     Hit "C-o a r" to bring up the Regex Tool which will let you compose a
@@ -1115,11 +1119,13 @@ API METHODS
 
     Die if $file doesn't exist, or on other errors.
 
-  raFileTestOther(file => $fileSource)
-    Return array ref with file names of files related to $file, i.e. the
-    "other" files related $file.
+  raFileTestOther(file => $fileSource, [sub => $sub])
+    Return array ref with file names of files related to $file and possibly
+    $sub, i.e. the "other" files related $file.
 
     If $file is a source file, return test files, and vice verca.
+
+    $sub is only ever active when $fileSource is a source file.
 
     Die if Devel::CoverX::Covered isn't installed.
 

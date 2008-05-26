@@ -615,13 +615,20 @@ amongst source files to go to.
 You must have Devel::CoverX::Covered installed and have a
 cover_db for your project in the project dir."
   (interactive)
-
-  (let* ((result-alist (ps/command-on-current-file-location "test_other_files"))
+  (let* ((sub-name
+          (save-excursion
+            (beginning-of-line)
+            (and (search-forward-regexp " *sub +\\([_a-z0-9]+\\)" (point-at-eol) t)
+                 (buffer-substring-no-properties (match-beginning 1) (match-end 1)))))
+         (sub-name-option
+          (if sub-name (format "--sub=%s" sub-name) ""))
+         (result-alist
+          (ps/command-on-current-file-location "test_other_files" sub-name-option))
          (message (alist-value result-alist "message")))
     (if message
         (message "%s" message)
       (let* ((other-files-list (alist-value result-alist "other_files"))
-             (project-dir (alist-value result-alist "project-dir"))
+             (project-dir (alist-value result-alist "project_dir"))
              (chosen-file (ps/choose-from-strings-alist "File: " other-files-list)))
         (if chosen-file
             (find-file (expand-file-name chosen-file project-dir)))
@@ -882,7 +889,7 @@ options, and return the parsed result as a sexp"
 (defun ps/shell-command-to-string (command)
   "Run command and return the response"
   (let ((response (shell-command-to-string command)))
-;;    (message "Called (%s), got (%s)" command response)
+;;;;    (message "Called (%s), got (%s)" command response)
     response
     )
   )

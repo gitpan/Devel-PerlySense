@@ -3,6 +3,18 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0156
+------
+
+* Added configuration tips to the Cookbook on how to run Test::Class
+  and custom test framework files.
+
+* Go To Tests - Other Files: C-o g t o -- Now sub-aware, i.e. when the
+  point is on a line with "sub name", the list is limited to that
+  sub. Requires Devel::CoverX::Covered >= 0.011 .
+
+
+
 0.0155
 ------
 

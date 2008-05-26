@@ -74,7 +74,7 @@ C<C-o e t c> -- Edit Test Count -- Increase the test count
 (e.g. "tests => 43")
 
 C<C-o a t> -- Assist With Test Count -- Synchronize invalid test count
-in .t file with the *compilation* buffer.
+in .t file with the C<*compilation*> buffer.
 
 Flymake may be used to highlight syntax errors and warnings in the
 source while editing (continously or at every save).
@@ -547,8 +547,8 @@ and type C<C-o C-r> to run the acceptance test the same way as a
 regular test.)
 
 If any warnings, errors or test failures are encountered, they are
-highlighted in the *compilation* buffer. Use C-c C-c to move from one
-error to the next. Or press RET on a highlighted line.
+highlighted in the C<*compilation*> buffer. Use C-c C-c to move from
+one error to the next. Or press RET on a highlighted line.
 
 If you wish to start many runs at the same time, rename the
 compilation buffer with C<M-x rename-buffer>.
@@ -560,8 +560,8 @@ Invoke C<C-o C-r> from within the *compilaton* buffer to re-run (C<M-x
 recompile>) the file. Useful when you have skipped around the source
 fixing errors and the .t file isn't visible.
 
-C<C-o r r> -- If not even the *compilation* buffer is visible, issue
-Re-Run File from anywhere to bring it up and re-run.
+C<C-o r r> -- If not even the C<*compilation*> buffer is visible,
+issue Re-Run File from anywhere to bring it up and re-run.
 
 
 =head2 Edit Test Count
@@ -573,29 +573,33 @@ C<C-o e t c> -- Increase the test count number in the line resembling
 without moving point. The current and new test count is reported in
 the echo area.
 
-Increase with the numeric argument (C<C-u 18 C-o e t c>), or default
-1.
+Increase with the numeric argument (e.g. C<C-u -2 C-o e t c>), or
+default 1.
 
 
 =head2 Assist With Test Count
 
 C<C-o a t> -- If the test count in a .t file is out of sync with
-what's correctly reported when running the test in the *compilation*
-buffer (see Run File), use this command to update the .t file.
+what's correctly reported when running the test in the
+C<*compilation*> buffer (see Run File), use this command to update the
+.t file.
 
 This updates the
 
   use Test::More tests => 43;
 
 line in the current buffer, so be sure to only run this when the
-*compilation* buffer contains the run result of this buffer.
+C<*compilation*> buffer contains the run result of this buffer.
 
 
 =head2 Go to Tests - Other Files
 
 C<C-o g t o> -- In a test file, navigate to the source files that are
-covered by that test file. In a source file, navigate to test files
-covering the file.
+covered by that test file.
+
+In a source file, navigate to test files covering the file. If the
+point is on a line with a sub declaration, the list of test files is
+limited to those that cover that particular sub.
 
 This requires that L<Devel::CoverX::Covered> is installed and a
 L<Devel::Cover> cover_db in the project root directory.
@@ -659,7 +663,7 @@ Create a PerlySense Project directory (see below) and look in the
 project.yml file for instructions on how to configure Flymake
 activities.
 
-Set "syntax" / "critic" to 1 to enable them.
+Set "syntax" and/or "critic" to 1 to enable them.
 
 The primary reason "syntax" is turned off by default is that it's a
 potential security hole; running "perl -c" on a file will not only
@@ -713,7 +717,7 @@ subs get a red underline.
 
 
 
-=head2 Code Coverage Setup
+=head2 Coverage Visualization Setup
 
 PerlySense uses L<Devel::CoverX::Covered> to manage the coverage
 data. Refer to that documentation for how to run your test suite with
@@ -727,7 +731,7 @@ Note: Running the test suite with Devel::Cover can be very, very
 slow. A nightly build is usually a good idea.
 
 
-=head2 Using Code Coverage 
+=head2 Using Coverage Visualization
 
 You can toggle Visualization with C<C-o C-v> at any time when editing.
 
@@ -762,12 +766,13 @@ and the source turns into a christmas tree! But if you browse past a
 complex method and see that it isn't tested, that should ring a bell.
 
 To increase this effect you may wan to only highlight subs with bad
-coverage (customize the variable ps/only-indicate-bad-sub-coverage)
+coverage (customize the variable
+C<ps/only-highlight-bad-sub-coverage>)
 
 Note that you can hit C<C-o g t o> -- "Go To Tests - Other Files" to
 see what test files are covering this file. If run the command with
 the cursor on a "sub" line, you'll get only the tests that cover that
-particular subroutine (not yet implemented).
+particular subroutine.
 
 
 
@@ -1201,7 +1206,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0155';
+our $VERSION = '0.0156';
 
 
 
@@ -1684,20 +1689,22 @@ sub rhRegexExample {
 
 
 
-=head2 raFileTestOther(file => $fileSource)
+=head2 raFileTestOther(file => $fileSource, [sub => $sub])
 
-Return array ref with file names of files related to $file, i.e. the
-"other" files related $file.
+Return array ref with file names of files related to $file and
+possibly $sub, i.e. the "other" files related $file.
 
 If $file is a source file, return test files, and vice verca.
+
+$sub is only ever active when $fileSource is a source file.
 
 Die if Devel::CoverX::Covered isn't installed.
 
 =cut
 sub raFileTestOther {
-    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+    my ($file, $sub) = Devel::PerlySense::Util::aNamedArg(["file", "sub"], @_);
     $self->setFindProject(file => $file) or die("Could not identify any PerlySense Project\n");
-    return $self->oProject->raFileTestOther(file => $file);
+    return $self->oProject->raFileTestOther(file => $file, sub => $sub);
 }
 
 

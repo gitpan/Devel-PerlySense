@@ -28,8 +28,8 @@ docs for that module for further information."
   :type 'boolean
   :group 'perly-sense)
 
-(defcustom ps/only-indicate-bad-sub-coverage nil
-  "When true, don't indicate any subs that aren't well
+(defcustom ps/only-highlight-bad-sub-coverage nil
+  "When true, only highlight subs that are badly
 covered. I.e. don't clutter up the display when there's nothing
 to do, only indicate subs that need improvements."
   :type 'boolean
@@ -71,7 +71,7 @@ to fontify the current region with code coverage"
   (when ps/enable-test-coverage-visualization
     (save-excursion
       (goto-char beg)
-      (while (search-forward-regexp "\n *\\(sub\\) +\\([_a-z]+\\)" end t)
+      (while (search-forward-regexp "\n *\\(sub\\) +\\([_a-z0-9]+\\)" end t)
         (let* ((sub-name (buffer-substring-no-properties (match-beginning 2) (match-end 2)))
                (sub-coverage-quality (ps/sub-coverage-quality sub-name))
                ;; (dummy (message "Quality for (%s) (%s)" sub-name sub-coverage-quality))
@@ -80,7 +80,7 @@ to fontify the current region with code coverage"
                           ((= sub-coverage-quality 0) ps/covered-bad-face)
                           ((and
                             (> sub-coverage-quality 0)
-                            (not ps/only-indicate-bad-sub-coverage))
+                            (not ps/only-highlight-bad-sub-coverage))
                            ps/covered-good-face)
                           (t nil)
                           )

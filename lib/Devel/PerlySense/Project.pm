@@ -534,18 +534,20 @@ sub rhSubCovered {
 
 
 
-=head2 raFileTestOther(file => $fileSource)
+=head2 raFileTestOther(file => $fileSource, [sub => $sub])
 
-Return array ref with file names of files related to $file, i.e. the
-"other" files related $file.
+Return array ref with file names of files related to $file and
+possibly $sub, i.e. the "other" files related $file.
 
 If $file is a source file, return test files, and vice verca.
+
+$sub is only ever active when $fileSource is a source file.
 
 Die if Devel::CoverX::Covered isn't installed.
 
 =cut
 sub raFileTestOther {
-    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+    my ($file, $sub) = Devel::PerlySense::Util::aNamedArg(["file", "sub"], @_);
 
     eval {
         require Devel::CoverX::Covered;
@@ -563,7 +565,7 @@ sub raFileTestOther {
             ? "test_files_covering"
             : "source_files_covered_by";
     my $fileRelative = file($file)->relative( $self->dirProject );
-    my $raFileTestOther = [ $db->$method($fileRelative) ];
+    my $raFileTestOther = [ $db->$method($fileRelative, $sub) ];
 
     return($raFileTestOther);
 }

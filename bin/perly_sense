@@ -60,7 +60,7 @@ else {
 
 #Oh yes, this file is in serious need of a makeover...
 sub main_perly_sense {
-    my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $nameClass, $nameMethod, $clearCache, $widthDisplay, $typeIo);
+    my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $sub, $nameClass, $nameMethod, $clearCache, $widthDisplay, $typeIo);
     debug("ARGV: (" . join(" ", "perly_sense",  @ARGV) . ")");
 
     GetOptions(
@@ -69,6 +69,7 @@ sub main_perly_sense {
         "dir:s"           => \$dir,
         "row:i"           => \$row,
         "col:i"           => \$col,
+        "sub:s"           => \$sub,
         "file_origin:s"   => \$fileOrigin,
         "dir_origin:s"    => \$dirOrigin,
         "class_name:s"    => \$nameClass,
@@ -421,7 +422,7 @@ sub main_perly_sense {
 
         eval {
             $oPs->setFindProject(file => $file);
-            my $raFileTestOther = $oPs->raFileTestOther(file => $file);
+            my $raFileTestOther = $oPs->raFileTestOther(file => $file, sub => $sub);
             @$raFileTestOther or die("No related test files found\n");
 
             print $oEditor->formatOutputDataStructure(
