@@ -35,7 +35,6 @@ Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 META.yml			# Will be created by "make dist"
-PerlySense-Editor-Vim-output.t
 README
 reinstall.sh
 t/00-load.t
@@ -115,6 +114,7 @@ t/PerlySense-Editor-Emacs-item-in-groups.t
 t/PerlySense-Editor-Emacs-line-wrap.t
 t/PerlySense-Editor-Emacs-output.t
 t/PerlySense-Editor-fit-columns.t
+t/PerlySense-Editor-Vim-output.t
 t/PerlySense-find-file-inc.t
 t/PerlySense-find-file-up-down.t
 t/PerlySense-find-module-interface.t

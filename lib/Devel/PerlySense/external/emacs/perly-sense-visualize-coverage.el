@@ -42,16 +42,16 @@ to do, only indicate subs that need improvements."
  (lambda ()
    (run-with-idle-timer 2 nil
     (lambda ()
-      (ps/load-sub-coverage-quality)
-      ))))
+      (when (buffer-live-p (current-buffer))
+        (ps/load-sub-coverage-quality))))))
 
 
 
 (defadvice cperl-font-lock-fontify-region-function
   (after display-cover activate)
   "Add coverage fontification after cperl fontification"
-  (ps/display-all beg end)
-  )
+  (when (buffer-live-p (current-buffer))
+    (ps/display-all beg end)))
 
 
 

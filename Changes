@@ -3,6 +3,14 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0157
+------
+
+* Fixed (potential) bug in covered visualization, when trying to
+  fontify a killed buffer.
+
+
+
 0.0156
 ------
 

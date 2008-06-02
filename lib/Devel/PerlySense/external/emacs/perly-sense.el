@@ -418,35 +418,31 @@ more items than that, use completing read instead."
 (defun ps/smart-docs-at-point ()
   "Display documentation for the code at point."
   (interactive)
-  (message "Smart docs...")
-  (let* ((result-alist (ps/command-on-current-file-location "smart_doc"))
-         (message-string (alist-value result-alist "message"))
-         (found          (alist-value result-alist "found"))
-         (name           (alist-value result-alist "name"))
-         (doc-type       (alist-value result-alist "doc_type"))
-         (text           (alist-value result-alist "text"))
-         )
-    (if (not (string= text ""))
-        (ps/display-doc-message-or-buffer doc-type name text)
-      (message "Nothing found")
-      )
-    (when message-string
-      (message "%s" message-string))
-    )
-  )
+  (ps/display-docs-from-command
+   "Smart docs..."
+   '(lambda ()
+      (ps/command-on-current-file-location "smart_doc"))))
 
 
 
-
-;; todo: remove duplication between this defun and the one above
 (defun ps/class-method-docs (class-name method)
   "Display documentation for the 'method' of 'class-name'."
   (interactive)
-  (message "Finding docs for method (%s)..." method)
-  (let* ((result-alist
-          (ps/command
-           "method_doc"
-           (format "--class_name=%s --method_name=%s --dir_origin=." class-name method)))
+  (ps/display-docs-from-command
+   (format "Finding docs for method (%s)..." method)
+   '(lambda ()
+      (ps/command
+       "method_doc"
+       (format "--class_name=%s --method_name=%s --dir_origin=." class-name method)))))
+
+
+
+(defun ps/display-docs-from-command (message command)
+  "Message `message`, and call `command`.
+Display documentation returned by the result-alist returned by
+calling command."
+  (message message)
+  (let* ((result-alist (funcall command))
          (message-string (alist-value result-alist "message"))
          (found          (alist-value result-alist "found"))
          (name           (alist-value result-alist "name"))

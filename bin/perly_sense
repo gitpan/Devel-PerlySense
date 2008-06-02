@@ -612,15 +612,18 @@ sub processFilesInDirs {
 
 __END__
 
-=head1 NAME - perly_sense
+=head1 NAME
 
-IntelliSense like editor support for Perl
-
+perly_sense -- CLI for L<Devel::PerlySense> with support for Emacs and
+Vim output formats.
 
 
 =head1 OPTIONS
 
 perly_sense COMMAND OPTIONS
+
+(Note that these docs are incomplete. if you really need to know, read
+the source of the script).
 
 =head2 smart_go_to --file, --row, --col
 
