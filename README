@@ -195,8 +195,9 @@ INSTALLATION
 
         ;; ** Color Config **
         ;; Emacs named colors: http://www.geocities.com/kensanata/colors.html
-        ;; These colors work fine with a white X11 background. They may not look
-        ;; that great on a console with the default color scheme.
+        ;; The following colors work fine with a white X11
+        ;; background. They may not look that great on a console with the
+        ;; default color scheme.
         (set-face-background 'flymake-errline "antique white")
         (set-face-background 'flymake-warnline "lavender")
         (set-face-background 'dropdown-list-face "lightgrey")
@@ -624,8 +625,8 @@ GETTING STARTED WITH EMACS
   Using Coverage Visualization
     You can toggle Visualization with "C-o C-v" at any time when editing.
 
-    You can also enable Visualization in the install script (see above), or
-    via customize.
+    You can also enable Visualization by default in the install script (see
+    above), or via customize.
 
     Whenever Visualization is enabled, PerlySense will try to fetch coverage
     information just after a file is opened and highlight the word "sub" for
@@ -653,9 +654,9 @@ GETTING STARTED WITH EMACS
     coverage (customize the variable "ps/only-highlight-bad-sub-coverage")
 
     Note that you can hit "C-o g t o" -- "Go To Tests - Other Files" to see
-    what test files are covering this file. If run the command with the
-    cursor on a "sub" line, you'll get only the tests that cover that
-    particular subroutine.
+    what test files are covering *this file*. If you run the command with
+    the cursor on a "sub" line, you'll get only the tests that cover *that
+    particular subroutine*.
 
   Assist With -- Regex
     Hit "C-o a r" to bring up the Regex Tool which will let you compose a

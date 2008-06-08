@@ -235,8 +235,9 @@ following in your .emacs config file:
 
     ;; ** Color Config **
     ;; Emacs named colors: http://www.geocities.com/kensanata/colors.html
-    ;; These colors work fine with a white X11 background. They may not look
-    ;; that great on a console with the default color scheme.
+    ;; The following colors work fine with a white X11
+    ;; background. They may not look that great on a console with the
+    ;; default color scheme.
     (set-face-background 'flymake-errline "antique white")
     (set-face-background 'flymake-warnline "lavender")
     (set-face-background 'dropdown-list-face "lightgrey")
@@ -735,8 +736,8 @@ slow. A nightly build is usually a good idea.
 
 You can toggle Visualization with C<C-o C-v> at any time when editing.
 
-You can also enable Visualization in the install script (see above),
-or via customize.
+You can also enable Visualization by default in the install script
+(see above), or via customize.
 
 Whenever Visualization is enabled, PerlySense will try to fetch
 coverage information just after a file is opened and highlight the
@@ -770,9 +771,9 @@ coverage (customize the variable
 C<ps/only-highlight-bad-sub-coverage>)
 
 Note that you can hit C<C-o g t o> -- "Go To Tests - Other Files" to
-see what test files are covering this file. If run the command with
-the cursor on a "sub" line, you'll get only the tests that cover that
-particular subroutine.
+see what test files are covering I<this file>. If you run the command
+with the cursor on a "sub" line, you'll get only the tests that cover
+I<that particular subroutine>.
 
 
 
@@ -1206,7 +1207,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0157';
+our $VERSION = '0.0158';
 
 
 

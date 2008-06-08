@@ -40,7 +40,7 @@ to do, only indicate subs that need improvements."
 (add-hook
  'cperl-mode-hook
  (lambda ()
-   (run-with-idle-timer 2 nil
+   (run-with-idle-timer 1 nil
     (lambda ()
       (when (buffer-live-p (current-buffer))
         (ps/load-sub-coverage-quality))))))
@@ -119,9 +119,10 @@ current buffer, if loaded. Otherwise, return an empty '() alist."
 
 
 (defun ps/load-coverage-if-active ()
-  "Call 'perly_sense covered_subs' on the buffer file name and
-store the data in ps/alist-covered-subs-quality, or store '() if
-there was no data returned.
+  "Call 'perly_sense covered_subs' asynchronously on the buffer
+file name and store the data in ps/alist-covered-subs-quality, or
+store '() if there was no data returned. Fontify buffer if
+appropriate.
 
 Only get coverage data if ps/enable-test-coverage-visualization
 is true and this is a cperl-mode buffer.
@@ -129,20 +130,23 @@ is true and this is a cperl-mode buffer.
 In any case, consider data loaded from now on.
 
 Return t if coverage was loaded, else nil."
-  ;; '(("nameVcs" . "0") ("newFromLocation" . "4"))
   (when (and ps/enable-test-coverage-visualization (string-equal major-mode "cperl-mode"))
-    (let* ((result-alist (ps/command-on-current-file-location "covered_subs"))
-           (message-string    (alist-value result-alist "message"))
-           (alist-sub-quality (alist-value result-alist "sub_quality"))
-           )
-      (when message-string (message "%s" message-string))
-      
-      (setq ps/alist-covered-subs-quality
-            (if alist-sub-quality alist-sub-quality '()))
-      (setq ps/alist-covered-subs-quality-loaded-p t)
-      )
-    t
-    )
+    (lexical-let ((source-buffer (current-buffer)))
+      (ps/async-command-on-current-file-location
+       "covered_subs"
+       (lambda (result-alist)
+         (let ((message-string    (alist-value result-alist "message"))
+               (alist-sub-quality (alist-value result-alist "sub_quality"))
+               )
+           (when message-string (message "%s" message-string))
+           (when (buffer-live-p source-buffer)
+             (with-current-buffer source-buffer
+               (setq ps/alist-covered-subs-quality
+                     (if alist-sub-quality alist-sub-quality '()))
+               (setq ps/alist-covered-subs-quality-loaded-p t)
+               (font-lock-fontify-buffer)
+               (message "Coverage information loaded")
+               )))))))
   )
 
 
@@ -158,7 +162,7 @@ Return t if coverage was loaded, else nil."
 (defun ps/load-sub-coverage-quality ()
   "Load coverage information and refresh buffer display"
   (interactive)
-  (and (ps/load-coverage-if-active) (font-lock-fontify-buffer))
+  (ps/load-coverage-if-active)
   )
 
 
@@ -168,7 +172,6 @@ Return t if coverage was loaded, else nil."
   (interactive)
   (message "Reloading coverage information...")
   (ps/load-sub-coverage-quality)
-  (message "Loaded")
   )
 
 

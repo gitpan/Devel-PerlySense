@@ -13,6 +13,9 @@
 ;(message "%s" (prin1-to-string thing))
 
 
+(load "async-shell-command-to-string" nil t)
+
+
 (defun alist-value (alist key)
   "Return the value of KEY in ALIST" ;; Surely there must be an existing defun to do this that I haven't found...
   (cdr (assoc key alist)))
@@ -869,6 +872,26 @@ and return the parsed result as a sexp"
 
 
 
+(defun ps/async-command-on-current-file-location (command callback &optional options)
+  "Call perly_sense COMMAND with the current file and row/col,
+call CALLBACK with the parsed result as a sexp"
+  (unless options (setq options ""))
+  (lexical-let ((callback-fun callback))
+    (ps/async-shell-command-to-string
+     (format "perly_sense %s \"--file=%s\" --row=%s --col=%s %s --width_display=%s"
+             command
+             (buffer-file-name)
+             (ps/current-line)
+             (+ 1 (current-column))
+             options
+             (- (window-width) 2))
+     (lambda (output)
+       (funcall callback-fun (ps/parse-sexp output))
+       )
+     )))
+
+
+
 (defun ps/command (command &optional options)
   "Call 'perly_sense COMMAND OPTIONS' and some additional default
 options, and return the parsed result as a sexp"
@@ -889,6 +912,22 @@ options, and return the parsed result as a sexp"
     response
     )
   )
+
+
+
+(defun ps/async-shell-command-to-string (command callback)
+  "Run command asynchronously and call callback with the
+response"
+  (lexical-let
+      ((command-string command)
+       (callback-fun callback))
+;;     (message "Calling (%s)" command-string)
+    (async-shell-command-to-string
+     command
+     (lambda (response)
+;;        (message "Called (%s), got (%s)" command-string response) 
+       (funcall callback-fun response)
+       ))))
 
 
 
@@ -1716,15 +1755,12 @@ or go to the Bookmark at point"
 
 
 
-
-(load "perly-sense-visualize-coverage")
-(if ps/load-flymake (load "perly-sense-flymake"))
+(load "perly-sense-visualize-coverage" nil t)
+(if ps/load-flymake (load "perly-sense-flymake" nil t))
 
 
 
 (provide 'perly-sense)
-
-
 
 
 
