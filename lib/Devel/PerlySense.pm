@@ -63,6 +63,10 @@ current Version Control system.
 C<C-o g t o> -- Go To Tests - Other Files -- Go to any related test or
 source files given a L<Devel::CoverX::Covered> covered db.
 
+C<C-o g p o> -- Go To Project's Other Files -- Go to I<corresponding>
+files given a C<.corresponding_file> config file (see
+L<File::Corresponding>).
+
 C<C-o C-r> -- Run file -- Run the current file using the Compilation
 mode and the settings appropriate for the source type (Test, Module,
 etc.). Highlight errors and jump to source with C-c C-c.
@@ -424,9 +428,25 @@ See also:
 =back
 
 
+=head2 Go to Project's Other Files
+
+C<C-o g p o> -- Navigate to I<other> source files in the project that
+correspond to the current file.
+
+This is useful if you have similarly named files in different parts of
+the source tree that belong to each other, as is common in projects
+with an MVC structure (e.g. those based L<Catalyst>).
+
+This requires that you have a C<.corresponding_file> config file in
+the C<.PerlySenseProject> or project root directory (or your home
+directory).
+
+See L<File::Corresponding> for details.
+
+
 =head2 Class Overview
 
-Pressing C-o C<C-o> will bring up the Class Overview of the Class name
+Pressing C<C-o C-o> will bring up the Class Overview of the Class name
 at point (not yet implemented), or otherwise the current Class (the
 active Package).
 
@@ -1207,7 +1227,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0158';
+our $VERSION = '0.0159';
 
 
 
@@ -1693,7 +1713,7 @@ sub rhRegexExample {
 =head2 raFileTestOther(file => $fileSource, [sub => $sub])
 
 Return array ref with file names of files related to $file and
-possibly $sub, i.e. the "other" files related $file.
+possibly $sub, i.e. the "other" files related to $file.
 
 If $file is a source file, return test files, and vice verca.
 
@@ -1706,6 +1726,25 @@ sub raFileTestOther {
     my ($file, $sub) = Devel::PerlySense::Util::aNamedArg(["file", "sub"], @_);
     $self->setFindProject(file => $file) or die("Could not identify any PerlySense Project\n");
     return $self->oProject->raFileTestOther(file => $file, sub => $sub);
+}
+
+
+
+
+
+=head2 raFileProjectOther(file => $fileSource)
+
+Return array ref with file names of files related to $file, i.e. the
+files corresponding to $file according to the .corresponding_files
+config file..
+
+Die if there is no config file.
+
+=cut
+sub raFileProjectOther {
+    my ($file, $sub) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+    $self->setFindProject(file => $file) or die("Could not identify any PerlySense Project\n");
+    return $self->oProject->raFileProjectOther(file => $file);
 }
 
 

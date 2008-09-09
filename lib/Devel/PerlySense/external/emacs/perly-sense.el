@@ -612,7 +612,7 @@ amongst test files to go to. When in a test file, let user choose
 amongst source files to go to.
 
 You must have Devel::CoverX::Covered installed and have a
-cover_db for your project in the project dir."
+'covered' db for your project in the project dir."
   (interactive)
   (let* ((sub-name
           (save-excursion
@@ -633,6 +633,31 @@ cover_db for your project in the project dir."
             (find-file (expand-file-name chosen-file project-dir)))
         )))
   )
+
+
+
+(defun ps/goto-project-other-files ()
+  "Go to other Project files. Let user choose amongst files
+corresponding to the current one to go to.
+
+You must have a File::Corresponding config file (called
+.corresponding_file) in the .PerlySenseProject dir (by default).
+"
+  (interactive)
+  (let* ((result-alist
+          (ps/command-on-current-file-location "project_other_files"))
+         (message (alist-value result-alist "message")))
+    (if message
+        (message "%s" message)
+      (let* ((other-files-list (alist-value result-alist "other_files"))
+             (project-dir (alist-value result-alist "project_dir"))
+             (chosen-file (ps/choose-from-strings-alist "File: " other-files-list)))
+        (if chosen-file
+            (find-file (expand-file-name chosen-file project-dir)))
+        ))
+    )
+  )
+
 
 
 
@@ -1171,6 +1196,7 @@ t on success, else nil"
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun ps/parse-sexp (result)
 ;;  (message "RESPONSE AS TEXT |%s|" result)
   (if (string= result "")
@@ -1749,6 +1775,7 @@ or go to the Bookmark at point"
 
 (global-set-key (format "%sge" ps/key-prefix) 'ps/compile-goto-error-file-line)
 (global-set-key (format "%sgto" ps/key-prefix) 'ps/goto-test-other-files)
+(global-set-key (format "%sgpo" ps/key-prefix) 'ps/goto-project-other-files)
 
 (global-set-key (format "%sar" ps/key-prefix) 'ps/regex-tool)
 

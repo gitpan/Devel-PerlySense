@@ -35,6 +35,7 @@ use Path::Class;
 use File::Slurp;
 use File::chdir;
 use Perl::Critic;
+use List::MoreUtils qw/ uniq /;
 
 use Devel::PerlySense;
 use Devel::PerlySense::Util;
@@ -569,6 +570,49 @@ sub raFileTestOther {
 
     return($raFileTestOther);
 }
+
+
+
+
+
+=head2 raFileProjectOther(file => $fileSource, [sub => $sub])
+
+Return array ref with file names of files corresponding to $file.
+
+Die if there is no config file.
+
+=cut
+sub raFileProjectOther {
+    my ($file, $sub) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+
+    eval {
+        require File::Corresponding;
+        require File::Corresponding::Config::Find;
+    };
+    $@ and die("File::Corresponding isn't installed\n");
+
+
+    # Work from the project dir, so the rest of the paths will just work out
+    local $CWD = $self->dirProject . "";
+
+    my $fileConfig = File::Corresponding::Config::Find->new(
+        preferred_dirs => [ dir(".PerlySenseProject"), dir(".") ],
+    )->user_config(".corresponding_file")
+            or die("Could not find a '.corresponding_file' config file in either 1) the .PerlySenseProject;  b) the current directory;  c) your home directory. See perldoc File::Corresponding for information on how to create one.\n");
+
+    my $corresponding = File::Corresponding->new();
+    eval { $corresponding->load_config_file($fileConfig) }
+            or die("Could not read config file ($fileConfig): $@\n");
+
+    my $fileRelative = file($file)->relative( $self->dirProject );
+    my @aFileProjectOther = uniq(
+        map { $_->file }
+        @{$corresponding->corresponding( $fileRelative )}
+    );
+
+    return(\@aFileProjectOther);
+}
+
 
 
 

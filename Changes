@@ -3,6 +3,16 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0159
+------
+
+* Go To Project's Other Files - C-o g p o -- If you have a
+  .corresponding_files in the .PerlySenseProject directory, this will
+  let you navigate to those other files. See File::Corresponding for
+  more info.
+
+
+
 0.0158
 ------
 
