@@ -50,7 +50,7 @@ diag("Look for a .PerlySenseProject indicate a project");
     my $fileTest = "$dirTest/Lawn.pm";
 
     ok($oPerlySense->setFindProject(file => $fileTest), "Set project ok");
-    
+
     is_deeply(
         $oPerlySense->rhConfig->{project},
         {

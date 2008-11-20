@@ -2,41 +2,41 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-          'PL_FILES' => {},
-          'INSTALLDIRS' => 'site',
           'NAME' => 'Devel::PerlySense',
+          'VERSION_FROM' => 'lib/Devel/PerlySense.pm',
+          'PREREQ_PM' => {
+                           'App::Ack' => '0',
+                           'Cache::Cache' => '0',
+                           'Carp' => '0',
+                           'Data::Dumper' => '0',
+                           'File::Basename' => '0',
+                           'File::Corresponding' => '0',
+                           'File::Find::Rule' => '0',
+                           'File::Slurp' => '0',
+                           'File::Spec' => '3.25',
+                           'File::chdir' => '0',
+                           'Getopt::Long' => '0',
+                           'Graph::Easy' => '0.57',
+                           'HTTP::Date' => '0',
+                           'List::MoreUtils' => '0',
+                           'PPI' => '1.003',
+                           'PPI::HTML' => '0',
+                           'Path::Class' => '0.11',
+                           'Perl::Critic' => '0',
+                           'Perl::Tidy' => '0',
+                           'Pod::Text' => '0',
+                           'Pod::Usage' => '0',
+                           'Spiffy' => '0.2',
+                           'Test::Differences' => '0',
+                           'Test::Exception' => '0',
+                           'Test::More' => '0',
+                           'Text::Table' => '1.107',
+                           'YAML::Tiny' => '0'
+                         },
+          'INSTALLDIRS' => 'site',
           'EXE_FILES' => [
                            'bin/perly_sense'
                          ],
-          'VERSION_FROM' => 'lib/Devel/PerlySense.pm',
-          'PREREQ_PM' => {
-                           'Text::Table' => '1.107',
-                           'PPI' => '1.003',
-                           'Pod::Usage' => 0,
-                           'Pod::Text' => 0,
-                           'File::Spec' => '3.25',
-                           'App::Ack' => 0,
-                           'Perl::Tidy' => 0,
-                           'File::chdir' => 0,
-                           'Cache::Cache' => 0,
-                           'Graph::Easy' => '0.57',
-                           'List::MoreUtils' => 0,
-                           'File::Slurp' => 0,
-                           'Getopt::Long' => 0,
-                           'File::Find::Rule' => 0,
-                           'Test::Exception' => 0,
-                           'File::Corresponding' => 0,
-                           'YAML::Tiny' => 0,
-                           'Spiffy' => '0.2',
-                           'Data::Dumper' => 0,
-                           'HTTP::Date' => 0,
-                           'Carp' => 0,
-                           'Test::More' => 0,
-                           'Test::Differences' => 0,
-                           'Perl::Critic' => 0,
-                           'Path::Class' => '0.11',
-                           'PPI::HTML' => 0,
-                           'File::Basename' => 0
-                         }
+          'PL_FILES' => {}
         )
 ;

@@ -161,10 +161,25 @@ field "raLocationSub" => [];
 
 
 
+
+
+
+=head2 raPlugin
+
+Array ref with Devel::PerlySense::Plugin::Syntax objects.
+
+Default: []
+
+=cut
+field "raPlugin" => [];
+
+
+
+
+
 =head1 API METHODS
 
 =head2 new()
-
 Create new empty Meta object
 
 =cut
@@ -211,16 +226,27 @@ sub parse {
     my @aLocationPod;
     my @aPodHeadingCurrent;
     my $packageCurrent = "main";
+    my $rhDataDocument = {
+        raPackage        => \@aPackage,
+        raNameModuleUse  => \%hNameModuleUse,
+        raNameModuleBase => \%hNameModuleBase,
+        rhRowColModule   => \%hRowColModule,
+        rhRowColMethod   => \%hRowColMethod,
+        raLocationPod    => \@aLocationPod,
+    };
 
     $oDocument->aDocumentFind(
         sub {
             my ($oTop, $oNode) = @_;
             my $oLocation = $oNode->location or return(0);
-
             eval {
 
                 my ($row, $col) = ($oLocation->[0], $oLocation->[1]);
-                my $pkgNode = ref($oNode);    #Optimization: compare against the string instead of doing insanely many ->isa(). This is slightly fragile wrt changes in subclasses in PPI.
+
+                #Optimization: compare against the string instead of
+                #doing insanely many ->isa(). This is slightly fragile
+                #wrt changes in subclasses in PPI.
+                my $pkgNode = ref($oNode);
 
 
 
@@ -272,7 +298,7 @@ sub parse {
                 ## fragile: stuff to the right...
                 if($pkgNode eq "PPI::Token::Symbol" && $oNode eq '@ISA') {
                     my $oStatement = $oNode->statement;
-                    
+
                     ###TODO: ignore module names with interpolated variables
                     if($oStatement =~ /\@ISA \s* = \s* (.+);$/xs) {
                         my $modules = $1;
@@ -386,6 +412,16 @@ sub parse {
                 }
 
 
+                for my $plugin (@{$self->raPlugin()}) {
+                    $plugin->parse(
+                        rhDataDocument => $rhDataDocument,
+                        oDocument      => $oDocument,
+                        oNode          => $oNode,
+                        pkgNode        => $pkgNode,
+                        row            => $row,
+                        col            => $col,
+                    );
+                }
             };
             $@ and warn($@);
 

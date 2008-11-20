@@ -321,7 +321,7 @@ GETTING STARTED WITH EMACS
     system. This typically displays the change status of the files in the
     project. A dired of the Project dir is used in lieu of a VCS.
 
-    First, try to go to an existing VC project buffer.
+    First, try to go to any existing VC project buffer.
 
     If there is no VC buffer open, find out what VCS is used, and display
     the Project view.
@@ -351,6 +351,17 @@ GETTING STARTED WITH EMACS
             rsion-control/>,
 
         *   <http://www.emacsblog.org/2007/05/17/package-faves-psvn/>
+
+    *   Git -- Magit
+
+        This requires you to have Magit installed. Download and manual at:
+        <http://zagadka.vm.bytemark.co.uk/magit/>.
+
+        When you switch to an existing Magit status buffer the status is
+        refreshed automatically to display the current status.
+
+        If there are many *magit: NAME* buffers open, the first existing one
+        will be used (whichever that might be).
 
   Go to Project's Other Files
     "C-o g p o" -- Navigate to *other* source files in the project that

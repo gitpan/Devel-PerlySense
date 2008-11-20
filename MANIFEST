@@ -62,6 +62,8 @@ t/data/project-lib/Game/UI.pm
 t/data/project-lib/Game/UI/None.pm
 t/data/project/with-dir/source/lib/Game/Lawn.pm
 t/data/project/with-dir/source/t/Game-Lawn.t
+t/data/project/with-git/source/.git/exists.txt
+t/data/project/with-git/source/bogus/t/Game-Lawn.t
 t/data/project/with-perlysenseproject/source/.PerlySenseProject/project.yml
 t/data/project/with-perlysenseproject/source/bogus/bin/worms.pl
 t/data/project/with-perlysenseproject/source/bogus/lib/Game/Lawn.pm
@@ -127,6 +129,7 @@ t/PerlySense-module-pod.t
 t/PerlySense-project-config.t
 t/PerlySense-Project-file-in-project.t
 t/PerlySense-Project-find.t
+t/PerlySense-Project-vcs.t
 t/PerlySense-run-file.t
 t/PerlySense-smart-doc-module-method.t
 t/PerlySense-smart-doc-object-method.t

@@ -9,10 +9,15 @@
 
 
 
+
+
+
+;; (require 'cl-seq)  ;; find-if
+
+
+
 ;;;; Utilities
 ;(message "%s" (prin1-to-string thing))
-
-
 (load "async-shell-command-to-string" nil t)
 
 
@@ -25,6 +30,16 @@
 (defun alist-num-value (alist key)
   "Return the numeric value of KEY in ALIST"
   (string-to-number (alist-value alist key)))
+
+
+
+
+
+
+(defun find-buffer-name-match (match-name)
+  "Return the first buffer found matching 'string-match',
+or nil if none exists"
+  (find-if (lambda (x) (string-match match-name (buffer-name x))) (buffer-list)))
 
 
 
@@ -694,7 +709,10 @@ Return the chosen string, or nil if the user canceled.
 project dir if there is no vc."
   (interactive)
   (message "Goto Version Control...")
-  (let ((vc-buffer (get-buffer "*svn-status*")))  ;; (or *cvs-status*, etc)
+  (let ((vc-buffer (or
+                    (get-buffer "*svn-status*")
+                    (ps/get-first-magit-status-buffer-refreshed)
+                    )))  ;; (or *cvs-status*, etc)
     (if vc-buffer
         (ps/switch-to-buffer vc-buffer)
       (let* ((result-alist (ps/command "vcs_dir"))
@@ -703,12 +721,7 @@ project dir if there is no vc."
              )
         (if (not (string= project-dir ""))
             (ps/vc-project vcs-name project-dir)
-          (message "No Project dir found")
-          )
-        )
-      )
-    )
-  )
+          (message "No Project dir found"))))))
 
 
 
@@ -719,11 +732,38 @@ the PROJECT-DIR, e.g. run svn-status for PROJECT-DIR."
    ((string= vcs "svn")
     (message "SVN status...")
     (svn-status project-dir))
+   ((string= vcs "git")
+    ;; For other git modes, introduce a customization var and branch here
+    (message "Magit status...")
+    (condition-case nil
+        (magit-status project-dir)
+      (error
+       (message "A Git repository was found, but the Magit mode isn't loaded"))))
    (t
     (message "No VCS...")
     (dired project-dir))
    )
   )
+
+
+
+
+
+
+(defun ps/get-first-magit-status-buffer-refreshed ()
+  "Return the first buffer found that is a Magit status buffer,
+or nil if none exists.
+
+If a Magit buffer is found, magit-refresh it before returning it.
+"
+  (let ((magit-buffer (find-buffer-name-match "^\\*magit: ")))
+    (if magit-buffer
+        (with-current-buffer magit-buffer (magit-refresh))
+      )
+    magit-buffer
+    ))
+
+
 
 
 
@@ -1023,11 +1063,11 @@ no method was found."
 
 (defun ps/go-to-location-alist (location-alist)
   "Go to the LOCATION-ALIST which may contain the (keys: file,
-row, col, class-name).
+row, col, class_name).
 
 If file is specified, visit that file first.
 
-If class-name is specified, display that class name in the echo
+If class_name is specified, display that class name in the echo
 area."
   (let ((file (alist-value location-alist "file"))
         (row (alist-num-value location-alist "row"))
@@ -1042,9 +1082,8 @@ area."
   )
 
 
-
 (defun ps/go-to-class-alist (class-alist)
-  "Go to the Class class-alist (keys: class-name, file, row)"
+  "Go to the Class class-alist (keys: class_name, file, row)"
   (let ((class-name (alist-value class-alist "class_name"))
         (class-inheritance (alist-value class-alist "class_inheritance"))
         (file (alist-value class-alist "file"))
@@ -1060,7 +1099,7 @@ area."
   "Let the user choose a class-alist from the lass-list of Class
 definitions.
 
-Return class-alist with (keys: class-name, file, row), or nil if
+Return class-alist with (keys: class_name, file, row), or nil if
 none was chosen."
   (ps/choose-class-alist-from-class-list-with-dropdown what-text class-list)
   )
@@ -1071,7 +1110,7 @@ none was chosen."
   "Let the user choose a class-alist from the lass-list of Class
 definitions using a dropdown list.
 
-Return class-alist with (keys: class-name, file, row), or nil if
+Return class-alist with (keys: class_name, file, row), or nil if
 none was chosen."
   (let* ((class-description-list (mapcar (lambda (class-alist)
                                     (alist-value class-alist "class_description")
@@ -1081,7 +1120,7 @@ none was chosen."
     (if n
         (let ((chosen-class-description (nth n class-description-list)))
           (ps/get-alist-from-list
-           class-list "class-description" chosen-class-description)
+           class-list "class_description" chosen-class-description)
           )
       nil
       )
@@ -1094,7 +1133,7 @@ none was chosen."
   "Let the user choose a class-alist from the lass-list of Class
 definitions using completing read.
 
-Return class-alist with (keys: class-name, file, row)"
+Return class-alist with (keys: class_name, file, row)"
   (let* ((class-description-list (mapcar (lambda (class-alist)
                                     (alist-value class-alist "class_description")
                                     ) class-list))
@@ -1208,8 +1247,8 @@ t on success, else nil"
   )
 
 
-;;;(ps/parse-result-into-alist "'((\"class-overview\" . \"Hej baberiba [ Class::Accessor ]\") (\"class-name\" . \"Class::Accessor\") (\"message\" . \"Whatever\"))")
-;;(ps/parse-result-into-alist "'((\"class-name\" . \"alpha\"))")
+;;;(ps/parse-result-into-alist "'((\"class-overview\" . \"Hej baberiba [ Class::Accessor ]\") (\"class_name\" . \"Class::Accessor\") (\"message\" . \"Whatever\"))")
+;;(ps/parse-result-into-alist "'((\"class_name\" . \"alpha\"))")
 
 
 

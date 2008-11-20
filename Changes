@@ -3,6 +3,21 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0160
+------
+
+* Git support (Magit) for the Version Control commands.
+  See: http://zagadka.vm.bytemark.co.uk/magit/
+
+* Fixed bug: Coverage visualization always instantiates an empty
+  "covered" directory, even if there isn't any coverage to begin with.
+
+* Fixed bug: Nothing happens after choosing between > 1 base classes
+  in "Go to Base class" (response key named "class-description"
+  instead of "class_description").
+
+
+
 0.0159
 ------
 

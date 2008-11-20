@@ -153,12 +153,26 @@ The name of the Version Control system for the project.
 
 Readonly. Currently supported:
 
+  git
   svn
   none
 
+In that order, so that if there's a Git repo on top of a SVN repo, git
+is found.
+
 =cut
 sub nameVcs {
+
+    #Git
+    $self->oPerlySense->dirFindLookingAround(
+        ".git",
+        $self->dirProject,
+        ["."],
+    ) and return("git");
+
+    #Subversion
     -d dir($self->dirProject, ".svn") and return("svn");
+
     return("none");
 }
 
@@ -518,14 +532,17 @@ sub rhSubCovered {
     ###TODO: use dir specified in config and/or on command line
     local $CWD = $self->dirProject . "";
 
+    ###TODO: Change Devel::CoverX::Covered to expose this dir properly
+    ###and get it from there.
+    my $dirDb = "covered";
+    -d $dirDb or return( {} );
+
     my $db = Devel::CoverX::Covered::Db->new();
-
     my $fileRelative = file($file)->relative( $self->dirProject );
-
     my %hSubQuality;
     for my $raSubQuality ( $db->covered_subs($fileRelative) ) {
-        my ($sub, $qualitu) = @$raSubQuality;
-        $hSubQuality{$sub} += $qualitu;
+        my ($sub, $quality) = @$raSubQuality;
+        $hSubQuality{$sub} += $quality;
     }
 
     return(\%hSubQuality);

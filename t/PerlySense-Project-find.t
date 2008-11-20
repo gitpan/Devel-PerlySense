@@ -29,7 +29,7 @@ ok(
     my $oPerlySense = Devel::PerlySense->new(),
     "New PerlySense object ok",
 );
-            
+
 
 
 is(
@@ -62,9 +62,10 @@ diag("Look for dirs that indicate a project");
     my $rexDirProject = $dirProject;
     $rexDirProject =~ s|\W|.|g;
 
+
     my $dirTest = "$dirProject/lib/Game";
     my $fileTest = "$dirTest/Lawn.pm";
-    
+
     ok(
         my $oProjectDir = Devel::PerlySense::Project->newFromLocation(
             dir => $dirTest,

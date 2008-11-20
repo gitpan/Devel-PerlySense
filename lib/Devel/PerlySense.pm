@@ -390,7 +390,7 @@ C<C-o g v> -- Go to the Project view for the current Version Control
 system. This typically displays the change status of the files in the
 project. A dired of the Project dir is used in lieu of a VCS.
 
-First, try to go to an existing VC project buffer.
+First, try to go to any existing VC project buffer.
 
 If there is no VC buffer open, find out what VCS is used, and display
 the Project view.
@@ -423,7 +423,21 @@ See also:
 
 =item * L<http://www.emacsblog.org/2007/05/17/package-faves-psvn/>
 
+
 =back
+
+
+=item * Git -- Magit
+
+This requires you to have Magit installed. Download and manual at:
+L<http://zagadka.vm.bytemark.co.uk/magit/>.
+
+When you switch to an existing Magit status buffer the status is
+refreshed automatically to display the current status.
+
+If there are many *magit: NAME* buffers open, the first existing one
+will be used (whichever that might be).
+
 
 =back
 
@@ -1227,7 +1241,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0159';
+our $VERSION = '0.0160';
 
 
 
@@ -2050,7 +2064,9 @@ sub dirFindLookingAround {
         }
 
         $dir = $dir->parent;
-        $dir =~ m{^( / | \\ | \w: \\ )$}x and last;  #At the root? Unix/Win32. What filesystems are missing?
+
+        #At the root? Unix/Win32. What filesystems are missing?
+        $dir =~ m{^( / | \\ | \w: \\ )$}x and last;
     }
 
     return(undef);

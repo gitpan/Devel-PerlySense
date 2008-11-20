@@ -2,6 +2,7 @@
 $|++;
 use lib q|c:/Dokument/Project/Dev/CPAN/Devel-PerlySense/trunk/source/lib|;
 use lib "c:/Dokument/Project/Dev/CPAN/Devel-CoverX-Covered/trunk/source/lib";
+
 use strict;
 
 use Getopt::Long;
@@ -572,7 +573,7 @@ sub main_perly_sense {
         print $oEditor->formatOutputDataStructure(
             rhData => {
                 project_dir => $oPs->oProject->dirProject,
-                vcs_name => $oPs->oProject->nameVcs,
+                vcs_name    => $oPs->oProject->nameVcs,
             },
         );
 

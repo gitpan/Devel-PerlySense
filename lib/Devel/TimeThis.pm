@@ -45,8 +45,10 @@ use Time::HiRes qw/time/;
 
 
 
+
+
 my $rhNameInfo = {};
-        
+
 
 
 
@@ -107,7 +109,7 @@ sub END {
         sort { $b->{timeDurationAcc} <=> $a->{timeDurationAcc} }
                 values %$rhNameInfo)
             {
-        printf("% 40s: % 4d : %3.5f\n", $rhInfo->{name}, $rhInfo->{count}, $rhInfo->{timeDurationAcc});       
+        printf("% 40s: % 4d : %3.5f\n", $rhInfo->{name}, $rhInfo->{count}, $rhInfo->{timeDurationAcc});
     }
 }
 
