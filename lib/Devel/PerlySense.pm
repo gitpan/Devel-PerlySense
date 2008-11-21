@@ -9,8 +9,13 @@ Devel::PerlySense - Perl IDE backend with Emacs frontend
 PerlySense is a Perl IDE backend that integrates with editor
 frontends, currently Emacs.
 
+(While no one has written a Vim frontend, PerlySense can emit Vim
+style data structures.)
+
 Conveniently navigate and browse the code and documentation of your
-project and Perl installation.
+project and Perl installation. Navigate between tests and source
+(L<Devel::CoverX::Covered>), and between related files
+(L<File::Corresponding>).
 
 Run tests and scripts and syntax check source with easy navigation to
 errors/warnings/failing tests.
@@ -1241,7 +1246,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0160';
+our $VERSION = '0.0161';
 
 
 
