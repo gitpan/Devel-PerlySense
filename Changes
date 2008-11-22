@@ -3,6 +3,15 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0163
+------
+
+* Another attempt, this time by introducing files in otherwise empty
+  directories. Maybe different versions of tar extract files
+  differently.
+
+
+
 0.0162
 ------
 
