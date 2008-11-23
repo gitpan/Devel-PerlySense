@@ -1164,7 +1164,8 @@ not...  well, there's always Java >:)
 PerlySense provides a plugin architecture for supporting custom syntax
 provided by OO modules such as Moose, or Class::Accessor.
 
-Currently Moose is supported.
+Currently Moose is supported via the L<Devel::Plugin::Syntax::Moose>
+module.
 
 
 
@@ -1258,7 +1259,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0164';
+our $VERSION = '0.0165';
 
 
 

@@ -948,7 +948,8 @@ IN CLOSING -- ON PARSING PERL
     PerlySense provides a plugin architecture for supporting custom syntax
     provided by OO modules such as Moose, or Class::Accessor.
 
-    Currently Moose is supported.
+    Currently Moose is supported via the Devel::Plugin::Syntax::Moose
+    module.
 
 MORE DOCUMENTATION
     Devel::PerlySense::Cookbook

@@ -1,6 +1,6 @@
 ---
 name: Devel-PerlySense
-version: 0.0164
+version: 0.0165
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
 abstract: Perl IDE backend with Emacs frontend
@@ -22,7 +22,7 @@ requires:
   Graph::Easy: 0.57
   HTTP::Date: 0
   List::MoreUtils: 0
-  Module::Pluggable: 3.8
+  Module::Pluggable: 3.5
   PPI: 1.003
   PPI::HTML: 0
   Path::Class: 0.11
@@ -40,7 +40,7 @@ requires:
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.0164
+    version: 0.0165
   Devel::PerlySense::Bookmark::Definition:
     file: lib/Devel/PerlySense/Bookmark/Definition.pm
     version: 0.01

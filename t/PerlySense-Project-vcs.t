@@ -28,7 +28,7 @@ ok(
 my $dirBase = "data/project/with-git";
 my $dirProject = "$dirBase/bogus";
 
-my $fileTest = "$dirProject//t/Game-Lawn.t";
+my $fileTest = "$dirProject/t/Game-Lawn.t";
 ok($oPerlySense->setFindProject(file => $fileTest), "Set project ok");
 
 

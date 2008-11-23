@@ -151,6 +151,7 @@ declaration. They have the following properties:
 
   nameSub
   source
+  namePackage
   oLocationEnd
 
 Default: []
@@ -401,33 +402,15 @@ sub parse {
                 $pkgNode eq "PPI::Statement::Sub" && !$oNode->forward and $nameSub = $oNode->name;
                 $pkgNode eq "PPI::Statement::Scheduled" and $nameSub = $oNode->type;
                 if($nameSub) {
-                    my $oLocation = Devel::PerlySense::Document::Location->new(
-                        file => $oDocument->file,
-                        row => $oNode->location->[0],
-                        col => $oNode->location->[1],
+                    push(
+                        @{$self->raLocationSub},
+                        $self->oLocationSub(
+                            $oDocument,
+                            $oNode,
+                            $nameSub,
+                            $packageCurrent,
+                        ),
                     );
-                    $oLocation->rhProperty->{nameSub} = $nameSub;
-                    $oLocation->rhProperty->{source} = "$oNode";
-                    $oLocation->rhProperty->{namePackage} = $packageCurrent;
-
-
-                    my $countNewline =()= $oNode =~ /\n/g;
-                    my ($rowEnd, $colEnd) = ($oNode->location->[0] + $countNewline, 1);
-                    if($countNewline) {
-                        $oNode =~ /\n([^\n]+?)\z/ and $colEnd += length($1);
-                    } else {
-                        $colEnd = length($oNode);
-                    }
-
-                    my $oLocationEnd = Devel::PerlySense::Document::Location->new(
-                        file => $oDocument->file,
-                        row => $rowEnd,
-                        col => $colEnd,
-                    );
-
-                    $oLocation->rhProperty->{oLocationEnd} = $oLocationEnd;
-
-                    push(@{$self->raLocationSub}, $oLocation);
                 }
 
 
@@ -580,6 +563,56 @@ sub parsePod {
     }
 
     return(1);
+}
+
+
+
+
+
+=head2 oLocationSub($oDocument, $oNode, $nameSub, $packageCurrent)
+
+Create a Document::Location object from the sub $nameSub consisting of
+$oNode, found in $oDocument in $packageCurrent.
+
+Set appropriate Location->rhProperty keys:
+
+  nameSub
+  source
+  namePackage
+  oLocationEnd
+
+Return the new Location object.
+
+=cut
+sub oLocationSub {
+    my ($oDocument, $oNode, $nameSub, $packageCurrent) = @_;
+    
+    my $oLocation = Devel::PerlySense::Document::Location->new(
+        file => $oDocument->file,
+        row  => $oNode->location->[0],
+        col  => $oNode->location->[1],
+    );
+    $oLocation->rhProperty->{nameSub} = $nameSub;
+    $oLocation->rhProperty->{source} = "$oNode";
+    $oLocation->rhProperty->{namePackage} = $packageCurrent;
+
+
+    my $countNewline =()= $oNode =~ /\n/g;
+    my ($rowEnd, $colEnd) = ($oNode->location->[0] + $countNewline, 1);
+    if ($countNewline) {
+        $oNode =~ /\n([^\n]+?)\z/ and $colEnd += length($1);
+    } else {
+        $colEnd = length($oNode);
+    }
+
+    my $oLocationEnd = Devel::PerlySense::Document::Location->new(
+        file => $oDocument->file,
+        row  => $rowEnd,
+        col  => $colEnd,
+    );
+    $oLocation->rhProperty->{oLocationEnd} = $oLocationEnd;
+
+    return($oLocation);
 }
 
 

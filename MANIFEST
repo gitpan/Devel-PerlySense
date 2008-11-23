@@ -44,6 +44,7 @@ t/data/inc-lib/Game/Event/Timed.pm
 t/data/inc-lib/SubClass.pm
 t/data/overview/api/lib/Game/Object.pm
 t/data/overview/api/lib/Game/Object/Worm.pm
+t/data/plugin-moose/Has.pm
 t/data/plugin-moose/Role/List.pm
 t/data/plugin-moose/Role/QwList.pm
 t/data/plugin-moose/Role/Scalar.pm
@@ -138,6 +139,7 @@ t/PerlySense-go-to-object-method-file.t
 t/PerlySense-go-to-self-method-file.t
 t/PerlySense-module-pod.t
 t/PerlySense-Plugin-Syntax-Moose-base-class.t
+t/PerlySense-Plugin-Syntax-Moose-has.t
 t/PerlySense-Plugin-Syntax-Moose-role.t
 t/PerlySense-project-config.t
 t/PerlySense-Project-file-in-project.t
