@@ -27,6 +27,7 @@ lib/Devel/PerlySense/external/emacs/perly-sense-visualize-coverage.el
 lib/Devel/PerlySense/external/emacs/perly-sense.el
 lib/Devel/PerlySense/external/emacs/regex-tool.el
 lib/Devel/PerlySense/Home.pm
+lib/Devel/PerlySense/Plugin/Syntax/Moose.pm
 lib/Devel/PerlySense/Project.pm
 lib/Devel/PerlySense/Project/Unknown.pm
 lib/Devel/PerlySense/Util.pm
@@ -43,6 +44,12 @@ t/data/inc-lib/Game/Event/Timed.pm
 t/data/inc-lib/SubClass.pm
 t/data/overview/api/lib/Game/Object.pm
 t/data/overview/api/lib/Game/Object/Worm.pm
+t/data/plugin-moose/Role/List.pm
+t/data/plugin-moose/Role/QwList.pm
+t/data/plugin-moose/Role/Scalar.pm
+t/data/plugin-moose/SubClass/List.pm
+t/data/plugin-moose/SubClass/QwList.pm
+t/data/plugin-moose/SubClass/Scalar.pm
 t/data/project-lib/Game/Application.pm
 t/data/project-lib/Game/Controller.pm
 t/data/project-lib/Game/Direction.pm
@@ -103,6 +110,7 @@ t/PerlySense-Document-Meta-base-class.t
 t/PerlySense-Document-Meta-method.t
 t/PerlySense-Document-Meta-module.t
 t/PerlySense-Document-Meta-package.t
+t/PerlySense-Document-Meta-plugin.t
 t/PerlySense-Document-Meta-pod.t
 t/PerlySense-Document-Meta-sub.t
 t/PerlySense-Document-Meta-use.t
@@ -129,6 +137,8 @@ t/PerlySense-go-to-module-method-file.t
 t/PerlySense-go-to-object-method-file.t
 t/PerlySense-go-to-self-method-file.t
 t/PerlySense-module-pod.t
+t/PerlySense-Plugin-Syntax-Moose-base-class.t
+t/PerlySense-Plugin-Syntax-Moose-role.t
 t/PerlySense-project-config.t
 t/PerlySense-Project-file-in-project.t
 t/PerlySense-Project-find.t

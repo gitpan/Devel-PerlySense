@@ -26,6 +26,9 @@ expressions, etc.
 Highlight syntax errors, warnings, Perl::Critic complaints, and
 Devel::Cover test coverage in the source while editing.
 
+PerlySense has a plugin system for understanding custom syntax,
+e.g. Moose.
+
 
 
 =head1 SYNOPSIS
@@ -1156,6 +1159,15 @@ not...  well, there's always Java >:)
 
 
 
+=head2 SYNTAX PARSING MODULES
+
+PerlySense provides a plugin architecture for supporting custom syntax
+provided by OO modules such as Moose, or Class::Accessor.
+
+Currently Moose is supported.
+
+
+
 =head1 MORE DOCUMENTATION
 
 L<Devel::PerlySense::Cookbook>
@@ -1246,7 +1258,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0163';
+our $VERSION = '0.0164';
 
 
 

@@ -23,6 +23,7 @@ our $VERSION = '0.01';
 use Spiffy -Base;
 use Carp;
 use File::Basename;
+use Path::Class;
 use Data::Dumper;
 use PPI::Document;
 use PPI::Dumper;
@@ -164,14 +165,28 @@ field "raLocationSub" => [];
 
 
 
-=head2 raPlugin
+=head2 aPluginSyntax
 
 Array ref with Devel::PerlySense::Plugin::Syntax objects.
 
-Default: []
+Return whatever plugins under Devel::PerlySense::Plugin::Syntax::* are
+found.
+
+Readonly.
 
 =cut
-field "raPlugin" => [];
+
+use Module::Pluggable (
+    sub_name    => "raPluginSyntax",
+    search_path => [ "Devel::PerlySense::Plugin::Syntax" ],
+    instantiate => "new",
+);
+
+my $raPluginSyntax;
+sub aPluginSyntax {
+    $raPluginSyntax ||= [ $self->raPluginSyntax ];
+    return @$raPluginSyntax;
+}
 
 
 
@@ -216,6 +231,7 @@ sub _setRowColNodeModule(%$$$) {
 
 sub parse {
     my ($oDocument) = @_;
+#PPI::Dumper->new($oDocument->oDocument)->print; use PPI::Dumper;
 
     my @aToken;
     my @aPackage;
@@ -228,12 +244,15 @@ sub parse {
     my $packageCurrent = "main";
     my $rhDataDocument = {
         raPackage        => \@aPackage,
-        raNameModuleUse  => \%hNameModuleUse,
-        raNameModuleBase => \%hNameModuleBase,
+        rhNameModuleUse  => \%hNameModuleUse,
+        rhNameModuleBase => \%hNameModuleBase,
         rhRowColModule   => \%hRowColModule,
         rhRowColMethod   => \%hRowColMethod,
         raLocationPod    => \@aLocationPod,
     };
+
+    #Optimization, avoid the method call inside the loop
+    my @aPluginSyntax = $self->aPluginSyntax();
 
     $oDocument->aDocumentFind(
         sub {
@@ -412,14 +431,18 @@ sub parse {
                 }
 
 
-                for my $plugin (@{$self->raPlugin()}) {
+                for my $plugin (@aPluginSyntax) {
+                    #TODO: Set new $packageCurrent if needed
                     $plugin->parse(
                         rhDataDocument => $rhDataDocument,
+                        oMeta          => $self,
                         oDocument      => $oDocument,
                         oNode          => $oNode,
                         pkgNode        => $pkgNode,
                         row            => $row,
                         col            => $col,
+                        packageCurrent => $packageCurrent,
+                        raToken        => \@aToken,
                     );
                 }
             };

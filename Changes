@@ -3,6 +3,14 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0164
+------
+
+* Moose plugin, supporting "extends" and "with". The plugin is still
+  in this distro, it will eventually get it's own distribution.
+
+
+
 0.0163
 ------
 

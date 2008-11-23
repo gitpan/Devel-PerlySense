@@ -19,6 +19,7 @@ WriteMakefile
                            'Graph::Easy' => '0.57',
                            'HTTP::Date' => '0',
                            'List::MoreUtils' => '0',
+                           'Module::Pluggable' => '3.8',
                            'PPI' => '1.003',
                            'PPI::HTML' => '0',
                            'Path::Class' => '0.11',
