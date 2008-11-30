@@ -25,7 +25,7 @@ ok(
 
 
 
-my $dirBase = "data/project/with-git";
+my $dirBase = "data/project/with-git/source";
 my $dirProject = "$dirBase/bogus";
 
 my $fileTest = "$dirProject/t/Game-Lawn.t";

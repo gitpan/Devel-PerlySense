@@ -3,6 +3,18 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0166
+------
+
+* Removed "Coverage information loaded" message that appears when
+  Devel::CoverX::Covered info is loaded. This messed up the echo area
+  for other messages.
+
+* Release related bugs fixed. Thanks to Lucien Hantute for spotting
+  the reason.
+
+
+
 0.0165
 ------
 

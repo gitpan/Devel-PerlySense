@@ -8,7 +8,7 @@ use Data::Dumper;
 use File::Basename;
 use File::Spec::Functions;
 
-use Carp::Always;
+#use Carp::Always;
 
 use lib "lib";
 use_ok("Devel::PerlySense");

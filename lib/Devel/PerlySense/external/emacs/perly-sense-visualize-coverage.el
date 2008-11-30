@@ -145,7 +145,7 @@ Return t if coverage was loaded, else nil."
                      (if alist-sub-quality alist-sub-quality '()))
                (setq ps/alist-covered-subs-quality-loaded-p t)
                (font-lock-fontify-buffer)
-               (message "Coverage information loaded")
+               ;; (message "Coverage information loaded")
                )))))))
   )
 
