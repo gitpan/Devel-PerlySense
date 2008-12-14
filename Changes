@@ -3,6 +3,15 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0167
+------
+
+* Fixed bug: missing (require 'pc-select) in elisp.
+  Thanks to Sebastian Willert for catching this.
+  https://rt.cpan.org/Ticket/Display.html?id=41416
+
+
+
 0.0166
 ------
 

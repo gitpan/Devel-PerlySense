@@ -755,7 +755,7 @@ PerlySense can display the code coverage in the source buffer.
 Currently supported is subroutine coverage, i.e. whether a sub is
 covered by tests or not.
 
-Covered subs are displayed with a discrete green underline, uncovered
+Covered subs are displayed with a discreet green underline, uncovered
 subs get a red underline.
 
 
@@ -1164,8 +1164,8 @@ not...  well, there's always Java >:)
 PerlySense provides a plugin architecture for supporting custom syntax
 provided by OO modules such as Moose, or Class::Accessor.
 
-Currently Moose is supported via the L<Devel::Plugin::Syntax::Moose>
-module.
+Currently Moose is supported via the
+L<Devel::PerlySense::Plugin::Syntax::Moose> module.
 
 
 
@@ -1259,7 +1259,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0166';
+our $VERSION = '0.0167';
 
 
 
