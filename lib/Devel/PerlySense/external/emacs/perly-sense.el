@@ -58,6 +58,27 @@ buffer is already visible anywhere, re-use that visible buffer."
 
 
 
+;; Probably reinventing the wheel here
+(defmacro ps/with-default-directory (dir &rest body)
+  "Execute the forms in BODY with the current
+directory (default-directory) temporarily set to 'dir'.
+
+The value returned is the value of the last form in BODY."
+  (let ((original-dir default-directory))
+    `(prog2
+         (cd ,dir)
+         ,@body
+       (cd ,original-dir))))
+
+
+
+(defun ps/active-region-string ()
+  "Return the string making up the active region, or nil if no
+region is active"
+  (if mark-active
+      (buffer-substring-no-properties (region-beginning) (region-end))
+    nil))
+
 
 
 ;;;; Other modules
@@ -303,7 +324,7 @@ more items than that, use completing read instead."
     )
   )
 
-  
+
 
 (defun ps/display-pod-for-module-at-point ()
   "Display POD for the module at point."
@@ -404,6 +425,8 @@ more items than that, use completing read instead."
       )
     )
   )
+
+
 
 (defun ps/run-file-run-command (command dir-run-from)
   "Run command from dir-run-from using the compiler function"
@@ -520,6 +543,57 @@ calling command."
 
 
 
+
+(defun ps/project-dir ()
+  "Return the project dir of the current buffer, or nil of no
+project was found"
+  (let* ((result-alist (ps/command "project_dir"))
+         (project-dir (alist-value result-alist "project_dir")))
+    (if (string= project-dir "")
+        nil
+      project-dir)))
+
+
+
+(defmacro ps/with-project-dir (&rest body)
+  "Execute the forms in BODY with the current directory
+temporarily set to the project dir of the current buffer.
+
+The value returned is the value of the last form in BODY."
+    `(progn
+       (ps/with-default-directory
+        (ps/project-dir)
+        ,@body)))
+
+
+
+(defun ps/find-project-ack-thing-at-point ()
+  "Run ack from the project dir. Default to a sensible ack command line.
+
+If there is an active region, search for that.
+
+if there is a word at point, search for that (with -w word boundary).
+
+If not, search for an empty string.
+"
+  (interactive)
+  (ps/with-project-dir
+   (let* ((word-only-flag "")
+          (search-term (or
+                        (ps/active-region-string)
+                        (let ((word-at-point (find-tag-default)))
+                          (if (not word-at-point)
+                              nil
+                            (setq word-only-flag "-w ")
+                            word-at-point))
+                        ""))
+          (grep-find-command
+           (format "ack --nocolor --perl %s-Q -- \"%s\"" word-only-flag search-term))
+          )
+     (call-interactively 'grep-find))))
+
+
+
 (defun ps/find-file-location (file row col)
   "Find the file and go to the row/col location. If row and/or
 col is 0, the point isn't moved in that dimension."
@@ -531,7 +605,6 @@ col is 0, the point isn't moved in that dimension."
     (forward-char (- col 1))
     )
   )
-
 
 
 
@@ -992,7 +1065,7 @@ response"
     (async-shell-command-to-string
      command
      (lambda (response)
-;;        (message "Called (%s), got (%s)" command-string response) 
+;;        (message "Called (%s), got (%s)" command-string response)
        (funcall callback-fun response)
        ))))
 
@@ -1788,8 +1861,8 @@ or go to the Bookmark at point"
 ;; Key bindings
 ;;;; TODO: move some of these to cperl-mode local bindings
 
-(global-set-key (format "%smf" ps/key-prefix) 'ps/find-source-for-module-at-point)
-(global-set-key (format "%smp" ps/key-prefix) 'ps/display-pod-for-module-at-point)
+(global-set-key (format "%smf" ps/key-prefix) 'ps/find-source-for-module-at-point)  ;; Obsolete, change/remove
+(global-set-key (format "%smp" ps/key-prefix) 'ps/display-pod-for-module-at-point)  ;; Obsolete, change
 
 (global-set-key (format "%s\C-d" ps/key-prefix) 'ps/smart-docs-at-point)
 (global-set-key (format "%sdi" ps/key-prefix) 'ps/inheritance-docs-at-point)
@@ -1802,6 +1875,9 @@ or go to the Bookmark at point"
 (global-set-key (format "%sgn" ps/key-prefix) 'ps/go-to-method-new)
 (global-set-key (format "%sgm" ps/key-prefix) 'ps/find-source-for-module-at-point)
 (global-set-key (format "%sgv" ps/key-prefix) 'ps/go-to-vc-project)
+
+(global-set-key (format "%sfa" ps/key-prefix) 'ps/find-project-ack-thing-at-point)
+
 
 (global-set-key (format "%semu" ps/key-prefix) 'ps/edit-move-use-statement)
 (global-set-key (format "%setc" ps/key-prefix) 'ps/edit-test-count)

@@ -291,24 +291,27 @@ customizations by doing
 =head1 GETTING STARTED WITH EMACS
 
 
-=head2 Smart docs
+
+=head2 Reading Docs
+
+=head3 Smart docs
 
 C<C-o C-d> is the "Smart docs" command. It brings up documentation for
 what's at point.
 
-Put the cursor on the "method" word of a $self->method call and press
-C<C-o C-d> and wait until a documentation hint for the method call is
-displayed briefly in the echo area. PerlySense will look in base
-classes if the method can't be found in the current class.
+Put the cursor on the C<method> word of a C<$self->method> call and
+press C<C-o C-d> and wait until a documentation hint for the method
+call is displayed briefly in the echo area. PerlySense will look in
+base classes if the method can't be found in the current class.
 
-Put the cursor on the "method" word of an $object->method call and
+Put the cursor on the C<method> word of an $object->method call and
 press C<C-o C-d> to see the docs hint. PerlySense will look through
-all your "use" modules (and their base classes) for the method call
+all your C<use>d modules (and their base classes) for the method call
 and try to identify the best match.
 
 Note! The first time each module is parsed this will take a second or
 two, and the very first time you run the command with lots of "use"
-modules it's bound to take longer than that.
+modules it's bound to take a lot longer than that.
 
 Put the cursor on a module name and press C<C-o C-d> to bring up a new
 buffer with the POD for that module (this is similar to the cperl-mode
@@ -318,21 +321,24 @@ Press C<C-o C-d> with nothing under the cursor brings up a POD buffer
 for the current file.
 
 
-=head2 Document Inheritance
+=head3 Document Inheritance
 
 C<C-o d i> will briefly display the Inheritance hierarchy for the
 current Class in the echo area. This is similar to the Class Overview
 (see below).
 
 
-=head2 Document Used Modules
+=head3 Document Used Modules
 
 C<C-o d u> will briefly display the list of modules used from the
 current buffer in the echo area. This is similar to the Class Overview
 (see below).
 
 
-=head2 Smart go to
+
+=head2 Browsing Code
+
+=head3 Smart go to
 
 C<C-o C-g> is the "Smart go to" command. It's similar to Smart Docs,
 but instead of bringing the docs to you, it brings you to the
@@ -346,7 +352,13 @@ Before you go anywhere the mark is set. Go back to earlier marks
 globally with C-x C-SPC, or locally with C-u C-SPC.
 
 
-=head2 Go to Base Class
+=head3 Go to Module
+
+C<C-o g m> -- Go to Module at point. Useful if "Smart go to" can't
+identify what's at point.
+
+
+=head3 Go to Base Class
 
 C<C-o g b> takes you up one level in the inheritance hierarchy. If the
 current class has many base classes, you'll have to choose which one
@@ -356,43 +368,22 @@ If the current method is implemented in that base class, go to the sub
 definition.
 
 After going to the Base Class, the Inheritance tree of that class is
-displayed in the echo area.
+displayed in the echo area so you can see where you ended up.
 
 
-=head2 Go to the 'new' method
+=head3 Go to the 'new' method
 
 C<C-o g n> takes you to the definition of the 'new' method of the
 current class (in this class, or a parent class).
 
 
-=head2 Go To 'use Module' section
+=head3 Go To 'use Module' section
 
 C<C-o g u> takes you to the line below the last 'use Module' statement
 in the the current buffer.
 
 
-=head2 Edit Move 'use Module' Statement
-
-C<C-o e m u> -- If point is on a line with a single 'use Module'
-statement, set mark and move that statement to the end of the 'use
-Module' section at the top of the file.
-
-This is typically useful when you realize you need a module,
-e.g. Data::Dumper, in the middle of the file, but you don't want to
-leave where you are just to fiddle with adding it.
-
-So type the 'use Module' statement, hit C<C-o e m u> to move it, see
-that it got moved to a good place and hit C-u C-SPC to return to where
-you were, and continue doing what you where doing.
-
-
-
-=head2 Go to Module
-
-C<C-o g m> -- Go to Module at point.
-
-
-=head2 Go to Version Control
+=head3 Go to Version Control
 
 C<C-o g v> -- Go to the Project view for the current Version Control
 system. This typically displays the change status of the files in the
@@ -450,20 +441,51 @@ will be used (whichever that might be).
 =back
 
 
-=head2 Go to Project's Other Files
+=head3 Go to Project's Other Files
 
 C<C-o g p o> -- Navigate to I<other> source files in the project that
 correspond to the current file.
 
 This is useful if you have similarly named files in different parts of
 the source tree that belong to each other, as is common in projects
-with an MVC structure (e.g. those based L<Catalyst>).
+with an MVC structure (e.g. those based on L<Catalyst>).
 
 This requires that you have a C<.corresponding_file> config file in
 the C<.PerlySenseProject> or project root directory (or your home
 directory).
 
 See L<File::Corresponding> for details.
+
+
+
+=head2 Finding Code
+
+
+=head3 Find with Ack
+
+C<C-o f a> -- Ack through the source and display the hits in a *grep*
+buffer.
+
+The search takes place from the Project directory. Before running ack
+you'll get to edit the command line with a sensible default chosen from:
+
+=over4
+
+=item * the active region
+
+=item * the word at point (with the -w option)
+
+=back
+
+For details, refer to the L<ack> documentation.
+
+Remember that earlier searches are available in the command history,
+just like with grep.
+
+Note that if you need to find something else while browsing the *grep*
+buffer, you can easily rename the current buffer to something else
+using C<M-x reame-buffer>.
+
 
 
 =head2 Class Overview
@@ -503,6 +525,9 @@ Example class CatalystX::FeedMe::Controller::Feed
   ->path_prefix
   ...
 
+
+=head3 Overview Sections
+
 The B<Inheritance> section shows all Base classes of the
 Class. Inheriting from something like Catalyst is hopefully the
 hairiest you'll see. Classes inherit from their parents upwards in the
@@ -541,6 +566,8 @@ current Project (thereby changing the current Project to the directory
 where those modules are installed).
 
 
+=head3 Key bindings
+
 When in the Class Overview buffer:
 
 g -- Go to the file of the thing at point (Module/Method/Bookmark)
@@ -565,7 +592,9 @@ q -- Quit the Class Overview buffer.
 
 
 
-=head2 Run File
+=head2 Testing
+
+=head3 Run File
 
 C<C-o C-r> -- Run the file of the current buffer using the Compilation
 mode.
@@ -597,7 +626,7 @@ If you wish to start many runs at the same time, rename the
 compilation buffer with C<M-x rename-buffer>.
 
 
-=head2 Re-run File
+=head3 Re-run File
 
 Invoke C<C-o C-r> from within the *compilaton* buffer to re-run (C<M-x
 recompile>) the file. Useful when you have skipped around the source
@@ -607,7 +636,7 @@ C<C-o r r> -- If not even the C<*compilation*> buffer is visible,
 issue Re-Run File from anywhere to bring it up and re-run.
 
 
-=head2 Edit Test Count
+=head3 Edit Test Count
 
 C<C-o e t c> -- Increase the test count number in the line resembling
 
@@ -620,7 +649,7 @@ Increase with the numeric argument (e.g. C<C-u -2 C-o e t c>), or
 default 1.
 
 
-=head2 Assist With Test Count
+=head3 Assist With Test Count
 
 C<C-o a t> -- If the test count in a .t file is out of sync with
 what's correctly reported when running the test in the
@@ -635,7 +664,7 @@ line in the current buffer, so be sure to only run this when the
 C<*compilation*> buffer contains the run result of this buffer.
 
 
-=head2 Go to Tests - Other Files
+=head3 Go to Tests - Other Files
 
 C<C-o g t o> -- In a test file, navigate to the source files that are
 covered by that test file.
@@ -650,7 +679,7 @@ L<Devel::Cover> cover_db in the project root directory.
 See L<Devel::CoverX::Covered> for details.
 
 
-=head2 Go to Error line
+=head3 Go to Error line
 
 If you run tests in a regular shell (inside Emacs or in a terminal
 window), this may be handy.
@@ -666,7 +695,9 @@ terminal, run this command and hit return to accept the default text).
 
 
 
-=head2 Flymake Introduction
+=head2 Reading Code
+
+=head3 Flymake Introduction
 
 "Flymake performs on-the-fly syntax checks of the files being edited
 using the external syntax check tool (usually the compiler).
@@ -691,7 +722,7 @@ L<Perl::Critic> violations use the warning face.
 
 
 
-=head2 Enabling Flymake
+=head3 Enabling Flymake
 
 First off, flymake itself needs to be enabled. Refer to the Emacs
 Installation description above.
@@ -718,7 +749,7 @@ This way you can have Flymake enabled globally and still not run "perl
 
 
 
-=head2 Using Flymake
+=head3 Using Flymake
 
 In the Project config file there are some hints on how to customize
 Flymake, when it should run, etc. You can also customize it with C<M-x
@@ -743,7 +774,7 @@ C<C-o s s> -- Display the error/warning text of the current line.
 
 
 
-=head2 Code Coverage Visualization Introduction
+=head3 Code Coverage Visualization Introduction
 
 If you have a test suite, you might like this. You should have tests.
 
@@ -760,7 +791,7 @@ subs get a red underline.
 
 
 
-=head2 Coverage Visualization Setup
+=head3 Coverage Visualization Setup
 
 PerlySense uses L<Devel::CoverX::Covered> to manage the coverage
 data. Refer to that documentation for how to run your test suite with
@@ -774,7 +805,7 @@ Note: Running the test suite with Devel::Cover can be very, very
 slow. A nightly build is usually a good idea.
 
 
-=head2 Using Coverage Visualization
+=head3 Using Coverage Visualization
 
 You can toggle Visualization with C<C-o C-v> at any time when editing.
 
@@ -808,7 +839,7 @@ what's covered or not. Too much detail and color all over the place
 and the source turns into a christmas tree! But if you browse past a
 complex method and see that it isn't tested, that should ring a bell.
 
-To increase this effect you may wan to only highlight subs with bad
+To increase this effect you may want to only highlight subs with bad
 coverage (customize the variable
 C<ps/only-highlight-bad-sub-coverage>)
 
@@ -819,7 +850,26 @@ I<that particular subroutine>.
 
 
 
-=head2 Assist With -- Regex
+=head2 Editing Code
+
+
+=head3 Edit Move 'use Module' Statement
+
+C<C-o e m u> -- If point is on a line with a single 'use Module'
+statement, set mark and move that statement to the end of the 'use
+Module' section at the top of the file.
+
+This is typically useful when you realize you need a module,
+e.g. Data::Dumper, in the middle of the file, but you don't want to
+leave where you are just to fiddle with adding it.
+
+So type the 'use Module' statement, hit C<C-o e m u> to move it, see
+that it got moved to a good place and hit C-u C-SPC to return to where
+you were, and continue doing what you where doing.
+
+
+
+=head3 Assist With -- Regex
 
 Hit C<C-o a r> to bring up the Regex Tool which will let you compose a
 Perl regular expression interactively with matching text highlighed.
@@ -1259,7 +1309,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0167';
+our $VERSION = '0.0168';
 
 
 

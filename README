@@ -242,23 +242,24 @@ INSTALLATION
       M-x customize-group perly-sense
 
 GETTING STARTED WITH EMACS
-  Smart docs
+  Reading Docs
+   Smart docs
     "C-o C-d" is the "Smart docs" command. It brings up documentation for
     what's at point.
 
-    Put the cursor on the "method" word of a $self->method call and press
+    Put the cursor on the "method" word of a "$self-"method> call and press
     "C-o C-d" and wait until a documentation hint for the method call is
     displayed briefly in the echo area. PerlySense will look in base classes
     if the method can't be found in the current class.
 
     Put the cursor on the "method" word of an $object->method call and press
     "C-o C-d" to see the docs hint. PerlySense will look through all your
-    "use" modules (and their base classes) for the method call and try to
+    "use"d modules (and their base classes) for the method call and try to
     identify the best match.
 
     Note! The first time each module is parsed this will take a second or
     two, and the very first time you run the command with lots of "use"
-    modules it's bound to take longer than that.
+    modules it's bound to take a lot longer than that.
 
     Put the cursor on a module name and press "C-o C-d" to bring up a new
     buffer with the POD for that module (this is similar to the cperl-mode
@@ -267,17 +268,18 @@ GETTING STARTED WITH EMACS
     Press "C-o C-d" with nothing under the cursor brings up a POD buffer for
     the current file.
 
-  Document Inheritance
+   Document Inheritance
     "C-o d i" will briefly display the Inheritance hierarchy for the current
     Class in the echo area. This is similar to the Class Overview (see
     below).
 
-  Document Used Modules
+   Document Used Modules
     "C-o d u" will briefly display the list of modules used from the current
     buffer in the echo area. This is similar to the Class Overview (see
     below).
 
-  Smart go to
+  Browsing Code
+   Smart go to
     "C-o C-g" is the "Smart go to" command. It's similar to Smart Docs, but
     instead of bringing the docs to you, it brings you to the definition of
     what's at point.
@@ -289,7 +291,11 @@ GETTING STARTED WITH EMACS
     Before you go anywhere the mark is set. Go back to earlier marks
     globally with C-x C-SPC, or locally with C-u C-SPC.
 
-  Go to Base Class
+   Go to Module
+    "C-o g m" -- Go to Module at point. Useful if "Smart go to" can't
+    identify what's at point.
+
+   Go to Base Class
     "C-o g b" takes you up one level in the inheritance hierarchy. If the
     current class has many base classes, you'll have to choose which one to
     go to.
@@ -298,33 +304,17 @@ GETTING STARTED WITH EMACS
     definition.
 
     After going to the Base Class, the Inheritance tree of that class is
-    displayed in the echo area.
+    displayed in the echo area so you can see where you ended up.
 
-  Go to the 'new' method
+   Go to the 'new' method
     "C-o g n" takes you to the definition of the 'new' method of the current
     class (in this class, or a parent class).
 
-  Go To 'use Module' section
+   Go To 'use Module' section
     "C-o g u" takes you to the line below the last 'use Module' statement in
     the the current buffer.
 
-  Edit Move 'use Module' Statement
-    "C-o e m u" -- If point is on a line with a single 'use Module'
-    statement, set mark and move that statement to the end of the 'use
-    Module' section at the top of the file.
-
-    This is typically useful when you realize you need a module, e.g.
-    Data::Dumper, in the middle of the file, but you don't want to leave
-    where you are just to fiddle with adding it.
-
-    So type the 'use Module' statement, hit "C-o e m u" to move it, see that
-    it got moved to a good place and hit C-u C-SPC to return to where you
-    were, and continue doing what you where doing.
-
-  Go to Module
-    "C-o g m" -- Go to Module at point.
-
-  Go to Version Control
+   Go to Version Control
     "C-o g v" -- Go to the Project view for the current Version Control
     system. This typically displays the change status of the files in the
     project. A dired of the Project dir is used in lieu of a VCS.
@@ -371,18 +361,39 @@ GETTING STARTED WITH EMACS
         If there are many *magit: NAME* buffers open, the first existing one
         will be used (whichever that might be).
 
-  Go to Project's Other Files
+   Go to Project's Other Files
     "C-o g p o" -- Navigate to *other* source files in the project that
     correspond to the current file.
 
     This is useful if you have similarly named files in different parts of
     the source tree that belong to each other, as is common in projects with
-    an MVC structure (e.g. those based Catalyst).
+    an MVC structure (e.g. those based on Catalyst).
 
     This requires that you have a ".corresponding_file" config file in the
     ".PerlySenseProject" or project root directory (or your home directory).
 
     See File::Corresponding for details.
+
+  Finding Code
+   Find with Ack
+    "C-o f a" -- Ack through the source and display the hits in a *grep*
+    buffer.
+
+    The search takes place from the Project directory. Before running ack
+    you'll get to edit the command line with a sensible default chosen from:
+
+    *   the active region
+
+    *   the word at point (with the -w option)
+
+    For details, refer to the ack documentation.
+
+    Remember that earlier searches are available in the command history,
+    just like with grep.
+
+    Note that if you need to find something else while browsing the *grep*
+    buffer, you can easily rename the current buffer to something else using
+    "M-x reame-buffer".
 
   Class Overview
     Pressing "C-o C-o" will bring up the Class Overview of the Class name at
@@ -420,6 +431,7 @@ GETTING STARTED WITH EMACS
       ->path_prefix
       ...
 
+   Overview Sections
     The Inheritance section shows all Base classes of the Class. Inheriting
     from something like Catalyst is hopefully the hairiest you'll see.
     Classes inherit from their parents upwards in the diagram unless there
@@ -457,6 +469,7 @@ GETTING STARTED WITH EMACS
     current Project (thereby changing the current Project to the directory
     where those modules are installed).
 
+   Key bindings
     When in the Class Overview buffer:
 
     g -- Go to the file of the thing at point (Module/Method/Bookmark)
@@ -479,7 +492,8 @@ GETTING STARTED WITH EMACS
 
     q -- Quit the Class Overview buffer.
 
-  Run File
+  Testing
+   Run File
     "C-o C-r" -- Run the file of the current buffer using the Compilation
     mode.
 
@@ -508,7 +522,7 @@ GETTING STARTED WITH EMACS
     If you wish to start many runs at the same time, rename the compilation
     buffer with "M-x rename-buffer".
 
-  Re-run File
+   Re-run File
     Invoke "C-o C-r" from within the *compilaton* buffer to re-run ("M-x
     recompile") the file. Useful when you have skipped around the source
     fixing errors and the .t file isn't visible.
@@ -516,7 +530,7 @@ GETTING STARTED WITH EMACS
     "C-o r r" -- If not even the "*compilation*" buffer is visible, issue
     Re-Run File from anywhere to bring it up and re-run.
 
-  Edit Test Count
+   Edit Test Count
     "C-o e t c" -- Increase the test count number in the line resembling
 
       use Test::More tests => 43;
@@ -527,7 +541,7 @@ GETTING STARTED WITH EMACS
     Increase with the numeric argument (e.g. "C-u -2 C-o e t c"), or default
     1.
 
-  Assist With Test Count
+   Assist With Test Count
     "C-o a t" -- If the test count in a .t file is out of sync with what's
     correctly reported when running the test in the "*compilation*" buffer
     (see Run File), use this command to update the .t file.
@@ -539,7 +553,7 @@ GETTING STARTED WITH EMACS
     line in the current buffer, so be sure to only run this when the
     "*compilation*" buffer contains the run result of this buffer.
 
-  Go to Tests - Other Files
+   Go to Tests - Other Files
     "C-o g t o" -- In a test file, navigate to the source files that are
     covered by that test file.
 
@@ -552,7 +566,7 @@ GETTING STARTED WITH EMACS
 
     See Devel::CoverX::Covered for details.
 
-  Go to Error line
+   Go to Error line
     If you run tests in a regular shell (inside Emacs or in a terminal
     window), this may be handy.
 
@@ -564,7 +578,8 @@ GETTING STARTED WITH EMACS
     if available (so it's easy to just copy the error line from the
     terminal, run this command and hit return to accept the default text).
 
-  Flymake Introduction
+  Reading Code
+   Flymake Introduction
     "Flymake performs on-the-fly syntax checks of the files being edited
     using the external syntax check tool (usually the compiler). Highlights
     erroneous lines and displays associated error messages."
@@ -586,7 +601,7 @@ GETTING STARTED WITH EMACS
 
     Perl::Critic violations use the warning face.
 
-  Enabling Flymake
+   Enabling Flymake
     First off, flymake itself needs to be enabled. Refer to the Emacs
     Installation description above.
 
@@ -610,7 +625,7 @@ GETTING STARTED WITH EMACS
     This way you can have Flymake enabled globally and still not run "perl
     -c" on everything that happens to be in a buffer.
 
-  Using Flymake
+   Using Flymake
     In the Project config file there are some hints on how to customize
     Flymake, when it should run, etc. You can also customize it with "M-x
     customize-group flymake".
@@ -632,7 +647,7 @@ GETTING STARTED WITH EMACS
 
     "C-o s s" -- Display the error/warning text of the current line.
 
-  Code Coverage Visualization Introduction
+   Code Coverage Visualization Introduction
     If you have a test suite, you might like this. You should have tests.
 
     If you run Devel::Cover, you'll be happy. You should know your code
@@ -646,7 +661,7 @@ GETTING STARTED WITH EMACS
     Covered subs are displayed with a discreet green underline, uncovered
     subs get a red underline.
 
-  Coverage Visualization Setup
+   Coverage Visualization Setup
     PerlySense uses Devel::CoverX::Covered to manage the coverage data.
     Refer to that documentation for how to run your test suite with
     Devel::Cover and generate a "covered" database.
@@ -658,7 +673,7 @@ GETTING STARTED WITH EMACS
     Note: Running the test suite with Devel::Cover can be very, very slow. A
     nightly build is usually a good idea.
 
-  Using Coverage Visualization
+   Using Coverage Visualization
     You can toggle Visualization with "C-o C-v" at any time when editing.
 
     You can also enable Visualization by default in the install script (see
@@ -686,7 +701,7 @@ GETTING STARTED WITH EMACS
     the source turns into a christmas tree! But if you browse past a complex
     method and see that it isn't tested, that should ring a bell.
 
-    To increase this effect you may wan to only highlight subs with bad
+    To increase this effect you may want to only highlight subs with bad
     coverage (customize the variable "ps/only-highlight-bad-sub-coverage")
 
     Note that you can hit "C-o g t o" -- "Go To Tests - Other Files" to see
@@ -694,7 +709,21 @@ GETTING STARTED WITH EMACS
     the cursor on a "sub" line, you'll get only the tests that cover *that
     particular subroutine*.
 
-  Assist With -- Regex
+  Editing Code
+   Edit Move 'use Module' Statement
+    "C-o e m u" -- If point is on a line with a single 'use Module'
+    statement, set mark and move that statement to the end of the 'use
+    Module' section at the top of the file.
+
+    This is typically useful when you realize you need a module, e.g.
+    Data::Dumper, in the middle of the file, but you don't want to leave
+    where you are just to fiddle with adding it.
+
+    So type the 'use Module' statement, hit "C-o e m u" to move it, see that
+    it got moved to a good place and hit C-u C-SPC to return to where you
+    were, and continue doing what you where doing.
+
+   Assist With -- Regex
     Hit "C-o a r" to bring up the Regex Tool which will let you compose a
     Perl regular expression interactively with matching text highlighed.
 
@@ -1355,4 +1384,14 @@ CACHE METHODS
     $file must be an existing file.
 
     Die on errors.
+
+POD ERRORS
+    Hey! The above document had some coding errors, which are explained
+    below:
+
+    Around line 472:
+        Unknown directive: =over4
+
+    Around line 474:
+        '=item' outside of any '=over'
 

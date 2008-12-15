@@ -3,6 +3,15 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0168
+------
+
+* Find using "ack" in Project. C-o f a.
+
+* Rearranged the docs to provide more readable sub headings.
+
+
+
 0.0167
 ------
 
