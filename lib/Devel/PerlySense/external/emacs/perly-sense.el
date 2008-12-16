@@ -258,10 +258,6 @@ more items than that, use completing read instead."
 
 
 
-;;;; Defuns
-
-
-
 (defun ps/log (msg)
   "log msg in a message and return msg"
 ;;  (message "LOG(%s)" msg)
@@ -587,10 +583,61 @@ If not, search for an empty string.
                             (setq word-only-flag "-w ")
                             word-at-point))
                         ""))
-          (grep-find-command
-           (format "ack --nocolor --perl %s-Q -- \"%s\"" word-only-flag search-term))
+          (ack-base-command (format "ack --nogroup --nocolor --perl %s-Q -- " word-only-flag))
+          (ack-command (format "%s\"%s\"" ack-base-command search-term))
+          (grep-find-command (cons        ;; Two item list sets the initial position
+                              ack-command
+                              (+ 2 (length ack-base-command))))
           )
-     (call-interactively 'grep-find))))
+   (call-interactively 'grep-find))))
+
+
+
+(defun ps/find-project-sub-declaration-at-point ()
+  "Run ack from the project dir, looking for the method/word/sub
+at point. Default to a sensible ack command line.
+
+If there is a method name ->like_t|his at point, search for that method.
+
+ (If there is a method call $lik|e->this at point, search for
+that method.)
+
+If not, search for the word at point.
+"
+  (interactive)
+  (ps/with-project-dir
+   (let* ((search-term (or
+                        (ps/class-method-at-point)  ;; Not good enough, write method-of-method-or-object-at-point
+                        (find-tag-default)
+                        ""))
+          (ack-base-command (format "ack --nogroup --nocolor --perl -- "))
+          (ack-command (format "%s\"^\\s*sub\\s+%s\\b\"" ack-base-command search-term))
+          )
+     (grep-find ack-command))))
+
+
+
+(defun ps/find-project-method-callers-at-point ()
+  "Run ack from the project dir, looking for method calls of the
+method/word/sub at point. Default to a sensible ack command line.
+
+If there is a method name ->like_t|his at point, search for that method.
+
+ (If there is a method call $lik|e->this at point, search for
+that method.)
+
+If not, search for the word at point.
+"
+  (interactive)
+  (ps/with-project-dir
+   (let* ((search-term (or
+                        (ps/class-method-at-point)  ;; Not good enough, write method-of-method-or-object-at-point
+                        (find-tag-default)
+                        ""))
+          (ack-base-command (format "ack --nogroup --nocolor --perl -- "))
+          (ack-command (format "%s\"->\\s*%s\\b\"" ack-base-command search-term))
+          )
+     (grep-find ack-command))))
 
 
 
@@ -1877,6 +1924,8 @@ or go to the Bookmark at point"
 (global-set-key (format "%sgv" ps/key-prefix) 'ps/go-to-vc-project)
 
 (global-set-key (format "%sfa" ps/key-prefix) 'ps/find-project-ack-thing-at-point)
+(global-set-key (format "%sfs" ps/key-prefix) 'ps/find-project-sub-declaration-at-point)
+(global-set-key (format "%sfc" ps/key-prefix) 'ps/find-project-method-callers-at-point)
 
 
 (global-set-key (format "%semu" ps/key-prefix) 'ps/edit-move-use-statement)

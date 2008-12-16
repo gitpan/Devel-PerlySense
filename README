@@ -9,9 +9,11 @@ DESCRIPTION
     data structures.)
 
     Conveniently navigate and browse the code and documentation of your
-    project and Perl installation. Navigate between tests and source
-    (Devel::CoverX::Covered), and between related files
-    (File::Corresponding).
+    project and Perl installation. Navigate between tests and source, and
+    between related files.
+
+    Search through the project for method declarations, invocants or free
+    text using Ack.
 
     Run tests and scripts and syntax check source with easy navigation to
     errors/warnings/failing tests.
@@ -65,6 +67,15 @@ SYNOPSIS
     files given a ".corresponding_file" config file (see
     File::Corresponding).
 
+    "C-o f a" -- Find with Ack -- Search for the selected text, or word at
+    point, or whatever, using Ack.
+
+    "C-o f s" -- Find sub declarations -- Search for sub declarations of the
+    method name, or word at point.
+
+    "C-o f c" -- Find method calls -- Search for method calls of the method
+    name, or word at point.
+
     "C-o C-r" -- Run file -- Run the current file using the Compilation mode
     and the settings appropriate for the source type (Test, Module, etc.).
     Highlight errors and jump to source with C-c C-c.
@@ -76,7 +87,7 @@ SYNOPSIS
     => 43")
 
     "C-o a t" -- Assist With Test Count -- Synchronize invalid test count in
-    .t file with the "*compilation*" buffer.
+    .t file with the *compilation* buffer.
 
     Flymake may be used to highlight syntax errors and warnings in the
     source while editing (continously or at every save).
@@ -220,7 +231,7 @@ INSTALLATION
 
     The load path is handled automatically by asking "perly_sense
     external_dir" where the elisp source was installed (that way,
-    Devel::PerlySense and the elisp is always in sync).
+    Devel::PerlySense and the elisp are always in sync).
 
   Emacs Configuration
     The most important config you can change is the prefix key.
@@ -376,24 +387,40 @@ GETTING STARTED WITH EMACS
 
   Finding Code
    Find with Ack
-    "C-o f a" -- Ack through the source and display the hits in a *grep*
-    buffer.
+    "C-o f a" -- Ack (it's like grep, but better. See ack) through the
+    source and display the hits in a *grep* buffer.
 
     The search takes place from the Project directory. Before running ack
     you'll get to edit the command line with a sensible default chosen from:
 
     *   the active region
 
-    *   the word at point (with the -w option)
+    *   the word at point (with the "-w" whole word option)
 
-    For details, refer to the ack documentation.
+    For details, refer to the ack documentation (the program was installed
+    as a dependency of PerlySense).
 
     Remember that earlier searches are available in the command history,
     just like with grep.
 
-    Note that if you need to find something else while browsing the *grep*
+    Tip: You can jump from a source file to the next hit with "C-c C-c"
+    (type "C-h m" in the *grep* buffer to see the mode documentation).
+
+    Tip: if you need to find something else while browsing the *grep*
     buffer, you can easily rename the current buffer to something else using
     "M-x reame-buffer".
+
+   Find sub declarations
+    "C-o f s" -- Ack the Project for sub declarations of the method, or word
+    at point.
+
+    I.e. look for lines with "sub NAME".
+
+   Find method calls
+    "C-o f c" -- Ack the Project for method calls to the method, or word at
+    point.
+
+    I.e. look for lines with "->NAME".
 
   Class Overview
     Pressing "C-o C-o" will bring up the Class Overview of the Class name at
@@ -431,7 +458,7 @@ GETTING STARTED WITH EMACS
       ->path_prefix
       ...
 
-   Overview Sections
+   Overview sections
     The Inheritance section shows all Base classes of the Class. Inheriting
     from something like Catalyst is hopefully the hairiest you'll see.
     Classes inherit from their parents upwards in the diagram unless there
@@ -506,17 +533,17 @@ GETTING STARTED WITH EMACS
     directory depending on the file type, and the @INC is set appropriately.
     You can also specify additional @INC directories in the Project config.
 
-    (Note that you can configure whatever type of run profile you like, not
+    Note that you can configure whatever type of run profile you like, not
     just Perl source files.
 
     As a taste of what's possible, imagine that you have a test framework
     with .yml acceptance test data files and a corresponding yml-runner.pl
-    script. With the x option (not implemented) you can edit the .yml file
-    and type "C-o C-r" to run the acceptance test the same way as a regular
-    test.)
+    script. You can set up the config so you can type "C-o C-r" while
+    editing the .yaml file to run that test. Refer to the
+    Devel::PerlySense::Cookbook for details.
 
     If any warnings, errors or test failures are encountered, they are
-    highlighted in the "*compilation*" buffer. Use C-c C-c to move from one
+    highlighted in the *compilation* buffer. Use C-c C-c to move from one
     error to the next. Or press RET on a highlighted line.
 
     If you wish to start many runs at the same time, rename the compilation
@@ -527,7 +554,7 @@ GETTING STARTED WITH EMACS
     recompile") the file. Useful when you have skipped around the source
     fixing errors and the .t file isn't visible.
 
-    "C-o r r" -- If not even the "*compilation*" buffer is visible, issue
+    "C-o r r" -- If not even the *compilation* buffer is visible, issue
     Re-Run File from anywhere to bring it up and re-run.
 
    Edit Test Count
@@ -543,7 +570,7 @@ GETTING STARTED WITH EMACS
 
    Assist With Test Count
     "C-o a t" -- If the test count in a .t file is out of sync with what's
-    correctly reported when running the test in the "*compilation*" buffer
+    correctly reported when running the test in the *compilation* buffer
     (see Run File), use this command to update the .t file.
 
     This updates the
@@ -551,7 +578,7 @@ GETTING STARTED WITH EMACS
       use Test::More tests => 43;
 
     line in the current buffer, so be sure to only run this when the
-    "*compilation*" buffer contains the run result of this buffer.
+    *compilation* buffer contains the run result of this buffer.
 
    Go to Tests - Other Files
     "C-o g t o" -- In a test file, navigate to the source files that are
@@ -578,7 +605,7 @@ GETTING STARTED WITH EMACS
     if available (so it's easy to just copy the error line from the
     terminal, run this command and hit return to accept the default text).
 
-  Reading Code
+  Displaying Code
    Flymake Introduction
     "Flymake performs on-the-fly syntax checks of the files being edited
     using the external syntax check tool (usually the compiler). Highlights
@@ -939,6 +966,10 @@ KEY BINDING CONVENTIONS
         Perform restructuring edits that don't impact
         functionality/behaviour.
 
+    *   A -- Assist
+
+        Solve very context sensitive problems.
+
   Explore Emacs key bindings
     Remember that you can use the usual Emacs feature to display possible
     key stroke completions by hitting C-h whenever in the key stroke
@@ -973,7 +1004,7 @@ IN CLOSING -- ON PARSING PERL
     If it works for you, brilliant, use it to be more productive. If not...
     well, there's always Java >:)
 
-  SYNTAX PARSING MODULES
+  Syntax Parsing Modules
     PerlySense provides a plugin architecture for supporting custom syntax
     provided by OO modules such as Moose, or Class::Accessor.
 
@@ -1389,9 +1420,9 @@ POD ERRORS
     Hey! The above document had some coding errors, which are explained
     below:
 
-    Around line 472:
+    Around line 483:
         Unknown directive: =over4
 
-    Around line 474:
+    Around line 485:
         '=item' outside of any '=over'
 

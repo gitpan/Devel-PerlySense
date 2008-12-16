@@ -13,9 +13,11 @@ frontends, currently Emacs.
 style data structures.)
 
 Conveniently navigate and browse the code and documentation of your
-project and Perl installation. Navigate between tests and source
-(L<Devel::CoverX::Covered>), and between related files
-(L<File::Corresponding>).
+project and Perl installation. Navigate between tests and source, and
+between related files.
+
+Search through the project for method declarations, invocants or free
+text using Ack.
 
 Run tests and scripts and syntax check source with easy navigation to
 errors/warnings/failing tests.
@@ -75,6 +77,15 @@ C<C-o g p o> -- Go To Project's Other Files -- Go to I<corresponding>
 files given a C<.corresponding_file> config file (see
 L<File::Corresponding>).
 
+C<C-o f a> -- Find with Ack -- Search for the selected text, or word
+at point, or whatever, using Ack.
+
+C<C-o f s> -- Find sub declarations -- Search for sub declarations of
+the method name, or word at point.
+
+C<C-o f c> -- Find method calls -- Search for method calls of the
+method name, or word at point.
+
 C<C-o C-r> -- Run file -- Run the current file using the Compilation
 mode and the settings appropriate for the source type (Test, Module,
 etc.). Highlight errors and jump to source with C-c C-c.
@@ -86,7 +97,7 @@ C<C-o e t c> -- Edit Test Count -- Increase the test count
 (e.g. "tests => 43")
 
 C<C-o a t> -- Assist With Test Count -- Synchronize invalid test count
-in .t file with the C<*compilation*> buffer.
+in .t file with the B<*compilation*> buffer.
 
 Flymake may be used to highlight syntax errors and warnings in the
 source while editing (continously or at every save).
@@ -261,7 +272,7 @@ following in your .emacs config file:
 
 The load path is handled automatically by asking "perly_sense
 external_dir" where the elisp source was installed (that way,
-Devel::PerlySense and the elisp is always in sync).
+Devel::PerlySense and the elisp are always in sync).
 
 
 
@@ -463,8 +474,8 @@ See L<File::Corresponding> for details.
 
 =head3 Find with Ack
 
-C<C-o f a> -- Ack through the source and display the hits in a *grep*
-buffer.
+C<C-o f a> -- Ack (it's like grep, but better. See L<ack>) through the
+source and display the hits in a B<*grep*> buffer. 
 
 The search takes place from the Project directory. Before running ack
 you'll get to edit the command line with a sensible default chosen from:
@@ -473,18 +484,38 @@ you'll get to edit the command line with a sensible default chosen from:
 
 =item * the active region
 
-=item * the word at point (with the -w option)
+=item * the word at point (with the C<-w> whole word option)
 
 =back
 
-For details, refer to the L<ack> documentation.
+For details, refer to the L<ack> documentation (the program was
+installed as a dependency of PerlySense).
 
 Remember that earlier searches are available in the command history,
 just like with grep.
 
-Note that if you need to find something else while browsing the *grep*
+Tip: You can jump from a source file to the next hit with C<C-c C-c>
+(type C<C-h m> in the B<*grep*> buffer to see the mode documentation).
+
+Tip: if you need to find something else while browsing the B<*grep*>
 buffer, you can easily rename the current buffer to something else
 using C<M-x reame-buffer>.
+
+
+=head3 Find sub declarations
+
+C<C-o f s> -- Ack the Project for sub declarations of the method, or
+word at point.
+
+I.e. look for lines with C<sub NAME>.
+
+
+=head3 Find method calls
+
+C<C-o f c> -- Ack the Project for method calls to the method, or word
+at point.
+
+I.e. look for lines with C<-E<gt>NAME>.
 
 
 
@@ -526,7 +557,7 @@ Example class CatalystX::FeedMe::Controller::Feed
   ...
 
 
-=head3 Overview Sections
+=head3 Overview sections
 
 The B<Inheritance> section shows all Base classes of the
 Class. Inheriting from something like Catalyst is hopefully the
@@ -609,17 +640,17 @@ directory depending on the file type, and the @INC is set
 appropriately. You can also specify additional @INC directories in the
 Project config.
 
-(Note that you can configure whatever type of run profile you like,
+Note that you can configure whatever type of run profile you like,
 not just Perl source files.
 
 As a taste of what's possible, imagine that you have a test framework
 with .yml acceptance test data files and a corresponding yml-runner.pl
-script. With the x option (not implemented) you can edit the .yml file
-and type C<C-o C-r> to run the acceptance test the same way as a
-regular test.)
+script. You can set up the config so you can type C<C-o C-r> while
+editing the .yaml file to run that test. Refer to the
+L<Devel::PerlySense::Cookbook> for details.
 
 If any warnings, errors or test failures are encountered, they are
-highlighted in the C<*compilation*> buffer. Use C-c C-c to move from
+highlighted in the B<*compilation*> buffer. Use C-c C-c to move from
 one error to the next. Or press RET on a highlighted line.
 
 If you wish to start many runs at the same time, rename the
@@ -628,11 +659,11 @@ compilation buffer with C<M-x rename-buffer>.
 
 =head3 Re-run File
 
-Invoke C<C-o C-r> from within the *compilaton* buffer to re-run (C<M-x
-recompile>) the file. Useful when you have skipped around the source
-fixing errors and the .t file isn't visible.
+Invoke C<C-o C-r> from within the B<*compilaton*> buffer to re-run
+(C<M-x recompile>) the file. Useful when you have skipped around the
+source fixing errors and the .t file isn't visible.
 
-C<C-o r r> -- If not even the C<*compilation*> buffer is visible,
+C<C-o r r> -- If not even the B<*compilation*> buffer is visible,
 issue Re-Run File from anywhere to bring it up and re-run.
 
 
@@ -653,7 +684,7 @@ default 1.
 
 C<C-o a t> -- If the test count in a .t file is out of sync with
 what's correctly reported when running the test in the
-C<*compilation*> buffer (see Run File), use this command to update the
+B<*compilation*> buffer (see Run File), use this command to update the
 .t file.
 
 This updates the
@@ -661,7 +692,7 @@ This updates the
   use Test::More tests => 43;
 
 line in the current buffer, so be sure to only run this when the
-C<*compilation*> buffer contains the run result of this buffer.
+B<*compilation*> buffer contains the run result of this buffer.
 
 
 =head3 Go to Tests - Other Files
@@ -695,7 +726,7 @@ terminal, run this command and hit return to accept the default text).
 
 
 
-=head2 Reading Code
+=head2 Displaying Code
 
 =head3 Flymake Introduction
 
@@ -874,18 +905,19 @@ you were, and continue doing what you where doing.
 Hit C<C-o a r> to bring up the Regex Tool which will let you compose a
 Perl regular expression interactively with matching text highlighed.
 
-The Regex Tool appears in a new frame with three buffers: *Regex*,
-*Text* and *Groups*.
+The Regex Tool appears in a new frame with three buffers: B<*Regex*>,
+B<*Text*> and B<*Groups*>.
 
 If point is on a regular expression in the source code, that regex
-will be used to pre-populate the *Regex* buffer. (Not yet implemented)
+will be used to pre-populate the B<*Regex*> buffer. (Not yet
+implemented)
 
 If there is a comment block just above the regex, it will be used to
-pre-populate the *Text* buffer. Note that it is very handy to document
-the regex with some sample input, so this is a good idea in
+pre-populate the B<*Text*> buffer. Note that it is very handy to
+document the regex with some sample input, so this is a good idea in
 general. (Not yet implemented)
 
-The contents of the *Regex* buffer should look e.g. like this:
+The contents of the B<*Regex*> buffer should look e.g. like this:
 
   / part \s (\w+) \s no:(\d) /xgm
 
@@ -906,8 +938,8 @@ The modifiers work as expected, including /x and /g .
 
 =back
 
-The results in the *Groups* buffer are updated as you type in either
-the *Regex* or *Text* buffer.
+The results in the B<*Groups*> buffer are updated as you type in
+either the B<*Regex*> or B<*Text*> buffer.
 
 Use C-c C-c to force an update.
 
@@ -1163,6 +1195,11 @@ Perform smaller convenience editing task.
 
 Perform restructuring edits that don't impact functionality/behaviour.
 
+
+=item * A -- Assist
+
+Solve very context sensitive problems.
+
 =back
 
 
@@ -1209,10 +1246,10 @@ not...  well, there's always Java >:)
 
 
 
-=head2 SYNTAX PARSING MODULES
+=head2 Syntax Parsing Modules
 
 PerlySense provides a plugin architecture for supporting custom syntax
-provided by OO modules such as Moose, or Class::Accessor.
+provided by OO modules such as L<Moose>, or L<Class::Accessor>.
 
 Currently Moose is supported via the
 L<Devel::PerlySense::Plugin::Syntax::Moose> module.
@@ -1309,7 +1346,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0168';
+our $VERSION = '0.0169';
 
 
 
