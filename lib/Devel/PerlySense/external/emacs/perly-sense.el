@@ -584,7 +584,7 @@ If not, search for an empty string.
                             word-at-point))
                         ""))
           (ack-base-command (format "ack --nogroup --nocolor --perl %s-Q -- " word-only-flag))
-          (ack-command (format "%s\"%s\"" ack-base-command search-term))
+          (ack-command (format "%s%s" ack-base-command (shell-quote-argument search-term)))
           (grep-find-command (cons        ;; Two item list sets the initial position
                               ack-command
                               (+ 2 (length ack-base-command))))
@@ -596,30 +596,26 @@ If not, search for an empty string.
 (defun ps/find-project-sub-declaration-at-point ()
   "Run ack from the project dir, looking for the method/word/sub
 at point. Default to a sensible ack command line.
-
-If there is a method name ->like_t|his at point, search for that method.
-
- (If there is a method call $lik|e->this at point, search for
-that method.)
-
-If not, search for the word at point.
 "
   (interactive)
-  (ps/with-project-dir
-   (let* ((search-term (or
-                        (ps/class-method-at-point)  ;; Not good enough, write method-of-method-or-object-at-point
-                        (find-tag-default)
-                        ""))
-          (ack-base-command (format "ack --nogroup --nocolor --perl -- "))
-          (ack-command (format "%s\"^\\s*sub\\s+%s\\b\"" ack-base-command search-term))
-          )
-     (grep-find ack-command))))
+  (ps/find-project-method-regex-at-point "^\\s*sub\\s+%s\\b")
+)
 
 
 
 (defun ps/find-project-method-callers-at-point ()
   "Run ack from the project dir, looking for method calls of the
-method/word/sub at point. Default to a sensible ack command line.
+method/word/sub at point. Default to a sensible ack command line."
+  (interactive)
+  (ps/find-project-method-regex-at-point "->\\s*%s\\b")
+)
+
+
+
+(defun ps/find-project-method-regex-at-point (regex_template)
+  "Run ack from the project dir, looking for methods matching
+'regex_template' of the method/word/sub at point. Default to a
+sensible ack command line.
 
 If there is a method name ->like_t|his at point, search for that method.
 
@@ -628,16 +624,39 @@ that method.)
 
 If not, search for the word at point.
 "
-  (interactive)
   (ps/with-project-dir
-   (let* ((search-term (or
-                        (ps/class-method-at-point)  ;; Not good enough, write method-of-method-or-object-at-point
+   (let* ((method-name (or
+                        (ps/method-of-method-or-object-at-point)
                         (find-tag-default)
                         ""))
           (ack-base-command (format "ack --nogroup --nocolor --perl -- "))
-          (ack-command (format "%s\"->\\s*%s\\b\"" ack-base-command search-term))
+          (search-term (shell-quote-argument (format regex_template method-name)))
+          (ack-command (format "%s%s" ack-base-command search-term))
           )
-     (grep-find ack-command))))
+     (if (not (string= search-term ""))
+         (grep-find ack-command)
+       (message "No method found at point")))))
+
+
+
+(defun ps/method-of-method-or-object-at-point ()
+  "Find name of method of method call at point. This can be:
+
+   ->like_t|his
+   $lik|e->this
+
+Return the method name, or nil.
+"
+  (or
+   
+   (and  ;; $ob|ject->method
+    (or
+     (and (looking-back "$[a-zA-Z0-0_]*") (looking-at "[a-zA-Z0-0_]*->\\([a-zA-Z0-0_]+\\)"))
+     (looking-at "$[a-zA-Z0-0_]*->\\([a-zA-Z0-0_]+\\)"))
+    (buffer-substring-no-properties (match-beginning 1) (match-end 1)))
+   (ps/class-method-at-point)  ;; ->me|thod
+   nil
+   ))
 
 
 

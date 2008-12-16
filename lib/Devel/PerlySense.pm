@@ -509,6 +509,9 @@ word at point.
 
 I.e. look for lines with C<sub NAME>.
 
+The point can be either on the method (C<$self-E<gt>st|ore|), or on the
+object (C<$us|er_agent-E<gt>get()>)
+
 
 =head3 Find method calls
 
@@ -1346,7 +1349,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0169';
+our $VERSION = '0.0170';
 
 
 

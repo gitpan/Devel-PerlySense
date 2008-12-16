@@ -416,6 +416,9 @@ GETTING STARTED WITH EMACS
 
     I.e. look for lines with "sub NAME".
 
+    The point can be either on the method ("$self->st|ore|), or on the
+    object ("$us|er_agent->get()")"
+
    Find method calls
     "C-o f c" -- Ack the Project for method calls to the method, or word at
     point.
@@ -1425,4 +1428,7 @@ POD ERRORS
 
     Around line 485:
         '=item' outside of any '=over'
+
+    Around line 512:
+        Unterminated C<...> sequence
 

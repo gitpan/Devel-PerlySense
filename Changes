@@ -3,6 +3,16 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0170
+------
+
+* Find with Ack quotes the search properly.
+
+* Find Sub Declarations and Find Method Calls identify methods when
+  point is on the object too.
+
+
+
 0.0169
 ------
 
