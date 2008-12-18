@@ -19,8 +19,8 @@ between related files.
 Search through the project for method declarations, invocants or free
 text using Ack.
 
-Run tests and scripts and syntax check source with easy navigation to
-errors/warnings/failing tests.
+Run tests and scripts with easy navigation to errors/warnings/failing
+tests.
 
 Automate common editing tasks related to source code, tests, regular
 expressions, etc.
@@ -38,69 +38,71 @@ e.g. Moose.
 
 =head2 From Emacs
 
-C<C-o C-o> -- Overview -- Show information about the Class at point or
-the current Class.
+B<Overview> -- C<C-o C-o> -- Show information about the Class at
+point or the current Class.
 
-C<C-o C-d> -- Docs -- Show docs (POD/signature/etc) for the symbol
+B<Docs> -- C<C-o C-d> -- Show docs (POD/signature/etc) for the symbol
 (module/method/sub) at point. A doc hint is displayed in the echo area
 (for methods and subs), or a new POD buffer is created (for modules).
 
-C<C-o d i> -- Document Inheritance -- Show the Inheritance hierarchy
+B<Document Inheritance> -- C<C-o d i> -- Show the Inheritance hierarchy
 for the current Class in the echo area.
 
 C<C-o d u> -- Document 'use Module' statements in the echo area.
 
-C<C-o C-g> -- Go To -- Open file at proper location for module,
+B<Go To> -- C<C-o C-g> -- Open file at proper location for module,
 method/sub declaration for the symbol (module/method/sub) at point. If
 no sub declaration is available (like for generated getters/setters),
 any appropriate POD is used instead.
 
-C<C-o g u> -- Go to the 'use Module' section of the current buffer.
+B<Go to Use> -- C<C-o g u> -- Go to the 'use Module' section of the current buffer.
 
-C<C-o g n> -- Go To 'new' -- Go to the 'new' method of the current
+B<Go To 'new'> -- C<C-o g n> -- Go to the 'new' method of the current
 class.
 
-C<C-o g b> -- Go To Base Class -- Open the file of the base class of
-the current class. This will take you up one level in the inheritance
-hierarchy.
+B<Go To Base Class> -- C<C-o g b> -- Open the file of the base class
+of the current class. This will take you up one level in the
+inheritance hierarchy.
 
-C<C-o g m> -- Go To Module -- Open the source file of the module at
+B<Go To Module> -- C<C-o g m> -- Open the source file of the module at
 point.
 
-C<C-o g v> -- Go To Version Control -- Go to the Project view of the
-current Version Control system.
+B<Go To Version Control> -- C<C-o g v> -- Go to the Project view of
+the current Version Control system.
 
-C<C-o g t o> -- Go To Tests - Other Files -- Go to any related test or
-source files given a L<Devel::CoverX::Covered> covered db.
+B<Go To Tests - Other Files> -- C<C-o g t o> -- Go to any related test
+or source files given a L<Devel::CoverX::Covered> covered db.
 
-C<C-o g p o> -- Go To Project's Other Files -- Go to I<corresponding>
-files given a C<.corresponding_file> config file (see
+B<Go To Project's Other Files> -- C<C-o g p o> -- Go to
+I<corresponding> files given a C<.corresponding_file> config file (see
 L<File::Corresponding>).
 
-C<C-o f a> -- Find with Ack -- Search for the selected text, or word
-at point, or whatever, using Ack.
+B<Find with Ack> -- C<C-o f a> -- Search for the selected text, or
+word at point, or whatever, using Ack.
 
-C<C-o f s> -- Find sub declarations -- Search for sub declarations of
-the method name, or word at point.
+B<Find sub declarations> -- C<C-o f s> -- Search for sub declarations
+of the method name, or word at point.
 
-C<C-o f c> -- Find method calls -- Search for method calls of the
+B<Find method calls> -- C<C-o f c> -- Search for method calls of the
 method name, or word at point.
 
-C<C-o C-r> -- Run file -- Run the current file using the Compilation
-mode and the settings appropriate for the source type (Test, Module,
-etc.). Highlight errors and jump to source with C-c C-c.
+B<Run file> -- C<C-o C-r> -- Run the current file using the
+Compilation mode and the settings appropriate for the source type
+(Test, Module, etc.). Highlight errors and jump to source with C-c
+C-c.
 
-C<C-o e m u> -- Edit - Move Use Statement -- Move the 'use Module'
+B<Edit - Move Use Statement> -- C<C-o e m u> -- Move the 'use Module'
 statement at point to the 'use Module' section at the top.
 
-C<C-o e t c> -- Edit Test Count -- Increase the test count
+B<Edit Test Count> -- C<C-o e t c> -- Increase the test count
 (e.g. "tests => 43")
 
-C<C-o a t> -- Assist With Test Count -- Synchronize invalid test count
-in .t file with the B<*compilation*> buffer.
+B<Assist With Test Count> -- C<C-o a t> -- Synchronize invalid test
+count in .t file with the B<*compilation*> buffer.
 
-Flymake may be used to highlight syntax errors and warnings in the
-source while editing (continously or at every save).
+Flymake may be used to highlight syntax errors, warnings, and
+Perl::Critic violations in the source while editing (continously or at
+every save).
 
 
 
@@ -111,7 +113,8 @@ anyway. If you pass the option
 
  --io_type=editor_vim
 
-to perly_sense, the output format will use the Vim serializer.
+to perly_sense, the output will be serialized to Vim L<Dictionary data
+structures|http://vimdoc.sourceforge.net/htmldoc/eval.html#Dictionaries>.
 
 
 
@@ -184,22 +187,40 @@ user home directory, etc. is.
 
 =head1 INSTALLATION
 
-=head2 perly_sense installation
+=head2 Module Installation
 
-Install required modules from CPAN. Recommended: use a configured CPAN
-shell, like this:
+Install the Devel::PerlySense module and accompanying elisp by using a
+configured CPAN shell, like this:
 
   cpan Devel::PerlySense
 
-and be done with it. When everything is installed, verify by running
+When everything is installed, verify by running
 
   perly_sense info
+
+The elisp is installed next to the Perl source (so it works to install
+as an unpriviliged user, and you don't I<have> to have Emacs
+installed, and the elisp and Perl source are always in sync).
 
 
 =head2 Supporting modules
 
-This isn't needed to begin with, but may be very useful if you have a
-lot of tests to navigate: L<Devel::CoverX::Covered>.
+These aren't needed to begin with, but may be very useful.
+
+=over 4
+
+=item * L<Devel::CoverX::Covered>
+
+If you have a lot of tests to navigate and run a nightly build with
+Devel::Cover to generate test coverage.
+
+=item * L<File::Corresponding>
+
+If you have an MVC style class structure with the same entity
+represented in different directories (e.g. Controller::Aeroplane,
+Model::Aeroplane, etc.).
+
+=back
 
 
 
@@ -270,11 +291,6 @@ following in your .emacs config file:
     ;; *** PerlySense End ***
 
 
-The load path is handled automatically by asking "perly_sense
-external_dir" where the elisp source was installed (that way,
-Devel::PerlySense and the elisp are always in sync).
-
-
 
 =head2 Emacs Configuration
 
@@ -301,24 +317,67 @@ customizations by doing
 
 =head1 GETTING STARTED WITH EMACS
 
+This is quite a handfull of new features, and you're not likely to be
+able to use them efficiently from day one. Remember, Emacs is all
+about acquiring finger memory, one feature at a time.
+
+These are the ones I use every day so they may be a good start:
+
+=over 4
+
+=item * Go to Module
+
+=item * Go to base class
+
+=item * Document Class Hierarchy
+
+=back
+
+=over4
+
+=item * Go to Version Control
+
+=back
+
+=over4
+
+=item * Find with Ack
+
+=item * Find sub declerations
+
+=back
+
+=over4
+
+=item * Run tests, Re-run tests
+
+=item * Assist with Test count
+
+=back
 
 
 =head2 Reading Docs
 
 =head3 Smart docs
 
-C<C-o C-d> is the "Smart docs" command. It brings up documentation for
-what's at point.
+=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
+<img src="../../doc/images/smart_docs_method.png" style="margin-bottom:4px;"/>
+<div>Smart Docs for the simplest case: point on a method of $self.</div>
+</div>
 
-Put the cursor on the C<method> word of a C<$self->method> call and
-press C<C-o C-d> and wait until a documentation hint for the method
-call is displayed briefly in the echo area. PerlySense will look in
-base classes if the method can't be found in the current class.
+C<C-o C-d> is the "Smart docs" command. It brings up POD documentation
+for what's at point.
 
-Put the cursor on the C<method> word of an $object->method call and
-press C<C-o C-d> to see the docs hint. PerlySense will look through
-all your C<use>d modules (and their base classes) for the method call
-and try to identify the best match.
+Put the cursor on the C<method> word of a C<$self-E<gt>method> call
+and press C<C-o C-d> and wait until a documentation hint for the
+method call is displayed briefly in the echo area. PerlySense will
+look in base classes if the method can't be found in the current
+class.
+
+Put the cursor on the C<method> word of an $object-E<gt>method call
+and press C<C-o C-d> to see the docs hint. PerlySense will look
+through all your C<use>d modules (and their base classes) for the
+method call and try to identify the best match.
 
 Note! The first time each module is parsed this will take a second or
 two, and the very first time you run the command with lots of "use"
@@ -335,15 +394,21 @@ for the current file.
 =head3 Document Inheritance
 
 C<C-o d i> will briefly display the Inheritance hierarchy for the
-current Class in the echo area. This is similar to the Class Overview
-(see below).
+current Class in the echo area. Example:
+
+    [ DBIx::Class::Componentised        ]
+    [ DBIx::Class                       ] --> [ Class::Data::Accessor ]
+    [<CatalystX::FeedMe::DBIC::FeedItem>]
 
 
 =head3 Document Used Modules
 
 C<C-o d u> will briefly display the list of modules used from the
-current buffer in the echo area. This is similar to the Class Overview
-(see below).
+current buffer in the echo area. Example:
+
+    [ Carp               ] [ File::Spec ] [ Win32::OLE::Const          ]
+    [ Class::MethodMaker ] [ File::Temp ] [ Win32::Word::Writer::Table ]
+    [ Data::Dumper       ] [ Win32::OLE ]
 
 
 
@@ -385,7 +450,8 @@ displayed in the echo area so you can see where you ended up.
 =head3 Go to the 'new' method
 
 C<C-o g n> takes you to the definition of the 'new' method of the
-current class (in this class, or a parent class).
+current class (in this class, or a parent class). But if you're
+unlucky, it might take you to your OO helper module's default new.
 
 
 =head3 Go To 'use Module' section
@@ -474,8 +540,15 @@ See L<File::Corresponding> for details.
 
 =head3 Find with Ack
 
-C<C-o f a> -- Ack (it's like grep, but better. See L<ack>) through the
-source and display the hits in a B<*grep*> buffer. 
+=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
+<img src="../../doc/images/find_with_ack.png" style="margin-bottom:4px;"/>
+<div>Find with Ack (try splitting vertically with C-x 3 instead if you have the monitor width).</div>
+</div>
+
+
+C<C-o f a> -- Ack through the source and display the hits in a
+B<*grep*> buffer. L<ack> is like grep, but more suitable for
+development.
 
 The search takes place from the Project directory. Before running ack
 you'll get to edit the command line with a sensible default chosen from:
@@ -498,28 +571,44 @@ Tip: You can jump from a source file to the next hit with C<C-c C-c>
 (type C<C-h m> in the B<*grep*> buffer to see the mode documentation).
 
 Tip: if you need to find something else while browsing the B<*grep*>
-buffer, you can easily rename the current buffer to something else
-using C<M-x reame-buffer>.
+buffer, you can easily rename the current B<*grep*> buffer to
+something else using C<M-x reame-buffer>.
 
 
 =head3 Find sub declarations
 
-C<C-o f s> -- Ack the Project for sub declarations of the method, or
-word at point.
+=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
+<img src="../../doc/images/find_sub_declarations.png" style="margin-bottom:4px;"/>
+<div>Find Sub Declarations.</div>
+</div>
+
+
+C<C-o f s> -- Ack the Project for I<sub declarations> of the method,
+or word at point.
 
 I.e. look for lines with C<sub NAME>.
 
-The point can be either on the method (C<$self-E<gt>st|ore|), or on the
-object (C<$us|er_agent-E<gt>get()>)
+The point can be either on the method (C<$self-E<gt>st|ore>), or on
+the object (C<$us|er_agent-E<gt>get()>)
+
+=for html <p style="clear:both">
 
 
 =head3 Find method calls
 
-C<C-o f c> -- Ack the Project for method calls to the method, or word
-at point.
+=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
+<img src="../../doc/images/find_method_callers.png" style="margin-bottom:4px;"/>
+<div>Find Method Callers.</div>
+</div>
+
+
+C<C-o f c> -- Ack the Project for I<method calls> to the method, or
+word at point.
 
 I.e. look for lines with C<-E<gt>NAME>.
 
+
+=for html <p style="clear:both">
 
 
 =head2 Class Overview
@@ -579,7 +668,7 @@ have defined in the Project config (see below).
 
 the B<API> section shows things that look like methods and properties
 of the class (sub declarations, $self method calls,
-$self->{hash_ref_keys}):
+$self-E<gt>{hash_ref_keys}):
 
   ->method_in_this_class
   \>method_in_base_class  (note the arrow coming from above)
@@ -620,13 +709,34 @@ B -- Move point to the Bookmarks heading.
 
 A -- Move point to the API heading.
 
-N -- Move point to the '->new' method in the buffer (if any).
+N -- Move point to the '-E<gt>new' method in the buffer (if any).
 
 q -- Quit the Class Overview buffer.
 
 
 
 =head2 Testing
+
+=begin html
+
+<div style="margin:8px; padding: 16px 0px 16px 0px; display:block; border-top: solid 1px; border-bottom: solid 1px;">
+
+<img src="../../doc/images/run_tests_1.png" style="margin-bottom:4px;" />
+<div>I just added a new test and want to run the .t file (C-o C-r)...</div>
+
+<img src="../../doc/images/run_tests_2_bad_plan.png" style="margin-bottom:4px; margin-top:22px;" />
+<div>...but it fails! The test count is wrong. There should be 13 tests, not 12.</div>
+
+<img src="../../doc/images/run_tests_3_assist_test_count.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>Assist with Test Count -- C-o a t -- to synchronize the test count with the last test run, all without moving point.</div>
+
+<img src="../../doc/images/run_tests_4_pass.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>Re-run the last .t file from any buffer with C-o r r... and all tests pass. Time to check in.</div>
+
+</div>
+
+=end html
+
 
 =head3 Run File
 
@@ -653,8 +763,10 @@ editing the .yaml file to run that test. Refer to the
 L<Devel::PerlySense::Cookbook> for details.
 
 If any warnings, errors or test failures are encountered, they are
-highlighted in the B<*compilation*> buffer. Use C-c C-c to move from
-one error to the next. Or press RET on a highlighted line.
+highlighted in the B<*compilation*> buffer. Press RET on a highlighted
+line to go to the source. Jump between errors with Tab.
+
+Use C-c C-c to move from one error to the next while editing.
 
 If you wish to start many runs at the same time, rename the
 compilation buffer with C<M-x rename-buffer>.
@@ -713,6 +825,21 @@ L<Devel::Cover> cover_db in the project root directory.
 See L<Devel::CoverX::Covered> for details.
 
 
+=begin html
+
+<div style="margin:8px; padding: 16px 0px 16px 0px; display:block; border-bottom: solid 1px;">
+
+<img src="../../doc/images/goto_tests_source_file_other.png" style="margin-bottom:4px;" />
+<div>Go to Tests - Other Files -- C-o g t o -- displays a menu with .t files covering this source file.</div>
+
+<img src="../../doc/images/goto_tests_source_sub_other.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>When point is on a sub declaration line, only tests covering that sub are displayed in the menu.</div>
+
+</div>
+
+=end html
+
+
 =head3 Go to Error line
 
 If you run tests in a regular shell (inside Emacs or in a terminal
@@ -733,6 +860,36 @@ terminal, run this command and hit return to accept the default text).
 
 =head3 Flymake Introduction
 
+=begin html
+
+<div style="float:right;">
+
+<div style="margin:8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px;">
+
+<img src="../../doc/images/flymake_highlight.png" style="margin-bottom:4px;"/>
+<div>D'oh, I clumsily deleted the semicolon. But a second after saving... hey, something is wrong here!</div>
+
+<img src="../../doc/images/flymake_details.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>C-o s s on the error line displays the compilation error.</div>
+
+</div>
+
+
+<div style="margin:32px 8px 8px 8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px; clear=both;">
+
+<img src="../../doc/images/flymake_critic_highlight.png" style="margin-bottom:4px;"/>
+<div>Perl::Critic violations (enable with utmost care,  not all are that great) are displayed as warnings</div>
+
+<img src="../../doc/images/flymake_critic_details.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>Although this one is very sensible.</div>
+
+</div>
+
+</div>
+
+=end html
+
+
 "Flymake performs on-the-fly syntax checks of the files being edited
 using the external syntax check tool (usually the compiler).
 Highlights erroneous lines and displays associated error messages."
@@ -746,9 +903,20 @@ PerlySense uses flymake to check syntax, Perl Critic, etc.
 Having Perl::Critic enabled will also speed up other operations by
 caching information.
 
-Three inconveniences with vanilla Flymake are fixed: no proper @INC,
-only .pl files, and "perl -c" warns about redefined subs for
-recursively used modules (which is perfectly fine Perl).
+Three inconveniences with vanilla Flymake are fixed:
+
+
+=over 4
+
+=item * no proper @INC
+
+=item * only .pl files
+
+=item * "perl -c" warns about redefined subs for
+recursively used modules (which is perfectly fine Perl)
+
+=back
+
 
 Syntax errors and warnings both use the error face.
 
@@ -764,8 +932,8 @@ Installation description above.
 This will enable Flymake for all cperl-mode buffers, causing Emacs to
 call perly_sense for each check.
 
-PerlySense won't do anything at this point though. You still need to
-configure what should happen during a flymake.
+I<PerlySense won't do anything at this point though>. You still need
+to configure what should happen during a flymake.
 
 Create a PerlySense Project directory (see below) and look in the
 project.yml file for instructions on how to configure Flymake
@@ -773,8 +941,8 @@ activities.
 
 Set "syntax" and/or "critic" to 1 to enable them.
 
-The primary reason "syntax" is turned off by default is that it's a
-potential security hole; running "perl -c" on a file will not only
+B<The primary reason "syntax" is turned off by default is that it's a
+potential security hole>; running "perl -c" on a file will not only
 check the syntax; BEGIN and CHECK blocks are also executed. Doing that
 on random code may be considered... baaad.
 
@@ -810,6 +978,38 @@ C<C-o s s> -- Display the error/warning text of the current line.
 
 =head3 Code Coverage Visualization Introduction
 
+
+=begin html
+
+<div style="float:right;">
+
+<div style="margin:8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px;">
+
+<img src="../../doc/images/covered_sub_green.png" style="margin-bottom:4px;"/>
+<div>Subtle green underlined "sub" keyword indicating the sub was covered.</div>
+
+<img src="../../doc/images/cover_report_sub_green.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>Sub coverage does not guarantee 100% line coverage like in this (bad) example.</div>
+
+</div>
+
+
+<div style="margin:32px 8px 8px 8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px; clear=both;">
+
+<img src="../../doc/images/covered_sub_red.png" style="margin-bottom:4px;"/>
+<div>Red underline + complex method == likely breakage</div>
+
+<img src="../../doc/images/cover_report_sub_red.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>And (obviously) no line coverage.</div>
+
+</div>
+
+</div>
+
+=end html
+
+
+
 If you have a test suite, you might like this. You should have tests.
 
 If you run Devel::Cover, you'll be happy. You should know your code
@@ -822,6 +1022,7 @@ covered by tests or not.
 
 Covered subs are displayed with a discreet green underline, uncovered
 subs get a red underline.
+
 
 
 
@@ -844,7 +1045,8 @@ slow. A nightly build is usually a good idea.
 You can toggle Visualization with C<C-o C-v> at any time when editing.
 
 You can also enable Visualization by default in the install script
-(see above), or via customize.
+(see above), or via C<M-x customize-variable
+ps/enable-test-coverage-visualization>.
 
 Whenever Visualization is enabled, PerlySense will try to fetch
 coverage information just after a file is opened and highlight the
@@ -881,6 +1083,9 @@ Note that you can hit C<C-o g t o> -- "Go To Tests - Other Files" to
 see what test files are covering I<this file>. If you run the command
 with the cursor on a "sub" line, you'll get only the tests that cover
 I<that particular subroutine>.
+
+
+=for html <p style="clear:both">
 
 
 
@@ -947,6 +1152,24 @@ either the B<*Regex*> or B<*Text*> buffer.
 Use C-c C-c to force an update.
 
 Use C-c C-k to quit all the regex-tool buffers and remove the frame.
+
+
+=begin html
+
+<div style="margin:8px; padding: 16px 0px 16px 0px; display:block; border-bottom: solid 1px;">
+
+<img src="../../doc/images/assist_regex_1.png" style="margin-bottom:4px;" />
+<div>No matches yet, the /x modifier is missing</div>
+
+<img src="../../doc/images/assist_regex_2_x.png" style="margin-bottom:4px; margin-top:22px;" />
+<div>Matches are highlighted, and the individual capture values displayed</div>
+
+<img src="../../doc/images/assist_regex_3_g.png" style="margin-bottom:4px; margin-top:22px;"/>
+<div>Including for multiple matches  with /g</div>
+
+</div>
+
+=end html
 
 
 
@@ -1349,7 +1572,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0170';
+our $VERSION = '0.0171';
 
 
 

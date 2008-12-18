@@ -15,8 +15,8 @@ DESCRIPTION
     Search through the project for method declarations, invocants or free
     text using Ack.
 
-    Run tests and scripts and syntax check source with easy navigation to
-    errors/warnings/failing tests.
+    Run tests and scripts with easy navigation to errors/warnings/failing
+    tests.
 
     Automate common editing tasks related to source code, tests, regular
     expressions, etc.
@@ -29,68 +29,70 @@ DESCRIPTION
 
 SYNOPSIS
   From Emacs
-    "C-o C-o" -- Overview -- Show information about the Class at point or
+    Overview -- "C-o C-o" -- Show information about the Class at point or
     the current Class.
 
-    "C-o C-d" -- Docs -- Show docs (POD/signature/etc) for the symbol
+    Docs -- "C-o C-d" -- Show docs (POD/signature/etc) for the symbol
     (module/method/sub) at point. A doc hint is displayed in the echo area
     (for methods and subs), or a new POD buffer is created (for modules).
 
-    "C-o d i" -- Document Inheritance -- Show the Inheritance hierarchy for
+    Document Inheritance -- "C-o d i" -- Show the Inheritance hierarchy for
     the current Class in the echo area.
 
     "C-o d u" -- Document 'use Module' statements in the echo area.
 
-    "C-o C-g" -- Go To -- Open file at proper location for module,
+    Go To -- "C-o C-g" -- Open file at proper location for module,
     method/sub declaration for the symbol (module/method/sub) at point. If
     no sub declaration is available (like for generated getters/setters),
     any appropriate POD is used instead.
 
-    "C-o g u" -- Go to the 'use Module' section of the current buffer.
+    Go to Use -- "C-o g u" -- Go to the 'use Module' section of the current
+    buffer.
 
-    "C-o g n" -- Go To 'new' -- Go to the 'new' method of the current class.
+    Go To 'new' -- "C-o g n" -- Go to the 'new' method of the current class.
 
-    "C-o g b" -- Go To Base Class -- Open the file of the base class of the
+    Go To Base Class -- "C-o g b" -- Open the file of the base class of the
     current class. This will take you up one level in the inheritance
     hierarchy.
 
-    "C-o g m" -- Go To Module -- Open the source file of the module at
+    Go To Module -- "C-o g m" -- Open the source file of the module at
     point.
 
-    "C-o g v" -- Go To Version Control -- Go to the Project view of the
+    Go To Version Control -- "C-o g v" -- Go to the Project view of the
     current Version Control system.
 
-    "C-o g t o" -- Go To Tests - Other Files -- Go to any related test or
+    Go To Tests - Other Files -- "C-o g t o" -- Go to any related test or
     source files given a Devel::CoverX::Covered covered db.
 
-    "C-o g p o" -- Go To Project's Other Files -- Go to *corresponding*
+    Go To Project's Other Files -- "C-o g p o" -- Go to *corresponding*
     files given a ".corresponding_file" config file (see
     File::Corresponding).
 
-    "C-o f a" -- Find with Ack -- Search for the selected text, or word at
+    Find with Ack -- "C-o f a" -- Search for the selected text, or word at
     point, or whatever, using Ack.
 
-    "C-o f s" -- Find sub declarations -- Search for sub declarations of the
+    Find sub declarations -- "C-o f s" -- Search for sub declarations of the
     method name, or word at point.
 
-    "C-o f c" -- Find method calls -- Search for method calls of the method
+    Find method calls -- "C-o f c" -- Search for method calls of the method
     name, or word at point.
 
-    "C-o C-r" -- Run file -- Run the current file using the Compilation mode
+    Run file -- "C-o C-r" -- Run the current file using the Compilation mode
     and the settings appropriate for the source type (Test, Module, etc.).
     Highlight errors and jump to source with C-c C-c.
 
-    "C-o e m u" -- Edit - Move Use Statement -- Move the 'use Module'
+    Edit - Move Use Statement -- "C-o e m u" -- Move the 'use Module'
     statement at point to the 'use Module' section at the top.
 
-    "C-o e t c" -- Edit Test Count -- Increase the test count (e.g. "tests
+    Edit Test Count -- "C-o e t c" -- Increase the test count (e.g. "tests
     => 43")
 
-    "C-o a t" -- Assist With Test Count -- Synchronize invalid test count in
+    Assist With Test Count -- "C-o a t" -- Synchronize invalid test count in
     .t file with the *compilation* buffer.
 
-    Flymake may be used to highlight syntax errors and warnings in the
-    source while editing (continously or at every save).
+    Flymake may be used to highlight syntax errors, warnings, and
+    Perl::Critic violations in the source while editing (continously or at
+    every save).
 
   From Vim
     There is no integraton with Vim available. Well, not properly anyway. If
@@ -98,7 +100,8 @@ SYNOPSIS
 
      --io_type=editor_vim
 
-    to perly_sense, the output format will use the Vim serializer.
+    to perly_sense, the output will be serialized to Vim <Dictionary data
+    structures>.
 
   From other editors
     Any editor that is programmable and that can call a shell script could
@@ -151,19 +154,33 @@ SYNOPSIS
         user home directory, etc. is.
 
 INSTALLATION
-  perly_sense installation
-    Install required modules from CPAN. Recommended: use a configured CPAN
-    shell, like this:
+  Module Installation
+    Install the Devel::PerlySense module and accompanying elisp by using a
+    configured CPAN shell, like this:
 
       cpan Devel::PerlySense
 
-    and be done with it. When everything is installed, verify by running
+    When everything is installed, verify by running
 
       perly_sense info
 
+    The elisp is installed next to the Perl source (so it works to install
+    as an unpriviliged user, and you don't *have* to have Emacs installed,
+    and the elisp and Perl source are always in sync).
+
   Supporting modules
-    This isn't needed to begin with, but may be very useful if you have a
-    lot of tests to navigate: Devel::CoverX::Covered.
+    These aren't needed to begin with, but may be very useful.
+
+    *   Devel::CoverX::Covered
+
+        If you have a lot of tests to navigate and run a nightly build with
+        Devel::Cover to generate test coverage.
+
+    *   File::Corresponding
+
+        If you have an MVC style class structure with the same entity
+        represented in different directories (e.g. Controller::Aeroplane,
+        Model::Aeroplane, etc.).
 
   Emacs installation
     Make sure the Devel::PerlySense CPAN module is installed, it contains
@@ -229,10 +246,6 @@ INSTALLATION
 
         ;; *** PerlySense End ***
 
-    The load path is handled automatically by asking "perly_sense
-    external_dir" where the elisp source was installed (that way,
-    Devel::PerlySense and the elisp are always in sync).
-
   Emacs Configuration
     The most important config you can change is the prefix key.
 
@@ -253,12 +266,34 @@ INSTALLATION
       M-x customize-group perly-sense
 
 GETTING STARTED WITH EMACS
+    This is quite a handfull of new features, and you're not likely to be
+    able to use them efficiently from day one. Remember, Emacs is all about
+    acquiring finger memory, one feature at a time.
+
+    These are the ones I use every day so they may be a good start:
+
+    *   Go to Module
+
+    *   Go to base class
+
+    *   Document Class Hierarchy
+
+    *   Go to Version Control
+
+    *   Find with Ack
+
+    *   Find sub declerations
+
+    *   Run tests, Re-run tests
+
+    *   Assist with Test count
+
   Reading Docs
    Smart docs
-    "C-o C-d" is the "Smart docs" command. It brings up documentation for
-    what's at point.
+    "C-o C-d" is the "Smart docs" command. It brings up POD documentation
+    for what's at point.
 
-    Put the cursor on the "method" word of a "$self-"method> call and press
+    Put the cursor on the "method" word of a "$self->method" call and press
     "C-o C-d" and wait until a documentation hint for the method call is
     displayed briefly in the echo area. PerlySense will look in base classes
     if the method can't be found in the current class.
@@ -281,13 +316,19 @@ GETTING STARTED WITH EMACS
 
    Document Inheritance
     "C-o d i" will briefly display the Inheritance hierarchy for the current
-    Class in the echo area. This is similar to the Class Overview (see
-    below).
+    Class in the echo area. Example:
+
+        [ DBIx::Class::Componentised        ]
+        [ DBIx::Class                       ] --> [ Class::Data::Accessor ]
+        [<CatalystX::FeedMe::DBIC::FeedItem>]
 
    Document Used Modules
     "C-o d u" will briefly display the list of modules used from the current
-    buffer in the echo area. This is similar to the Class Overview (see
-    below).
+    buffer in the echo area. Example:
+
+        [ Carp               ] [ File::Spec ] [ Win32::OLE::Const          ]
+        [ Class::MethodMaker ] [ File::Temp ] [ Win32::Word::Writer::Table ]
+        [ Data::Dumper       ] [ Win32::OLE ]
 
   Browsing Code
    Smart go to
@@ -319,7 +360,8 @@ GETTING STARTED WITH EMACS
 
    Go to the 'new' method
     "C-o g n" takes you to the definition of the 'new' method of the current
-    class (in this class, or a parent class).
+    class (in this class, or a parent class). But if you're unlucky, it
+    might take you to your OO helper module's default new.
 
    Go To 'use Module' section
     "C-o g u" takes you to the line below the last 'use Module' statement in
@@ -387,8 +429,8 @@ GETTING STARTED WITH EMACS
 
   Finding Code
    Find with Ack
-    "C-o f a" -- Ack (it's like grep, but better. See ack) through the
-    source and display the hits in a *grep* buffer.
+    "C-o f a" -- Ack through the source and display the hits in a *grep*
+    buffer. ack is like grep, but more suitable for development.
 
     The search takes place from the Project directory. Before running ack
     you'll get to edit the command line with a sensible default chosen from:
@@ -407,21 +449,21 @@ GETTING STARTED WITH EMACS
     (type "C-h m" in the *grep* buffer to see the mode documentation).
 
     Tip: if you need to find something else while browsing the *grep*
-    buffer, you can easily rename the current buffer to something else using
-    "M-x reame-buffer".
+    buffer, you can easily rename the current *grep* buffer to something
+    else using "M-x reame-buffer".
 
    Find sub declarations
-    "C-o f s" -- Ack the Project for sub declarations of the method, or word
-    at point.
+    "C-o f s" -- Ack the Project for *sub declarations* of the method, or
+    word at point.
 
     I.e. look for lines with "sub NAME".
 
-    The point can be either on the method ("$self->st|ore|), or on the
-    object ("$us|er_agent->get()")"
+    The point can be either on the method ("$self->st|ore"), or on the
+    object ("$us|er_agent->get()")
 
    Find method calls
-    "C-o f c" -- Ack the Project for method calls to the method, or word at
-    point.
+    "C-o f c" -- Ack the Project for *method calls* to the method, or word
+    at point.
 
     I.e. look for lines with "->NAME".
 
@@ -546,8 +588,10 @@ GETTING STARTED WITH EMACS
     Devel::PerlySense::Cookbook for details.
 
     If any warnings, errors or test failures are encountered, they are
-    highlighted in the *compilation* buffer. Use C-c C-c to move from one
-    error to the next. Or press RET on a highlighted line.
+    highlighted in the *compilation* buffer. Press RET on a highlighted line
+    to go to the source. Jump between errors with Tab.
+
+    Use C-c C-c to move from one error to the next while editing.
 
     If you wish to start many runs at the same time, rename the compilation
     buffer with "M-x rename-buffer".
@@ -623,9 +667,14 @@ GETTING STARTED WITH EMACS
     Having Perl::Critic enabled will also speed up other operations by
     caching information.
 
-    Three inconveniences with vanilla Flymake are fixed: no proper @INC,
-    only .pl files, and "perl -c" warns about redefined subs for recursively
-    used modules (which is perfectly fine Perl).
+    Three inconveniences with vanilla Flymake are fixed:
+
+    *   no proper @INC
+
+    *   only .pl files
+
+    *   "perl -c" warns about redefined subs for recursively used modules
+        (which is perfectly fine Perl)
 
     Syntax errors and warnings both use the error face.
 
@@ -638,7 +687,7 @@ GETTING STARTED WITH EMACS
     This will enable Flymake for all cperl-mode buffers, causing Emacs to
     call perly_sense for each check.
 
-    PerlySense won't do anything at this point though. You still need to
+    *PerlySense won't do anything at this point though*. You still need to
     configure what should happen during a flymake.
 
     Create a PerlySense Project directory (see below) and look in the
@@ -707,7 +756,8 @@ GETTING STARTED WITH EMACS
     You can toggle Visualization with "C-o C-v" at any time when editing.
 
     You can also enable Visualization by default in the install script (see
-    above), or via customize.
+    above), or via "M-x customize-variable
+    ps/enable-test-coverage-visualization".
 
     Whenever Visualization is enabled, PerlySense will try to fetch coverage
     information just after a file is opened and highlight the word "sub" for
@@ -1423,12 +1473,27 @@ POD ERRORS
     Hey! The above document had some coding errors, which are explained
     below:
 
-    Around line 483:
+    Around line 336:
         Unknown directive: =over4
 
-    Around line 485:
+    Around line 338:
         '=item' outside of any '=over'
 
-    Around line 512:
-        Unterminated C<...> sequence
+    Around line 342:
+        Unknown directive: =over4
+
+    Around line 344:
+        '=item' outside of any '=over'
+
+    Around line 350:
+        Unknown directive: =over4
+
+    Around line 352:
+        '=item' outside of any '=over'
+
+    Around line 556:
+        Unknown directive: =over4
+
+    Around line 558:
+        '=item' outside of any '=over'
 

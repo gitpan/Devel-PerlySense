@@ -651,8 +651,8 @@ Return the method name, or nil.
    
    (and  ;; $ob|ject->method
     (or
-     (and (looking-back "$[a-zA-Z0-0_]*") (looking-at "[a-zA-Z0-0_]*->\\([a-zA-Z0-0_]+\\)"))
-     (looking-at "$[a-zA-Z0-0_]*->\\([a-zA-Z0-0_]+\\)"))
+     (and (looking-back "$[a-zA-Z0-9_]*") (looking-at "[a-zA-Z0-0_]*->\\([a-zA-Z0-9_]+\\)"))
+     (looking-at "$[a-zA-Z0-9_]*->\\([a-zA-Z0-9_]+\\)"))
     (buffer-substring-no-properties (match-beginning 1) (match-end 1)))
    (ps/class-method-at-point)  ;; ->me|thod
    nil
@@ -1647,11 +1647,11 @@ return t, or return nil if no method could be found at point."
   "Return the method name at (or very near) point, or nil if none was found."
   (save-excursion
     (if (looking-at "[ \n(]") (backward-char)) ;; if at end of method name, move into it
-    (if (looking-at "\\w")                ;; we may be on a method name
-        (while (looking-at "\\w") (backward-char))   ;; position at beginning of word
+    (if (looking-at "[a-zA-Z0-9_]")                ;; we may be on a method name
+        (while (looking-at "[a-zA-Z0-9_]") (backward-char))   ;; position at beginning of word
       )
     (if (looking-at ">") (backward-char))
-    (if (looking-at "[\\\\-]>\\(\\w+\\)")            ;; If on -> or \>, capture method name
+    (if (looking-at "[\\\\-]>\\([a-zA-Z0-9_]+\\)")            ;; If on -> or \>, capture method name
         (match-string 1)
       nil
       )
