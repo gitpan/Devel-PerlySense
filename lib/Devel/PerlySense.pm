@@ -1572,7 +1572,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0171';
+our $VERSION = '0.0172';
 
 
 

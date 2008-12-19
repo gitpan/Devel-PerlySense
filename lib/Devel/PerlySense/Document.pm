@@ -664,6 +664,10 @@ Set the rhProperty keys of the Location:
   pod - the POD describing $name (includes podSection)
   podSection - the POD section the name is located in
 
+pod will be munged to include podSection, and if the original pod
+consisted of an "=item", it will be surrounded by "=over" 4 and
+"=back".
+
 Die on errors.
 
 =cut
@@ -683,7 +687,10 @@ sub oLocationPod {
             $oLocation->rhProperty->{found} = $lookFor;
             $oLocation->rhProperty->{docType} = "hint";
             $oLocation->rhProperty->{name} = "$name";
-            $oLocation->rhProperty->{pod} = $oLocation->rhProperty->{podSection} . $oLocation->rhProperty->{pod};
+
+            my $pod = $oLocation->rhProperty->{pod};
+            $pod =~ /^=item\s/ and $pod = "=over 4\n\n$pod\n\n=back\n";
+            $oLocation->rhProperty->{pod} = $oLocation->rhProperty->{podSection} . $pod;
 
             return($oLocation);
         }

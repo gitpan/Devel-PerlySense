@@ -3,6 +3,14 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0172
+------
+
+* Fixed bug: If displaying method docs with an =item in the POD, it
+  will render with a warning.
+
+
+
 0.0171
 ------
 

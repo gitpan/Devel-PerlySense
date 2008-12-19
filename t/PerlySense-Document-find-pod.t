@@ -67,11 +67,16 @@ is($oLocation->row, 1193, "  row");
 is($oLocation->col, 1, "  col");
 is($oLocation->rhProperty->{pod}, q{=head1 PRIVATE PROPERTIES
 
+=over 4
+
 =item hasWrittenParagraph
 
 Whether the writer has written a paragraph yet.
 
 
+
+
+=back
 }, " Got POD");
 is($oLocation->rhProperty->{name}, "hasWrittenParagraph", " Got name ok");
 is($oLocation->rhProperty->{docType}, "hint", " Got docType ok");
@@ -84,11 +89,16 @@ is($oLocation->row, 1198, "  row");
 is($oLocation->col, 1, "  col");
 is($oLocation->rhProperty->{pod}, q{=head1 PRIVATE PROPERTIES
 
+=over 4
+
 =item B<hasWrittenText>
 
 Whether the writer has written any text or paragraph yet.
 
 
+
+
+=back
 }, " Got POD");
 is($oLocation->rhProperty->{name}, "hasWrittenText", " Got name ok");
 is($oLocation->rhProperty->{docType}, "hint", " Got docType ok");
