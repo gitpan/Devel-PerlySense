@@ -450,7 +450,7 @@ GETTING STARTED WITH EMACS
 
     Tip: if you need to find something else while browsing the *grep*
     buffer, you can easily rename the current *grep* buffer to something
-    else using "M-x reame-buffer".
+    else using "M-x rename-buffer".
 
    Find sub declarations
     "C-o f s" -- Ack the Project for *sub declarations* of the method, or
@@ -1491,9 +1491,9 @@ POD ERRORS
     Around line 352:
         '=item' outside of any '=over'
 
-    Around line 556:
+    Around line 553:
         Unknown directive: =over4
 
-    Around line 558:
+    Around line 555:
         '=item' outside of any '=over'
 

@@ -360,10 +360,9 @@ These are the ones I use every day so they may be a good start:
 
 =head3 Smart docs
 
-=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
-<img src="../../doc/images/smart_docs_method.png" style="margin-bottom:4px;"/>
-<div>Smart Docs for the simplest case: point on a method of $self.</div>
-</div>
+
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/smart_docs_method.html">Screenshot</a> ]<p>
+
 
 C<C-o C-d> is the "Smart docs" command. It brings up POD documentation
 for what's at point.
@@ -540,10 +539,8 @@ See L<File::Corresponding> for details.
 
 =head3 Find with Ack
 
-=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
-<img src="../../doc/images/find_with_ack.png" style="margin-bottom:4px;"/>
-<div>Find with Ack (try splitting vertically with C-x 3 instead if you have the monitor width).</div>
-</div>
+
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/find_with_ack.html">Screenshot</a> ]<p>
 
 
 C<C-o f a> -- Ack through the source and display the hits in a
@@ -572,15 +569,13 @@ Tip: You can jump from a source file to the next hit with C<C-c C-c>
 
 Tip: if you need to find something else while browsing the B<*grep*>
 buffer, you can easily rename the current B<*grep*> buffer to
-something else using C<M-x reame-buffer>.
+something else using C<M-x rename-buffer>.
 
 
 =head3 Find sub declarations
 
-=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
-<img src="../../doc/images/find_sub_declarations.png" style="margin-bottom:4px;"/>
-<div>Find Sub Declarations.</div>
-</div>
+
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/find_sub_declaration.html">Screenshot</a> ]<p>
 
 
 C<C-o f s> -- Ack the Project for I<sub declarations> of the method,
@@ -591,15 +586,11 @@ I.e. look for lines with C<sub NAME>.
 The point can be either on the method (C<$self-E<gt>st|ore>), or on
 the object (C<$us|er_agent-E<gt>get()>)
 
-=for html <p style="clear:both">
-
 
 =head3 Find method calls
 
-=for html <div style="margin:8px; padding: 0px 0px 8px 6px; display:block; float:right; border-left: solid 1px; border-bottom: solid 1px;">
-<img src="../../doc/images/find_method_callers.png" style="margin-bottom:4px;"/>
-<div>Find Method Callers.</div>
-</div>
+
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/find_method_calls.html">Screenshot</a> ]<p>
 
 
 C<C-o f c> -- Ack the Project for I<method calls> to the method, or
@@ -607,8 +598,6 @@ word at point.
 
 I.e. look for lines with C<-E<gt>NAME>.
 
-
-=for html <p style="clear:both">
 
 
 =head2 Class Overview
@@ -717,25 +706,8 @@ q -- Quit the Class Overview buffer.
 
 =head2 Testing
 
-=begin html
 
-<div style="margin:8px; padding: 16px 0px 16px 0px; display:block; border-top: solid 1px; border-bottom: solid 1px;">
-
-<img src="../../doc/images/run_tests_1.png" style="margin-bottom:4px;" />
-<div>I just added a new test and want to run the .t file (C-o C-r)...</div>
-
-<img src="../../doc/images/run_tests_2_bad_plan.png" style="margin-bottom:4px; margin-top:22px;" />
-<div>...but it fails! The test count is wrong. There should be 13 tests, not 12.</div>
-
-<img src="../../doc/images/run_tests_3_assist_test_count.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>Assist with Test Count -- C-o a t -- to synchronize the test count with the last test run, all without moving point.</div>
-
-<img src="../../doc/images/run_tests_4_pass.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>Re-run the last .t file from any buffer with C-o r r... and all tests pass. Time to check in.</div>
-
-</div>
-
-=end html
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/testing.html">Screenshot</a> ]<p>
 
 
 =head3 Run File
@@ -812,6 +784,10 @@ B<*compilation*> buffer contains the run result of this buffer.
 
 =head3 Go to Tests - Other Files
 
+
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/goto_tests.html">Screenshot</a> ]<p>
+
+
 C<C-o g t o> -- In a test file, navigate to the source files that are
 covered by that test file.
 
@@ -823,21 +799,6 @@ This requires that L<Devel::CoverX::Covered> is installed and a
 L<Devel::Cover> cover_db in the project root directory.
 
 See L<Devel::CoverX::Covered> for details.
-
-
-=begin html
-
-<div style="margin:8px; padding: 16px 0px 16px 0px; display:block; border-bottom: solid 1px;">
-
-<img src="../../doc/images/goto_tests_source_file_other.png" style="margin-bottom:4px;" />
-<div>Go to Tests - Other Files -- C-o g t o -- displays a menu with .t files covering this source file.</div>
-
-<img src="../../doc/images/goto_tests_source_sub_other.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>When point is on a sub declaration line, only tests covering that sub are displayed in the menu.</div>
-
-</div>
-
-=end html
 
 
 =head3 Go to Error line
@@ -860,34 +821,8 @@ terminal, run this command and hit return to accept the default text).
 
 =head3 Flymake Introduction
 
-=begin html
 
-<div style="float:right;">
-
-<div style="margin:8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px;">
-
-<img src="../../doc/images/flymake_highlight.png" style="margin-bottom:4px;"/>
-<div>D'oh, I clumsily deleted the semicolon. But a second after saving... hey, something is wrong here!</div>
-
-<img src="../../doc/images/flymake_details.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>C-o s s on the error line displays the compilation error.</div>
-
-</div>
-
-
-<div style="margin:32px 8px 8px 8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px; clear=both;">
-
-<img src="../../doc/images/flymake_critic_highlight.png" style="margin-bottom:4px;"/>
-<div>Perl::Critic violations (enable with utmost care,  not all are that great) are displayed as warnings</div>
-
-<img src="../../doc/images/flymake_critic_details.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>Although this one is very sensible.</div>
-
-</div>
-
-</div>
-
-=end html
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/flymake.html">Screenshot</a> ]<p>
 
 
 "Flymake performs on-the-fly syntax checks of the files being edited
@@ -979,35 +914,7 @@ C<C-o s s> -- Display the error/warning text of the current line.
 =head3 Code Coverage Visualization Introduction
 
 
-=begin html
-
-<div style="float:right;">
-
-<div style="margin:8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px;">
-
-<img src="../../doc/images/covered_sub_green.png" style="margin-bottom:4px;"/>
-<div>Subtle green underlined "sub" keyword indicating the sub was covered.</div>
-
-<img src="../../doc/images/cover_report_sub_green.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>Sub coverage does not guarantee 100% line coverage like in this (bad) example.</div>
-
-</div>
-
-
-<div style="margin:32px 8px 8px 8px; padding: 0px 0px 8px 6px; display:block; border-left: solid 1px; border-bottom: solid 1px; clear=both;">
-
-<img src="../../doc/images/covered_sub_red.png" style="margin-bottom:4px;"/>
-<div>Red underline + complex method == likely breakage</div>
-
-<img src="../../doc/images/cover_report_sub_red.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>And (obviously) no line coverage.</div>
-
-</div>
-
-</div>
-
-=end html
-
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/code_coverage.html">Screenshot</a> ]<p>
 
 
 If you have a test suite, you might like this. You should have tests.
@@ -1085,9 +992,6 @@ with the cursor on a "sub" line, you'll get only the tests that cover
 I<that particular subroutine>.
 
 
-=for html <p style="clear:both">
-
-
 
 =head2 Editing Code
 
@@ -1109,6 +1013,10 @@ you were, and continue doing what you where doing.
 
 
 =head3 Assist With -- Regex
+
+
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/regex_tool.html">Screenshot</a> ]<p>
+
 
 Hit C<C-o a r> to bring up the Regex Tool which will let you compose a
 Perl regular expression interactively with matching text highlighed.
@@ -1152,24 +1060,6 @@ either the B<*Regex*> or B<*Text*> buffer.
 Use C-c C-c to force an update.
 
 Use C-c C-k to quit all the regex-tool buffers and remove the frame.
-
-
-=begin html
-
-<div style="margin:8px; padding: 16px 0px 16px 0px; display:block; border-bottom: solid 1px;">
-
-<img src="../../doc/images/assist_regex_1.png" style="margin-bottom:4px;" />
-<div>No matches yet, the /x modifier is missing</div>
-
-<img src="../../doc/images/assist_regex_2_x.png" style="margin-bottom:4px; margin-top:22px;" />
-<div>Matches are highlighted, and the individual capture values displayed</div>
-
-<img src="../../doc/images/assist_regex_3_g.png" style="margin-bottom:4px; margin-top:22px;"/>
-<div>Including for multiple matches  with /g</div>
-
-</div>
-
-=end html
 
 
 
@@ -1572,7 +1462,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0172';
+our $VERSION = '0.0173';
 
 
 

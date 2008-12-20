@@ -3,6 +3,12 @@ bin/perly_sense
 Build.PL
 Changes
 dist.sh
+doc/code_coverage.html
+doc/find_method_calls.html
+doc/find_sub_declaration.html
+doc/find_with_ack.html
+doc/flymake.html
+doc/goto_tests.html
 doc/images/assist_regex_1.png
 doc/images/assist_regex_2_x.png
 doc/images/assist_regex_3_g.png
@@ -27,6 +33,9 @@ doc/images/run_tests_3_assist_test_count.png
 doc/images/run_tests_4_pass.png
 doc/images/smart_docs_method.png
 doc/images/smart_goto_method.png
+doc/regex_tool.html
+doc/smart_docs_method.html
+doc/testing.html
 lib/Devel/PerlySense.pm
 lib/Devel/PerlySense/Bookmark/Definition.pm
 lib/Devel/PerlySense/Bookmark/Match.pm
