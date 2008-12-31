@@ -59,6 +59,7 @@ lib/Devel/PerlySense/external/emacs/perly-sense-flymake.el
 lib/Devel/PerlySense/external/emacs/perly-sense-visualize-coverage.el
 lib/Devel/PerlySense/external/emacs/perly-sense.el
 lib/Devel/PerlySense/external/emacs/regex-tool.el
+lib/Devel/PerlySense/external/emacs/shell-command-pool.el
 lib/Devel/PerlySense/Home.pm
 lib/Devel/PerlySense/Plugin/Syntax/Moose.pm
 lib/Devel/PerlySense/Project.pm

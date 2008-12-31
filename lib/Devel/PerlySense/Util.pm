@@ -51,7 +51,10 @@ sub aNamedArg {
 
     my @aResult;
     for my $param (@$raParam) {
-        exists $hArg{$param} or do { local $Carp::CarpLevel = 1; croak("Missing argument ($param). Arguments: " . Dumper(\@_)); };
+        exists $hArg{$param} or do {
+            local $Carp::CarpLevel = 1;
+            croak("Missing argument ($param). Arguments: (" . join(", ", sort keys %hArg) . ")");
+        };
         push(@aResult, $hArg{$param});
     }
 

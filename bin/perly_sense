@@ -13,6 +13,7 @@ use File::Find;
 use Path::Class;
 use Cache::FileCache;
 use List::Util qw/ max /;
+use List::MoreUtils qw/ any /;
 
 use lib "../lib", "lib";
 use Devel::PerlySense;
@@ -29,40 +30,48 @@ use Devel::TimeThis;
 
 local $SIG{__WARN__} = sub { debug(@_); };
 
-my $countCommand = 0;
-if (($ARGV[0] || "") eq "--shell") {
-    while(1) {
-        $countCommand++;
-        print 'PerlySense (' . $countCommand . ')$ ';
-        my $command = <STDIN>;
-        $command =~ /^(quit)|(exit)$/ and exit(0);
 
-        ###TODO: parse into tokens according to shell rules (what about spaces in embedded strings for one thing?)
+main();
+
+sub main {
+
+    my $oPs = createPerlySense();
+
+    if (($ARGV[0] || "") eq "--stdin") {
+
+        chomp(my $dir = <STDIN>);
+        chomp(my $command = <STDIN>);
+        $dir && $command or warn(q|Please enter ABS_DIR\nARGV\n| . "\n"), exit(0);
+
+        chdir($dir) or warn("Could not chdir to ($dir)\n"), exit(0);
+
         local @ARGV = split(/\s+/, $command);
+        s/^(["'])(.*)\1$/$2/ for @ARGV; #Remove quotes
 
-        print "---START OF PERLYSENSE OUTPUT ($countCommand)---\n";
-        eval { main_perly_sense() };
+        eval { main_perly_sense($oPs) };
         $@ and print $@;
-        print "\n---END OF PERLYSENSE OUTPUT ($countCommand)---\n";
-    }
-}
-else {
+    } else {
 #     my $total = Devel::TimeThis->new("Total loop");
 #      for (1..5) {
 #          my $iteration = Devel::TimeThis->new("Iteration");
 #          local @ARGV = @ARGV;
 #          sleep(5);
-    caller() or main_perly_sense();
+        main_perly_sense($oPs);
 #      }
+    }
 }
+
 
 
 
 
 #Oh yes, this file is in serious need of a makeover...
 sub main_perly_sense {
+    my ($oPs) = @_;
+
     my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $sub, $nameClass, $nameMethod, $clearCache, $widthDisplay, $typeIo);
-    debug("ARGV: (" . join(" ", "perly_sense",  @ARGV) . ")");
+    my @aShow;
+    debug("ARGV: (" . join(" ", map { "|$_|" } ("perly_sense",  @ARGV)) . ")");
 
     GetOptions(
         "module:s"        => \$module,
@@ -75,16 +84,13 @@ sub main_perly_sense {
         "dir_origin:s"    => \$dirOrigin,
         "class_name:s"    => \$nameClass,
         "method_name:s"   => \$nameMethod,
+        "show:s"          => \@aShow,
         "clear_cache"     => \$clearCache,
         "width_display:s" => \$widthDisplay,
         "io_type:s"       => \$typeIo,
         );
     my ($command) = @ARGV;
     $command or syntax("Missing command");
-
-
-    my $oPs = Devel::PerlySense->new();
-
 
     $typeIo ||= "editor_emacs";
     my $rhIoClass = {
@@ -98,21 +104,11 @@ sub main_perly_sense {
         widthDisplay => $widthDisplay,
     );
 
-
-    my $oHome = $oPs->oHome;
-    my $dirHomeCache = $oHome->dirHomeCache
-            or warn(
-                "Could not create cache dir in either of:\n",
-                join(":", $oHome->aDirHomeCandidate) . "\n",
-            );
-    if($dirHomeCache && $clearCache) {
+    if ($clearCache && (my $dirHomeCache = $oPs->oHome->dirHomeCache)) {
         warn("Clearing cache directory ($dirHomeCache)\n");
         rmtree([$dirHomeCache]); -d $dirHomeCache and die("Could not clear cache ($dirHomeCache)\n");
         mkpath([$dirHomeCache]); -d $dirHomeCache or die("Could not re-create cache dir ($dirHomeCache)\n");
     }
-    my $oCache = Cache::FileCache->new({cache_root => $dirHomeCache})
-            or warn("Could not create cache in ($dirHomeCache)\n");
-    $oPs->oCache($oCache);
 
 
 
@@ -228,10 +224,26 @@ sub main_perly_sense {
             }
 
             if($oClass) {
+                my $raClassOverviewShow = $oEditor->raClassOverviewShow;
+
+                my $raOverviewShow = $oEditor->raClassOverviewShowDefault;
+                if(@aShow) {
+                    $raOverviewShow = [ @aShow ];
+                    for my $show (@$raOverviewShow) {
+                        if( ! any(sub { $show eq $_ }, @$raClassOverviewShow) ) {
+                            my $showValuesValid = join(", ", @$raClassOverviewShow);
+                            die("Invalid --show option ($show). Valid values are: $showValuesValid\n");
+                        }
+                    }
+                }
+
                 my $overview = $oEditor->formatOutputDataStructure(
                     rhData => {
                         class_name => $oClass->name,
-                        class_overview => $oEditor->classOverview(oClass => $oClass),
+                        class_overview => $oEditor->classOverview(
+                            oClass => $oClass,
+                            raShow => $raOverviewShow,
+                        ),
                         message => "Class Overview for (" . $oClass->name . ")",
                         dir => $oClass->dirModule,
                     },
@@ -627,6 +639,25 @@ sub processFilesInDirs {
         debug(sprintf("%0.6f : $file", $hFileTime{$file}));
     }
 
+}
+
+
+
+sub createPerlySense {
+
+    my $oPs = Devel::PerlySense->new();
+
+    my $oHome = $oPs->oHome;
+    my $dirHomeCache = $oHome->dirHomeCache
+            or warn(
+                "Could not create cache dir in either of:\n",
+                join(":", $oHome->aDirHomeCandidate) . "\n",
+            );
+    my $oCache = Cache::FileCache->new({cache_root => $dirHomeCache})
+            or warn("Could not create cache in ($dirHomeCache)\n");
+    $oPs->oCache($oCache);
+
+    return $oPs;
 }
 
 

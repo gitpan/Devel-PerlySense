@@ -67,6 +67,43 @@ field "widthDisplay" => undef;
 
 
 
+=head2 raClassOverviewShowDefault
+
+Names of features to show in the class overview by default.
+
+Default: { ... }
+
+=cut
+field "raClassOverviewShowDefault" => [qw/
+    inheritance
+    api
+    bookmarks
+    uses
+/];
+
+
+
+
+
+=head2 raClassOverviewShow
+
+Names of features to allow being show in the class overview.
+
+Default: { ... }
+
+=cut
+field "raClassOverviewShow" => [qw/
+    inheritance
+    api
+    bookmarks
+    uses
+    neighbourhood
+/];
+
+
+
+
+
 =head1 CLASS METHODS
 
 =head2 dirExtenal()
@@ -112,42 +149,24 @@ Return string representing the Class Overview of $oClass.
 
 =cut
 sub classOverview {
-    my ($oClass) = Devel::PerlySense::Util::aNamedArg(["oClass"], @_);
+    my ($oClass, $raShow) = Devel::PerlySense::Util::aNamedArg(["oClass", "raShow"], @_);
 
-    my $textInheritance =
-            "* Inheritance *\n" .
-            $self->textClassInheritance(oClass => $oClass);
+    my %hNameHeading = (
+        Api           => "API",
+        Neighbourhood => "NeighbourHood",
+    );
+    my @aTextOutput;
+    for my $show (@$raShow) {
+        my $name = ucfirst($show);
+        my $nameMethod = "textClass$name";
+        $self->can($nameMethod) or die("Internal error ($nameMethod)");
 
-    my $textUses =
-            "* Uses *\n"
-            . $self->textClassUses(oClass => $oClass);
+        my $nameHeading = $hNameHeading{$name} || $name;
+        my $text = "* $nameHeading *\n" . $self->$nameMethod(oClass => $oClass);
+        push(@aTextOutput, $text);
+    }
 
-    my $textNeighbourhood =
-            "* NeighbourHood *\n"
-            . $self->textClassNeighbourhood(oClass => $oClass);
-
-    my $textBookmarks =
-            "* Bookmarks *\n"
-            . $self->textClassBookmarks(oClass => $oClass);
-
-#     my $textStructure =
-#             "* Structure *\n"
-#             . $self->textClassStructure(oClass => $oClass);
-
-    my $textApi =
-            "* API *\n"
-            . $self->textClassApi(oClass => $oClass);
-
-
-    my $textOverview = $self->stripTrailingWhitespace(join(
-        "\n",
-        $textInheritance,
-        $textApi,
-        $textBookmarks,
-        $textUses,
-        $textNeighbourhood,
-#        $textStructure,
-    ));
+    my $textOverview = $self->stripTrailingWhitespace( join("\n", @aTextOutput) );
 
     #Highlight the current class
     my $leftBracket = "[[]";

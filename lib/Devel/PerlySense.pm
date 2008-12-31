@@ -38,8 +38,23 @@ e.g. Moose.
 
 =head2 From Emacs
 
-B<Overview> -- C<C-o C-o> -- Show information about the Class at
-point or the current Class.
+B<Overview> -- C<C-o C-o> -- Show information about the Class at point
+or the current Class. There are also shortcuts to show a single
+section:
+
+=over 4
+
+=item * C-o o i -- Inheritance
+
+=item * C-o o a -- API
+
+=item * C-o o b -- Bookmarks
+
+=item * C-o o u -- Uses
+
+=item * C-o o h -- NeighbourHood
+
+=back
 
 B<Docs> -- C<C-o C-d> -- Show docs (POD/signature/etc) for the symbol
 (module/method/sub) at point. A doc hint is displayed in the echo area
@@ -288,6 +303,12 @@ following in your .emacs config file:
     (set-face-background 'dropdown-list-selection-face "grey")
 
 
+    ;; ** Misc Config **
+
+    ;; Run calls to perly_sense as a prepared shell command. Experimental
+    ;; optimization, please try it out.
+    (setq ps/use-prepare-shell-command t)
+
     ;; *** PerlySense End ***
 
 
@@ -361,7 +382,7 @@ These are the ones I use every day so they may be a good start:
 =head3 Smart docs
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/smart_docs_method.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/smart_docs_method.html">Screenshot</a> ]<p>
 
 
 C<C-o C-d> is the "Smart docs" command. It brings up POD documentation
@@ -540,7 +561,7 @@ See L<File::Corresponding> for details.
 =head3 Find with Ack
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/find_with_ack.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/find_with_ack.html">Screenshot</a> ]<p>
 
 
 C<C-o f a> -- Ack through the source and display the hits in a
@@ -575,7 +596,7 @@ something else using C<M-x rename-buffer>.
 =head3 Find sub declarations
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/find_sub_declaration.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/find_sub_declaration.html">Screenshot</a> ]<p>
 
 
 C<C-o f s> -- Ack the Project for I<sub declarations> of the method,
@@ -584,13 +605,13 @@ or word at point.
 I.e. look for lines with C<sub NAME>.
 
 The point can be either on the method (C<$self-E<gt>st|ore>), or on
-the object (C<$us|er_agent-E<gt>get()>)
+the object (C<$us|er_agent-E<gt>get()>).
 
 
 =head3 Find method calls
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/find_method_calls.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/find_method_calls.html">Screenshot</a> ]<p>
 
 
 C<C-o f c> -- Ack the Project for I<method calls> to the method, or
@@ -640,6 +661,24 @@ Example class CatalystX::FeedMe::Controller::Feed
 
 =head3 Overview sections
 
+In addition to the full Overview, each section may be displayed
+individually:
+
+=over 4
+
+=item * C-o o i -- Inheritance
+
+=item * C-o o a -- API
+
+=item * C-o o b -- Bookmarks
+
+=item * C-o o u -- Uses
+
+=item * C-o o h -- NeighbourHood
+
+=back
+
+
 The B<Inheritance> section shows all Base classes of the
 Class. Inheriting from something like Catalyst is hopefully the
 hairiest you'll see. Classes inherit from their parents upwards in the
@@ -651,6 +690,9 @@ The B<NeighbourHood> section shows three columns (1: parent dir, 2:
 current dir, 3: subdir for the current class) with Classes located
 nearby (this can be bizarrely huge (and take a long time) if you
 browse your site_lib or similar).
+
+(This was disabled for having a bad time/useful ratio. Use C-o o h to
+bring up only the NeighbourHood).
 
 The B<Bookmarks> section shows matches for bookmark definitions you
 have defined in the Project config (see below).
@@ -707,7 +749,7 @@ q -- Quit the Class Overview buffer.
 =head2 Testing
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/testing.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/testing.html">Screenshot</a> ]<p>
 
 
 =head3 Run File
@@ -785,7 +827,7 @@ B<*compilation*> buffer contains the run result of this buffer.
 =head3 Go to Tests - Other Files
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/goto_tests.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/goto_tests.html">Screenshot</a> ]<p>
 
 
 C<C-o g t o> -- In a test file, navigate to the source files that are
@@ -822,7 +864,7 @@ terminal, run this command and hit return to accept the default text).
 =head3 Flymake Introduction
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/flymake.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/flymake.html">Screenshot</a> ]<p>
 
 
 "Flymake performs on-the-fly syntax checks of the files being edited
@@ -914,7 +956,7 @@ C<C-o s s> -- Display the error/warning text of the current line.
 =head3 Code Coverage Visualization Introduction
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/code_coverage.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/code_coverage.html">Screenshot</a> ]<p>
 
 
 If you have a test suite, you might like this. You should have tests.
@@ -1015,7 +1057,7 @@ you were, and continue doing what you where doing.
 =head3 Assist With -- Regex
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0173/doc/regex_tool.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/regex_tool.html">Screenshot</a> ]<p>
 
 
 Hit C<C-o a r> to bring up the Regex Tool which will let you compose a
@@ -1462,7 +1504,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0173';
+our $VERSION = '0.0174';
 
 
 

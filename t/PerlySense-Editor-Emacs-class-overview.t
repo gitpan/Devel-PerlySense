@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 13;
+use Test::More tests => 18;
 use Test::Exception;
 use Test::Differences;
 
@@ -77,7 +77,10 @@ my $sNone = "       ";
 
 
     ok(
-        my $textShai = $oEditor->classOverview(oClass => $oClassOjectWormShai),
+        my $textShai = $oEditor->classOverview(
+            oClass => $oClassOjectWormShai,
+            raShow => [ @{$oEditor->raClassOverviewShowDefault}, "neighbourhood" ],
+        ),
         " render classOverview ok",
     );
     #warn("-----\n$textShai\n-----\n");
@@ -186,28 +189,26 @@ ShaiHulud.pm:96:         #XXX fix before checkin
 
 
     ok(
-        my $textShai = $oEditor->classOverview(oClass => $oClassOject),
+        my $textShai = $oEditor->classOverview(
+            oClass => $oClassOject,
+            raShow => [ @{$oEditor->raClassOverviewShowDefault}, "neighbourhood" ],
+        ),
         " render classOverview ok",
     );
     #warn("-----\n$textShai\n-----\n");
 
-    my $textGameObjectSpace = "                       ";
-    my $textExpected = q/* Inheritance *
-[<Game::Object>]
-
-* API *
+    my $textInheritance = q/* Inheritance *
+[<Game::Object>]/;
+    my $textApi = q/* API *
 ->color      ->raBodyChar
 ->isBlocking ->raBodyLocation
 ->oLawn      ->buildBodyRight($length, $oLocation, $rcChar)
-->oLocation  ->new($oLocation)
-
-* Bookmarks *
-
-* Uses *
+->oLocation  ->new($oLocation)/;
+    my $textBookmarks = q/* Bookmarks */;
+    my $textUses = q/* Uses *
 [ Class::MethodMaker ] [ Game::Event::Timed ]
-[ Data::Dumper       ] [ Game::Location     ]
-
-* NeighbourHood *
+[ Data::Dumper       ] [ Game::Location     ]/;
+    my $textNeighbourHood = q/* NeighbourHood *
 -none- [ Game::Application   ] [ Game::Object::Prize       ]
        [ Game::Controller    ] [ Game::Object::Wall        ]
        [ Game::Direction     ] [ Game::Object::Worm        ]
@@ -217,14 +218,40 @@ ShaiHulud.pm:96:         #XXX fix before checkin
        [ Game::ObjectVisible ]
        [ Game::UI            ]/;
 
-    eq_or_diff
-    #is
-    ($textShai, $textExpected, "  And got correct output");
+
+    my $textExpectedAll = qq/$textInheritance
+
+$textApi
+
+$textBookmarks
+
+$textUses
+
+$textNeighbourHood/;
+
+    eq_or_diff($textShai, $textExpectedAll, "  And got correct output");
 
 # * Structure *
 # ==;;;;;==;=;=;=;=;=;==S{;;;;";;;;;;;}=S{;;{;;}";;};
 
 
+    my $rhTest = {
+        inheritance => $textInheritance,
+        api => $textApi,
+        bookmarks => $textBookmarks,
+        uses => $textUses,
+        neighbourhood => $textNeighbourHood,
+    };
+
+    for my $show (sort keys %$rhTest) {
+        diag("Testing ($show)");
+        my $textRendered = $oEditor->classOverview(
+            oClass => $oClassOject,
+            raShow => [ $show ],
+        );
+        eq_or_diff($textRendered, $rhTest->{$show}, "  And got correct output for ($show)");
+    }
+    
 }
 
 

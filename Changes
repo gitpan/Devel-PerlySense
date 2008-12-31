@@ -3,6 +3,31 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0174
+------
+
+* New specific Overview commands:
+  - C-o o i -- Inheritance
+  - C-o o a -- API
+  - C-o o b -- Bookmarks
+  - C-o o u -- Uses
+  - C-o o h -- NeighbourHood
+
+* Beta: Run calls to perly_sense as a prepared shell command, if the
+  variable ps/use-prepare-shell-command is non-nil.
+
+  (setq ps/use-prepare-shell-command t) to enable in your config.
+
+  This will shave around 1.8s off each call, which is
+  significant. This makes most things _a_lot_ snappier.
+
+* Removed the NeighbourHood from Class Overview. This was making Class
+  Overview too slow to be useful, and provided little benefit.
+
+  You can still use C-o o h if you want to see the NeighbourHood.
+
+
+
 0.0173
 ------
 
