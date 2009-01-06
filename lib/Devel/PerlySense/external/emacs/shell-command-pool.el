@@ -44,27 +44,33 @@
 print 'stdin-args' to it. Prepare for the next calll.
 
 Return the output of running 'command', or nil on error."
-  (if (not scp/buffer-ready) (scp/prepare-shell-command command))
-  (if scp/buffer-command-running (kill-buffer scp/buffer-command-running))
+  (let ((abs-dir (expand-file-name dir)))
+    (if (not scp/buffer-ready) (scp/prepare-shell-command command))
+    (if scp/buffer-command-running (kill-buffer
+                                    scp/buffer-command-running))
+    (setq scp/buffer-command-running scp/buffer-ready)
+    (setq scp/buffer-ready nil)
 
-  (setq scp/buffer-command-running scp/buffer-ready)
-  (setq scp/buffer-ready nil)
+    (let ((running-process
+           (get-buffer-process scp/buffer-command-running)))
+      (process-send-string
+       scp/buffer-command-running
+       (concat abs-dir "\n"))
+      (process-send-string
+       scp/buffer-command-running
+       (concat stdin-args "\n"))
+      (while (string= (process-status running-process) "run")
+        (accept-process-output running-process)
+        (sleep-for 0 100)))
 
-  (let ((running-process (get-buffer-process scp/buffer-command-running)))
-    (process-send-string scp/buffer-command-running (concat dir "\n"))
-    (process-send-string scp/buffer-command-running (concat stdin-args "\n"))
-    (while (string= (process-status running-process) "run")
-      (accept-process-output running-process)
-      (sleep-for 0 100)))
+    (with-current-buffer scp/buffer-command-running
+      (let ((output (buffer-string)))
+        (kill-buffer scp/buffer-command-running)
+        (setq scp/buffer-command-running nil)
 
-  (with-current-buffer scp/buffer-command-running
-    (let ((output (buffer-string)))
-      (kill-buffer scp/buffer-command-running)
-      (setq scp/buffer-command-running nil)
+        (scp/prepare-shell-command command)
 
-      (scp/prepare-shell-command command)
-
-      output)))
+        output))))
 
 
 

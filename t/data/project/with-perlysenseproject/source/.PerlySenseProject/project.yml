@@ -41,6 +41,36 @@ run_file:
     run_from: file_directory
 
 
+
+#These are evaluated in order to find a way to debug a file. First
+#match is used.
+debug_file:
+  -
+    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    moniker: Test
+    rex: \.t$
+    debug_from: source_root_directory
+  -
+    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    moniker: Script
+    rex: \.pl$
+    debug_from: file_directory
+
+  -
+    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    moniker: Module
+    rex: \.pm$
+    debug_from: source_root_directory
+
+  #This is a catch-all for all other types of files
+  -
+    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    moniker: 'Script (no .pl)'
+    rex: .
+    debug_from: file_directory
+
+
+
 external:
   editor:
 

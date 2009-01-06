@@ -42,7 +42,10 @@ diag("Identify which file type to run");
         local $oProject->rhConfig->{run_file}->[0]->{rex} = undef;
         
         throws_ok(
-            sub { $oProject->rhConfigTypeForFile(file => $fileTest) },
+            sub { $oProject->rhConfigTypeForFile(
+                file      => $fileTest,
+                keyConfig => "run_file",
+            ) },
             qr/Missing rex key/,
             "Missing regex found ok",
         );
@@ -52,7 +55,7 @@ diag("Identify which file type to run");
         local $oProject->rhConfig->{run_file}->[0]->{rex} = 'abc(';
         
         throws_ok(
-            sub { $oProject->rhConfigTypeForFile(file => $fileTest) },
+            sub { $oProject->rhConfigTypeForFile(file => $fileTest, keyConfig => "run_file") },
             qr/Invalid rex value in config/,
             "Invalid regex found ok",
         );
@@ -64,7 +67,7 @@ diag("Identify which file type to run");
         local $oProject->rhConfig->{run_file} = [];
         
         throws_ok(
-            sub { $oProject->rhConfigTypeForFile(file => $fileTest) },
+            sub { $oProject->rhConfigTypeForFile(file => $fileTest, keyConfig => "run_file") },
             qr/No run_perl rex matched the/,
             "No matching type found ok",
         );
@@ -73,16 +76,16 @@ diag("Identify which file type to run");
 
     my $rhConfigType;
 
-    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc.t"), "Identify a .t file");
+    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc.t", keyConfig => "run_file"), "Identify a .t file");
     is($rhConfigType->{moniker}, "Test", "  correct moniker");
    
-    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc.pm"), "Identify a .pm file");
+    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc.pm", keyConfig => "run_file"), "Identify a .pm file");
     is($rhConfigType->{moniker}, "Module", "  correct moniker");
    
-    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc.pl"), "Identify a .pl file");
+    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc.pl", keyConfig => "run_file"), "Identify a .pl file");
     is($rhConfigType->{moniker}, "Script", "  correct moniker");
    
-    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc"), "Identify everything else");
+    ok($rhConfigType = $oProject->rhConfigTypeForFile(file => "abc", keyConfig => "run_file"), "Identify everything else");
     is($rhConfigType->{moniker}, "Script (no .pl)", "  correct moniker");
 
 }

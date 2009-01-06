@@ -3,6 +3,14 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0175
+------
+
+* Fixed problem with shell dialect syntax in directory names for
+  prepare-shell-command. Now works on Unixen too.
+
+
+
 0.0174
 ------
 

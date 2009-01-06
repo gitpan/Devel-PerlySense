@@ -324,7 +324,10 @@ sub rhRunFile {
     my $rhConfigType = $p{rhConfigType};
 
     $file = file($file)->absolute;
-    $rhConfigType ||= $self->rhConfigTypeForFile(file => $file);
+    $rhConfigType ||= $self->rhConfigTypeForFile(
+        file      => $file,
+        keyConfig => "run_file",
+    );
 
     my $dirProject = dir($self->dirProject)->absolute;
     my %hTypeDirRunFrom = (
@@ -358,7 +361,69 @@ sub rhRunFile {
 
 
 
-=head2 rhConfigTypeForFile(file => $fileSource)
+=head2 rhDebugFile(file => $fileSource, [rhConfigType = DEDUCED_FROM_FILE])
+
+Figure out what type of source file $fileSource is, and how it should
+be debugged.
+
+The settings in the global config->{debug_file} is used to determine the
+details.
+
+Return hash ref with (keys: "dir_debug_from", "command_debug",
+"type_source_file"), or die on errors (like if no Project could be
+found).
+
+dir_debug_from is an absolute file name which should be the cwd when
+command_debug is executed.
+
+type_source_file is something like "Test", "Module".
+
+=cut
+### XXX refactor, DRY with rhRunFile
+sub rhDebugFile {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+    my %p = @_;
+    my $rhConfigType = $p{rhConfigType};
+
+    $file = file($file)->absolute;
+    $rhConfigType ||= $self->rhConfigTypeForFile(
+        file      => $file,
+        keyConfig => "debug_file",
+    );
+
+    my $dirProject = dir($self->dirProject)->absolute;
+    my %hTypeDirDebugFrom = (
+        source_root_directory => sub { $dirProject },
+        file_directory => sub { $file->dir },
+    );
+    my $typeDebugFrom = $rhConfigType->{debug_from};
+    my $rsDirDebugFrom = $hTypeDirDebugFrom{$typeDebugFrom} or die("Invalid debug_from value ($typeDebugFrom)\n" . Dumper($rhConfigType) . "Allowed values: (" . join(", ", (sort keys %hTypeDirDebugFrom)) . ")\n");
+    my $dirDebugFrom = $rsDirDebugFrom->();
+
+    my @aDirIncProject = $self->aDirIncProject(dirRelativeTo => $dirDebugFrom);
+    my $optionInc = join(" ", map { qq|"-I$_"| } @aDirIncProject);
+
+    my $fileSource = $file->relative($dirDebugFrom);
+    my $commandDebug = textRenderTemplate(
+        $rhConfigType->{command}, {
+            INC => $optionInc,
+            SOURCE_FILE => $fileSource . "",
+        },
+    );
+
+    my $rhConfigDebug = {
+        dir_debug_from => $dirDebugFrom . "",
+        command_debug => $commandDebug,
+        type_source_file => $rhConfigType->{moniker},
+    };
+    return($rhConfigDebug);
+}
+
+
+
+
+
+=head2 rhConfigTypeForFile(file => $fileSource, keyConfig => CONFIG_KEY)
 
 Return the config type hash ref (keys: command, moniker) from the ones
 available in the config. Match the $fileSource name against each rex
@@ -368,10 +433,10 @@ Die if no configType could be identified.
 
 =cut
 sub rhConfigTypeForFile {
-    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+    my ($file, $keyConfig) = Devel::PerlySense::Util::aNamedArg(["file", "keyConfig"], @_);
 
     my $rhConfig = $self->oPerlySense->rhConfig;
-    for my $rhConfigType (@{ $rhConfig->{run_file} }) {
+    for my $rhConfigType (@{ $rhConfig->{ $keyConfig } }) {
         my $rex = $rhConfigType->{rex}
                 or die("Missing rex key in config chunk: " . Dumper($rhConfigType));
 

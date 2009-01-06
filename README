@@ -1341,6 +1341,22 @@ API METHODS
 
     type_source_file is something like "Test", "Module".
 
+  rhDebugFile(file => $fileSource)
+    Figure out what type of source file $fileSource is, and how it should be
+    debugged.
+
+    The settings in the Project's config->{debug_file} is used to determine
+    the details.
+
+    Return hash ref with (keys: "dir_debug_from", "command_debug",
+    "type_source_file"), or die on errors (like if no Project could be
+    found).
+
+    dir_debug_from is an absolute file name which should be the cwd when
+    command_debug is executed.
+
+    type_source_file is something like "Test", "Module".
+
   flymakeFile(file => $fileSource)
     Do a flymake run with $fileSource according to the flymake config and
     output the result to STDOUT and STDERR.

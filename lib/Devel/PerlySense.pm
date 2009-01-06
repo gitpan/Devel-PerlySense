@@ -382,7 +382,7 @@ These are the ones I use every day so they may be a good start:
 =head3 Smart docs
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/smart_docs_method.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/smart_docs_method.html">Screenshot</a> ]<p>
 
 
 C<C-o C-d> is the "Smart docs" command. It brings up POD documentation
@@ -561,7 +561,7 @@ See L<File::Corresponding> for details.
 =head3 Find with Ack
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/find_with_ack.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/find_with_ack.html">Screenshot</a> ]<p>
 
 
 C<C-o f a> -- Ack through the source and display the hits in a
@@ -596,7 +596,7 @@ something else using C<M-x rename-buffer>.
 =head3 Find sub declarations
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/find_sub_declaration.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/find_sub_declaration.html">Screenshot</a> ]<p>
 
 
 C<C-o f s> -- Ack the Project for I<sub declarations> of the method,
@@ -611,7 +611,7 @@ the object (C<$us|er_agent-E<gt>get()>).
 =head3 Find method calls
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/find_method_calls.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/find_method_calls.html">Screenshot</a> ]<p>
 
 
 C<C-o f c> -- Ack the Project for I<method calls> to the method, or
@@ -749,7 +749,7 @@ q -- Quit the Class Overview buffer.
 =head2 Testing
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/testing.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/testing.html">Screenshot</a> ]<p>
 
 
 =head3 Run File
@@ -827,7 +827,7 @@ B<*compilation*> buffer contains the run result of this buffer.
 =head3 Go to Tests - Other Files
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/goto_tests.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/goto_tests.html">Screenshot</a> ]<p>
 
 
 C<C-o g t o> -- In a test file, navigate to the source files that are
@@ -864,7 +864,7 @@ terminal, run this command and hit return to accept the default text).
 =head3 Flymake Introduction
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/flymake.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/flymake.html">Screenshot</a> ]<p>
 
 
 "Flymake performs on-the-fly syntax checks of the files being edited
@@ -956,7 +956,7 @@ C<C-o s s> -- Display the error/warning text of the current line.
 =head3 Code Coverage Visualization Introduction
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/code_coverage.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/code_coverage.html">Screenshot</a> ]<p>
 
 
 If you have a test suite, you might like this. You should have tests.
@@ -1057,7 +1057,7 @@ you were, and continue doing what you where doing.
 =head3 Assist With -- Regex
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0174/doc/regex_tool.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0175/doc/regex_tool.html">Screenshot</a> ]<p>
 
 
 Hit C<C-o a r> to bring up the Regex Tool which will let you compose a
@@ -1504,7 +1504,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0174';
+our $VERSION = '0.0175';
 
 
 
@@ -2053,6 +2053,37 @@ sub rhRunFile {
             or die("Could not identify any PerlySense Project\n");
 
     return $self->oProject->rhRunFile(file => $file);
+}
+
+
+
+
+
+=head2 rhDebugFile(file => $fileSource)
+
+Figure out what type of source file $fileSource is, and how it should
+be debugged.
+
+The settings in the Project's config->{debug_file} is used to determine
+the details.
+
+Return hash ref with (keys: "dir_debug_from", "command_debug",
+"type_source_file"), or die on errors (like if no Project could be
+found).
+
+dir_debug_from is an absolute file name which should be the cwd when
+command_debug is executed.
+
+type_source_file is something like "Test", "Module".
+
+=cut
+sub rhDebugFile {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+
+    $self->setFindProject(file => $file)
+            or die("Could not identify any PerlySense Project\n");
+
+    return $self->oProject->rhDebugFile(file => $file);
 }
 
 

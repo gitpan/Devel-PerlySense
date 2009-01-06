@@ -127,6 +127,7 @@ t/PerlySense-Class-neighbourhood.t
 t/PerlySense-Class-new.t
 t/PerlySense-Class-subclass.t
 t/PerlySense-Config-Project.t
+t/PerlySense-debug-file.t
 t/PerlySense-Document-Api-consists-supported.t
 t/PerlySense-Document-api-likely.t
 t/PerlySense-Document-api-match.t

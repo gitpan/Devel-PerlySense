@@ -9,7 +9,7 @@ use Path::Class;
 
 use Data::Dumper;
 
-use lib "../lib";
+use lib "lib";
 
 use_ok("Devel::PerlySense::Config::Project");
 use_ok("Devel::PerlySense");
@@ -72,7 +72,7 @@ like(
 );
 ok(-e "$dirTemp/.PerlySenseProject", "Project dir created");
 ok(-e "$dirTemp/.PerlySenseProject/project.yml", "Project config file created");
-is(scalar keys %{$oConfig->rhConfig}, 4, "  Loaded config");
+is(scalar keys %{$oConfig->rhConfig}, 5, "  Loaded config");
 is(
     $oConfig->rhConfig->{run_file}->[0]->{moniker},
     "Test",

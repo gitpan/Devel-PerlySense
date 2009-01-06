@@ -483,6 +483,19 @@ sub main_perly_sense {
             print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
         }
 
+    } elsif($command eq "debug_file") {
+        $file or syntax("Missing option --file");
+
+        eval {
+            print $oEditor->formatOutputDataStructure(
+                rhData => $oPs->rhDebugFile(file => $file),
+            );
+        };
+        if(my $err = $@) {
+            chomp($err);
+            print $oEditor->formatOutputDataStructure( rhData => { message => $err } );
+        }
+
     } elsif($command eq "flymake_file") {
         $file or syntax("Missing option --file");
 

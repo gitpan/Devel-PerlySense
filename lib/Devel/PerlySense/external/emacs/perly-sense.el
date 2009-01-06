@@ -440,6 +440,27 @@ more items than that, use completing read instead."
 
 
 
+;; XXX refactor DRY run-file
+(defun ps/debug-file ()
+  "Debug the current file"
+  (interactive)
+
+  (message "Debug File...")
+  (let* ((result-alist (ps/command "debug_file" (format "\"--file=%s\"" (buffer-file-name))))
+         (dir-debug-from (alist-value result-alist "dir_debug_from"))
+         (command-debug (alist-value result-alist "command_debug"))
+         (type-source-file (alist-value result-alist "type_source_file"))
+         (message-string (alist-value result-alist "message")))
+    (if command-debug
+        (ps/debug-file-debug-command command-debug dir-debug-from))
+    (if message-string
+        (message message-string)
+      )
+    )
+  )
+
+
+
 (defun ps/run-file-run-command (command dir-run-from)
   "Run command from dir-run-from using the compiler function"
   (with-temp-buffer
@@ -465,6 +486,20 @@ more items than that, use completing read instead."
       )
     )
   )
+
+
+
+(defun ps/debug-file-debug-command (command dir-debug-from)
+  "Debug command from dir-debug-from using gud"
+  (setq gud-chdir-before-run nil)
+  (setq gud-perldb-command-name command)
+  (ps/with-project-dir
+   (call-interactively 'perldb)
+   )
+  )
+
+
+
 
 
 
@@ -2055,6 +2090,7 @@ Return t if found, else nil."
 
 (global-set-key (format "%s\C-r" ps/key-prefix) 'ps/run-file)
 (global-set-key (format "%srr" ps/key-prefix) 'ps/rerun-file)
+(global-set-key (format "%srd" ps/key-prefix) 'ps/debug-file)
 
 (global-set-key (format "%sge" ps/key-prefix) 'ps/compile-goto-error-file-line)
 (global-set-key (format "%sgto" ps/key-prefix) 'ps/goto-test-other-files)
