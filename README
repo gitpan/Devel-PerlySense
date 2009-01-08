@@ -684,6 +684,24 @@ GETTING STARTED WITH EMACS
     if available (so it's easy to just copy the error line from the
     terminal, run this command and hit return to accept the default text).
 
+  Debugging Code
+   Run File in Debugger
+    "C-o r d" -- Run the file of the current buffer using the Emacs
+    integrated Perl debugger. This the same as the "M-x perldb", except a
+    few annoyances are fixed.
+
+    The debugger is started according to the file source type, which is
+    determined by the file name (see the config file). This can be
+    configured similar to how files are run (see above).
+
+    Most files are run from the Project root directory by default.
+
+    Once started, refer to the Gud menu for a few useful commands and key
+    bindings.
+
+    Since the debugger command line is available, make sure you read up on
+    that too: <http://perldoc.perl.org/perldebug.html>
+
   Displaying Code
    Flymake Introduction
     "Flymake performs on-the-fly syntax checks of the files being edited

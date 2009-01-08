@@ -156,25 +156,25 @@ run_file:
 #match is used.
 debug_file:
   -
-    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    command: "perl -d ${INC} \"${SOURCE_FILE_BASENAME}\""
     moniker: Test
     rex: \.t$
     debug_from: source_root_directory
   -
-    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    command: "perl -d ${INC} \"${SOURCE_FILE_BASENAME}\""
     moniker: Script
     rex: \.pl$
     debug_from: file_directory
 
   -
-    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    command: "perl -d ${INC} \"${SOURCE_FILE_BASENAME}\""
     moniker: Module
     rex: \.pm$
     debug_from: source_root_directory
 
   #This is a catch-all for all other types of files
   -
-    command: "perl -d ${INC} \"${SOURCE_FILE}\""
+    command: "perl -d ${INC} \"${SOURCE_FILE_BASENAME}\""
     moniker: 'Script (no .pl)'
     rex: .
     debug_from: file_directory

@@ -12,6 +12,7 @@
 ;; (require 'cl-seq)  ;; find-if
 
 (require 'pc-select)  ;; next-line-nomark
+(require 'gud)        ;; perldb
 
 
 
@@ -80,11 +81,13 @@ buffer is already visible anywhere, re-use that visible buffer."
 directory (default-directory) temporarily set to 'dir'.
 
 The value returned is the value of the last form in BODY."
-  (let ((original-dir default-directory))
+  (let ((original-dir default-directory)
+        (original-buffer (current-buffer)))
     `(prog2
          (cd ,dir)
          ,@body
-       (cd ,original-dir))))
+       (with-current-buffer ,original-buffer
+         (cd ,original-dir)))))
 
 
 
@@ -445,19 +448,23 @@ more items than that, use completing read instead."
   "Debug the current file"
   (interactive)
 
-  (message "Debug File...")
-  (let* ((result-alist (ps/command "debug_file" (format "\"--file=%s\"" (buffer-file-name))))
-         (dir-debug-from (alist-value result-alist "dir_debug_from"))
-         (command-debug (alist-value result-alist "command_debug"))
-         (type-source-file (alist-value result-alist "type_source_file"))
-         (message-string (alist-value result-alist "message")))
-    (if command-debug
-        (ps/debug-file-debug-command command-debug dir-debug-from))
-    (if message-string
-        (message message-string)
-      )
-    )
-  )
+  (if (not (buffer-file-name))
+      (message "No file to debug")
+    (message "Debug File...")
+    (let* ((result-alist (ps/command "debug_file" (format "\"--file=%s\"" (buffer-file-name))))
+           (dir-debug-from (alist-value result-alist "dir_debug_from"))
+           (command-debug (alist-value result-alist "command_debug"))
+           (type-source-file (alist-value result-alist "type_source_file"))
+           (message-string (alist-value result-alist "message")))
+      (if command-debug
+          (progn
+            (let ((command-debug-without-quotes
+                   (replace-regexp-in-string "[\"']" "" command-debug)))
+              (ps/debug-file-debug-command
+               command-debug-without-quotes
+               dir-debug-from))))
+      (if message-string
+          (message message-string)))))
 
 
 
@@ -489,19 +496,49 @@ more items than that, use completing read instead."
 
 
 
+;; Copy-paste job from gud.el:perldb (shoulders of giants, etc)
 (defun ps/debug-file-debug-command (command dir-debug-from)
-  "Debug command from dir-debug-from using gud"
-  (setq gud-chdir-before-run nil)
-  (setq gud-perldb-command-name command)
-  (ps/with-project-dir
-   (call-interactively 'perldb)
-   )
-  )
+  "Run perldb on program FILE in buffer *gud-FILE*."
+  (let ((command-line (ps/gud-query-cmdline command)))
+    (setq gud-chdir-before-run t)
+    (setq gud-perldb-command-name command)
+
+    (gud-common-init command-line 'gud-perldb-massage-args 'gud-perldb-marker-filter)
+    (set (make-local-variable 'gud-minor-mode) 'perldb)
+
+    (gud-def gud-break  "b %l"         "\C-b" "Set breakpoint at current line.")
+    (gud-def gud-remove "B %l"         "\C-d" "Remove breakpoint at current line")
+    (gud-def gud-step   "s"            "\C-s" "Step one source line with display.")
+    (gud-def gud-next   "n"            "\C-n" "Step one line (skip functions).")
+    (gud-def gud-cont   "c"            "\C-r" "Continue with display.")
+                                        ;  (gud-def gud-finish "finish"       "\C-f" "Finish executing current function.")
+                                        ;  (gud-def gud-up     "up %p"        "<" "Up N stack frames (numeric arg).")
+                                        ;  (gud-def gud-down   "down %p"      ">" "Down N stack frames (numeric arg).")
+    (gud-def gud-print  "p %e"          "\C-p" "Evaluate perl expression at point.")
+    (gud-def gud-until  "c %l"          "\C-u" "Continue to current line.")
+
+    (setq comint-prompt-regexp "^  DB<+[0-9]+>+ ")
+    (setq paragraph-start comint-prompt-regexp)
+
+    ;; Chdir to the project dir the first thing we do, inside the perl debugger
+    (comint-send-string (current-buffer) (format "chdir('%s');\n" dir-debug-from))
+    ;;;; TODO: replace the first line in the buffer indicating cwd with the real cwd
+
+    (run-hooks 'perldb-mode-hook)))
 
 
 
 
-
+(defun ps/gud-query-cmdline (command)
+  (let* ((minor-mode 'perldb)
+         (hist-sym (gud-symbol 'history nil minor-mode))
+         (cmd-name (gud-val 'command-name minor-mode)))
+    (unless (boundp hist-sym) (set hist-sym nil))
+    (read-from-minibuffer
+     (format "Run %s (like this): " minor-mode)
+     command
+     gud-minibuffer-local-map nil
+     hist-sym)))
 
 
 

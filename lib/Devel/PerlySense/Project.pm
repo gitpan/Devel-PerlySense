@@ -344,8 +344,9 @@ sub rhRunFile {
     my $fileSource = $file->relative($dirRunFrom);
     my $commandRun = textRenderTemplate(
         $rhConfigType->{command}, {
-            INC => $optionInc,
-            SOURCE_FILE => $fileSource . "",
+            INC                  => $optionInc,
+            SOURCE_FILE          => $fileSource . "",
+            SOURCE_FILE_BASENAME => basename($fileSource . ""),
         },
     );
 
@@ -406,8 +407,9 @@ sub rhDebugFile {
     my $fileSource = $file->relative($dirDebugFrom);
     my $commandDebug = textRenderTemplate(
         $rhConfigType->{command}, {
-            INC => $optionInc,
-            SOURCE_FILE => $fileSource . "",
+            INC                  => $optionInc,
+            SOURCE_FILE          => $fileSource . "",
+            SOURCE_FILE_BASENAME => basename($fileSource . ""),
         },
     );
 

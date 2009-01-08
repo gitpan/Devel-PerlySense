@@ -3,6 +3,17 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0176
+------
+
+* Run in Debugger -- C-o r d
+  - !NOTE! Requires you to re-create the .project config file !NOTE!
+  - Run current file from the project directory
+  - With proper -I include directories
+
+
+
+
 0.0175
 ------
 
