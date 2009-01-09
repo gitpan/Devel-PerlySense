@@ -3,6 +3,15 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0177
+------
+
+* Debugger
+  - Fixed a bug with the working directory.
+  - Proper docs
+
+
+
 0.0176
 ------
 

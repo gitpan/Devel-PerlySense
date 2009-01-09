@@ -125,7 +125,7 @@ diag("Debug test file inside dir");
     is($rhDebug->{type_source_file}, "Test", "    type_source_file");
     like(
         $rhDebug->{command_debug},
-        qr|perl -d "-I." "-Ilib" "Game-Lawn.t"|,
+        qr|perl -d "-I." "-Ilib" "t.Game-Lawn.t"|,
         "    command_debug",
     );
     like($rhDebug->{dir_debug_from}, qr|t.data.project.with-dir.source|, "    dir_debug_from");

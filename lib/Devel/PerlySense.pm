@@ -382,7 +382,7 @@ These are the ones I use every day so they may be a good start:
 =head3 Smart docs
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/smart_docs_method.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/smart_docs_method.html">Screenshot</a> ]<p>
 
 
 C<C-o C-d> is the "Smart docs" command. It brings up POD documentation
@@ -561,7 +561,7 @@ See L<File::Corresponding> for details.
 =head3 Find with Ack
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/find_with_ack.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/find_with_ack.html">Screenshot</a> ]<p>
 
 
 C<C-o f a> -- Ack through the source and display the hits in a
@@ -596,7 +596,7 @@ something else using C<M-x rename-buffer>.
 =head3 Find sub declarations
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/find_sub_declaration.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/find_sub_declaration.html">Screenshot</a> ]<p>
 
 
 C<C-o f s> -- Ack the Project for I<sub declarations> of the method,
@@ -611,7 +611,7 @@ the object (C<$us|er_agent-E<gt>get()>).
 =head3 Find method calls
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/find_method_calls.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/find_method_calls.html">Screenshot</a> ]<p>
 
 
 C<C-o f c> -- Ack the Project for I<method calls> to the method, or
@@ -749,7 +749,7 @@ q -- Quit the Class Overview buffer.
 =head2 Testing
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/testing.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/testing.html">Screenshot</a> ]<p>
 
 
 =head3 Run File
@@ -827,7 +827,7 @@ B<*compilation*> buffer contains the run result of this buffer.
 =head3 Go to Tests - Other Files
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/goto_tests.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/goto_tests.html">Screenshot</a> ]<p>
 
 
 C<C-o g t o> -- In a test file, navigate to the source files that are
@@ -864,8 +864,12 @@ terminal, run this command and hit return to accept the default text).
 =head3 Run File in Debugger
 
 C<C-o r d> -- Run the file of the current buffer using the Emacs
-integrated Perl debugger. This the same as the C<M-x perldb>, except a
-few annoyances are fixed.
+integrated Perl debugger. This the same as the excellent C<M-x
+perldb>, except a few annoyances are fixed, like the include
+directories, the working directory, the default command line etc.
+
+Note that if you have spaces in your file names, this might not work
+(it's a perldb thing).
 
 The debugger is started according to the file source type, which is
 determined by the file name (see the config file). This can be
@@ -873,11 +877,55 @@ configured similar to how files are run (see above).
 
 Most files are run from the Project root directory by default.
 
-Once started, refer to the Gud menu for a few useful commands and key
-bindings.
 
-Since the debugger command line is available, make sure you read up on
-that too: L<http://perldoc.perl.org/perldebug.html>
+=head3 Commands and key bindings
+
+Commonly used commands:
+
+    |-------------+------+-------------------------|
+    | Source      | DB   | Command                 |
+    |-------------+------+-------------------------|
+    | C-x C-a C-n | n    | Next line (step over)   |
+    | C-x C-a C-s | s    | Step into               |
+    |             | RET  | Repeat last n or s      |
+    | C-x C-a C-r | r    | Return from sub         |
+    | C-x C-a C-u |      | Run to (Until) point    |
+    |             | x $v | Dump variable $v        |
+    |             | T    | Stack trace             |
+    |             | y    | Dump lexicals (mY vars) |
+    |             | R    | Restart                 |
+    |             | m $o | List methods of $o      |
+    |-------------+------+-------------------------|
+
+
+=head3 Dumping objects
+
+  x $VAR
+
+to print/dump objects.
+
+See L<http://use.perl.org/~jplindstrom/journal/34427> for how to deal
+with large objects (put the C<.perldb> file in $HOME or the project
+root dir).
+
+
+=head3 Breakpoints
+
+Create a programmatic breakpoint like this
+
+  $DB::single = 1;
+
+
+=head3 More Documentation
+
+Once the debugger is started, refer to the Gud menu for a few useful
+commands and key bindings (gud = Grand Unified Debugger). See also:
+L<http://www.gnu.org/software/emacs/manual/html_node/emacs/Debuggers.html>
+
+Since the Perl debugger command line is available, make sure you read
+up on that too: L<http://perldoc.perl.org/perldebug.html> (especially
+the E<lt>E<lt>, {{, etc. are more useful than they might seem at
+first).
 
 
 
@@ -886,7 +934,7 @@ that too: L<http://perldoc.perl.org/perldebug.html>
 =head3 Flymake Introduction
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/flymake.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/flymake.html">Screenshot</a> ]<p>
 
 
 "Flymake performs on-the-fly syntax checks of the files being edited
@@ -978,7 +1026,7 @@ C<C-o s s> -- Display the error/warning text of the current line.
 =head3 Code Coverage Visualization Introduction
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/code_coverage.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/code_coverage.html">Screenshot</a> ]<p>
 
 
 If you have a test suite, you might like this. You should have tests.
@@ -1079,7 +1127,7 @@ you were, and continue doing what you where doing.
 =head3 Assist With -- Regex
 
 
-=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0176/doc/regex_tool.html">Screenshot</a> ]<p>
+=for html <p>[ <a href="http://search.cpan.org/src/JOHANL/Devel-PerlySense-0.0177/doc/regex_tool.html">Screenshot</a> ]<p>
 
 
 Hit C<C-o a r> to bring up the Regex Tool which will let you compose a
@@ -1526,7 +1574,7 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-our $VERSION = '0.0176';
+our $VERSION = '0.0177';
 
 
 

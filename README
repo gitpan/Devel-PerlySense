@@ -687,8 +687,12 @@ GETTING STARTED WITH EMACS
   Debugging Code
    Run File in Debugger
     "C-o r d" -- Run the file of the current buffer using the Emacs
-    integrated Perl debugger. This the same as the "M-x perldb", except a
-    few annoyances are fixed.
+    integrated Perl debugger. This the same as the excellent "M-x perldb",
+    except a few annoyances are fixed, like the include directories, the
+    working directory, the default command line etc.
+
+    Note that if you have spaces in your file names, this might not work
+    (it's a perldb thing).
 
     The debugger is started according to the file source type, which is
     determined by the file name (see the config file). This can be
@@ -696,11 +700,47 @@ GETTING STARTED WITH EMACS
 
     Most files are run from the Project root directory by default.
 
-    Once started, refer to the Gud menu for a few useful commands and key
-    bindings.
+   Commands and key bindings
+    Commonly used commands:
 
-    Since the debugger command line is available, make sure you read up on
-    that too: <http://perldoc.perl.org/perldebug.html>
+        |-------------+------+-------------------------|
+        | Source      | DB   | Command                 |
+        |-------------+------+-------------------------|
+        | C-x C-a C-n | n    | Next line (step over)   |
+        | C-x C-a C-s | s    | Step into               |
+        |             | RET  | Repeat last n or s      |
+        | C-x C-a C-r | r    | Return from sub         |
+        | C-x C-a C-u |      | Run to (Until) point    |
+        |             | x $v | Dump variable $v        |
+        |             | T    | Stack trace             |
+        |             | y    | Dump lexicals (mY vars) |
+        |             | R    | Restart                 |
+        |             | m $o | List methods of $o      |
+        |-------------+------+-------------------------|
+
+   Dumping objects
+      x $VAR
+
+    to print/dump objects.
+
+    See <http://use.perl.org/~jplindstrom/journal/34427> for how to deal
+    with large objects (put the ".perldb" file in $HOME or the project root
+    dir).
+
+   Breakpoints
+    Create a programmatic breakpoint like this
+
+      $DB::single = 1;
+
+   More Documentation
+    Once the debugger is started, refer to the Gud menu for a few useful
+    commands and key bindings (gud = Grand Unified Debugger). See also:
+    <http://www.gnu.org/software/emacs/manual/html_node/emacs/Debuggers.html
+    >
+
+    Since the Perl debugger command line is available, make sure you read up
+    on that too: <http://perldoc.perl.org/perldebug.html> (especially the
+    <<, {{, etc. are more useful than they might seem at first).
 
   Displaying Code
    Flymake Introduction

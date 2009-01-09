@@ -16,3 +16,4 @@ release.pl
 ^covered
 ^tar.bat
 ^pdoc
+.perldb
