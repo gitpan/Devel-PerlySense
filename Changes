@@ -3,6 +3,16 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0178
+------
+
+* Bug http://rt.cpan.org/Public/Bug/Display.html?id=42577
+  - Test::More output "# Looks like you planned 1 test but ran 2."
+    singular not recognized. Thanks to Kevin Ryde for noticing!
+  - Also relaxed singular/plural for other phrases
+
+
+
 0.0177
 ------
 

@@ -302,59 +302,13 @@ sub newFindExplicit(@) {
 
 =head2 rhRunFile(file => $fileSource, [rhConfigType = DEDUCED_FROM_FILE])
 
-Figure out what type of source file $fileSource is, and how it should
-be run.
-
-The settings in the global config->{run_file} is used to determine the
-details.
-
-Return hash ref with (keys: "dir_run_from", "command_run",
-"type_source_file"), or die on errors (like if no Project could be
-found).
-
-dir_run_from is an absolute file name which should be the cwd when
-command_run is executed.
-
-type_source_file is something like "Test", "Module".
+Like rhRunFile0, but with what => "run".
 
 =cut
 sub rhRunFile {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
     my %p = @_;
-    my $rhConfigType = $p{rhConfigType};
-
-    $file = file($file)->absolute;
-    $rhConfigType ||= $self->rhConfigTypeForFile(
-        file      => $file,
-        keyConfig => "run_file",
-    );
-
-    my $dirProject = dir($self->dirProject)->absolute;
-    my %hTypeDirRunFrom = (
-        source_root_directory => sub { $dirProject },
-        file_directory => sub { $file->dir },
-    );
-    my $typeRunFrom = $rhConfigType->{run_from};
-    my $rsDirRunFrom = $hTypeDirRunFrom{$typeRunFrom} or die("Invalid run_from value ($typeRunFrom)\n" . Dumper($rhConfigType) . "Allowed values: (" . join(", ", (sort keys %hTypeDirRunFrom)) . ")\n");
-    my $dirRunFrom = $rsDirRunFrom->();
-
-    my @aDirIncProject = $self->aDirIncProject(dirRelativeTo => $dirRunFrom);
-    my $optionInc = join(" ", map { qq|"-I$_"| } @aDirIncProject);
-
-    my $fileSource = $file->relative($dirRunFrom);
-    my $commandRun = textRenderTemplate(
-        $rhConfigType->{command}, {
-            INC => $optionInc,
-            SOURCE_FILE => $fileSource . "",
-        },
-    );
-
-    my $rhConfigRun = {
-        dir_run_from => $dirRunFrom . "",
-        command_run => $commandRun,
-        type_source_file => $rhConfigType->{moniker},
-    };
-    return($rhConfigRun);
+    return( $self->rhRunFile0(%p, what => "run") );
 }
 
 
@@ -363,60 +317,76 @@ sub rhRunFile {
 
 =head2 rhDebugFile(file => $fileSource, [rhConfigType = DEDUCED_FROM_FILE])
 
-Figure out what type of source file $fileSource is, and how it should
-be debugged.
-
-The settings in the global config->{debug_file} is used to determine the
-details.
-
-Return hash ref with (keys: "dir_debug_from", "command_debug",
-"type_source_file"), or die on errors (like if no Project could be
-found).
-
-dir_debug_from is an absolute file name which should be the cwd when
-command_debug is executed.
-
-type_source_file is something like "Test", "Module".
+Like rhRunFile0, but with what => "debug".
 
 =cut
 ### XXX refactor, DRY with rhRunFile
 sub rhDebugFile {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
     my %p = @_;
+    return( $self->rhRunFile0(%p, what => "debug") );
+}
+
+
+
+
+
+=head2 rhRunFile0(file => $fileSource, what => "run" | "debug", [rhConfigType = DEDUCED_FROM_FILE])
+
+Figure out what type of source file $fileSource is, and how it should
+be run/debugged.
+
+The settings in the global config->{$what_file} is used to determine
+the details.
+
+Return hash ref with (keys: "dir_$what_from", "command_$what",
+"type_source_file"), or die on errors (like if no Project could be
+found).
+
+dir_$what_from is an absolute directory name which should be the cwd
+when command_$what is executed.
+
+type_source_file is something like "Test", "Module".
+
+=cut
+sub rhRunFile0 {
+    my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
+    my %p = @_;
     my $rhConfigType = $p{rhConfigType};
+    my $what = $p{what};
 
     $file = file($file)->absolute;
     $rhConfigType ||= $self->rhConfigTypeForFile(
         file      => $file,
-        keyConfig => "debug_file",
+        keyConfig => "${what}_file",
     );
 
     my $dirProject = dir($self->dirProject)->absolute;
-    my %hTypeDirDebugFrom = (
+    my %hTypeDirRunFrom = (
         source_root_directory => sub { $dirProject },
-        file_directory => sub { $file->dir },
+        file_directory        => sub { $file->dir },
     );
-    my $typeDebugFrom = $rhConfigType->{debug_from};
-    my $rsDirDebugFrom = $hTypeDirDebugFrom{$typeDebugFrom} or die("Invalid debug_from value ($typeDebugFrom)\n" . Dumper($rhConfigType) . "Allowed values: (" . join(", ", (sort keys %hTypeDirDebugFrom)) . ")\n");
-    my $dirDebugFrom = $rsDirDebugFrom->();
+    my $typeRunFrom = $rhConfigType->{"${what}_from"};
+    my $rsDirRunFrom = $hTypeDirRunFrom{$typeRunFrom} or die("Invalid ${what}_from value ($typeRunFrom)\n" . Dumper($rhConfigType) . "Allowed values: (" . join(", ", (sort keys %hTypeDirRunFrom)) . ")\n");
+    my $dirRunFrom = $rsDirRunFrom->();
 
-    my @aDirIncProject = $self->aDirIncProject(dirRelativeTo => $dirDebugFrom);
+    my @aDirIncProject = $self->aDirIncProject(dirRelativeTo => $dirRunFrom);
     my $optionInc = join(" ", map { qq|"-I$_"| } @aDirIncProject);
 
-    my $fileSource = $file->relative($dirDebugFrom);
-    my $commandDebug = textRenderTemplate(
+    my $fileSource = $file->relative($dirRunFrom);
+    my $commandRun = textRenderTemplate(
         $rhConfigType->{command}, {
-            INC => $optionInc,
+            INC         => $optionInc,
             SOURCE_FILE => $fileSource . "",
         },
     );
 
-    my $rhConfigDebug = {
-        dir_debug_from => $dirDebugFrom . "",
-        command_debug => $commandDebug,
-        type_source_file => $rhConfigType->{moniker},
+    my $rhConfigRun = {
+        "dir_${what}_from" => $dirRunFrom . "",
+        "command_${what}"  => $commandRun,
+        type_source_file   => $rhConfigType->{moniker},
     };
-    return($rhConfigDebug);
+    return($rhConfigRun);
 }
 
 

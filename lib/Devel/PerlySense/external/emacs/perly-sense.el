@@ -421,7 +421,7 @@ more items than that, use completing read instead."
         )
     (progn
       (message "Run File...")
-      (let* ((result-alist (ps/command "run_file" (format "\"--file=%s\"" (buffer-file-name))))
+      (let* ((result-alist (ps/command-on-current-file-location "run_file"))
              (dir-run-from (alist-value result-alist "dir_run_from"))
              (command-run (alist-value result-alist "command_run"))
              (type-source-file (alist-value result-alist "type_source_file"))
@@ -443,7 +443,6 @@ more items than that, use completing read instead."
 
 
 
-;; XXX refactor DRY run-file
 (defun ps/debug-file ()
   "Debug the current file"
   (interactive)
@@ -451,10 +450,9 @@ more items than that, use completing read instead."
   (if (not (buffer-file-name))
       (message "No file to debug")
     (message "Debug File...")
-    (let* ((result-alist (ps/command "debug_file" (format "\"--file=%s\"" (buffer-file-name))))
+    (let* ((result-alist (ps/command-on-current-file-location "debug_file"))
            (dir-debug-from (alist-value result-alist "dir_debug_from"))
            (command-debug (alist-value result-alist "command_debug"))
-           (type-source-file (alist-value result-alist "type_source_file"))
            (message-string (alist-value result-alist "message")))
       (if command-debug
           (progn
@@ -1117,7 +1115,7 @@ current test run, if any"
         (goto-char (point-min))
         (if (re-search-forward "Files=[0-9]+, Tests=\\([0-9]+\\)" nil t)
             (throw 'count-string (string-to-number (match-string 1))))
-        (if (re-search-forward "Looks like you planned \\([0-9]+\\) tests but ran \\([0-9]+\\) extra" nil t)
+        (if (re-search-forward "Looks like you planned \\([0-9]+\\) tests? but ran \\([0-9]+\\) extra" nil t)
             (let* ((planned-count (string-to-number (match-string 1)))
                    (extra-count (string-to-number (match-string 2)))
                    (actual-count (+ planned-count extra-count))
@@ -1125,9 +1123,9 @@ current test run, if any"
               (throw 'count-string actual-count)
               )
           )
-        (if (re-search-forward "planned [0-9]+ tests but \\(only \\)?ran \\([0-9]+\\)" nil t)
+        (if (re-search-forward "planned [0-9]+ tests? but \\(only \\)?ran \\([0-9]+\\)" nil t)
             (throw 'count-string (string-to-number (match-string 2))))
-        (if (re-search-forward "Failed [0-9]+/\\([0-9]+\\) tests" nil t)
+        (if (re-search-forward "Failed [0-9]+/\\([0-9]+\\) tests?" nil t)
             (throw 'count-string (string-to-number (match-string 1))))
         (throw 'count-string nil)))))
 
