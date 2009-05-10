@@ -29,9 +29,35 @@
 
 
 
+
+(defun ps/flymake-display-err-for-current-line ()
+  "Display a menu/message (depending on display capabilities and
+customization) with errors/warnings for current line if it has
+errors and/or warnings."
+  (interactive)
+  (if (and (display-popup-menus-p) (not ps/flymake-prefer-errors-in-minibuffer))
+      (flymake-display-err-menu-for-current-line)
+    (ps/flymake-display-err-message-for-current-line)
+    )
+  )
+
+
+
+(defun ps/flymake-display-err-message-for-current-line ()
+  "Display a message with errors/warnings for current line if it
+has errors and/or warnings."
+  (interactive)
+  (let ((err (get-char-property (point) 'help-echo)))
+            (when err
+              (message err)))
+  )
+
+
+
 (global-set-key (format "%ssn" ps/key-prefix) 'flymake-goto-next-error)
 (global-set-key (format "%ssp" ps/key-prefix) 'flymake-goto-prev-error)
-(global-set-key (format "%sss" ps/key-prefix) 'flymake-display-err-menu-for-current-line)
+(global-set-key (format "%sss" ps/key-prefix) 'ps/flymake-display-err-for-current-line)
+
 
 
 

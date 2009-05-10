@@ -814,7 +814,10 @@ GETTING STARTED WITH EMACS
 
     "C-o s p" -- Go to the previous Source error/warning.
 
-    "C-o s s" -- Display the error/warning text of the current line.
+    "C-o s s" -- Display the error/warning text of the current line in a
+    popup. Or display the error in the minibuffer if the display isn't
+    graphical, or if the ps/flymake-prefer-errors-in-minibuffer variable is
+    customized to a true value.
 
    Code Coverage Visualization Introduction
     If you have a test suite, you might like this. You should have tests.

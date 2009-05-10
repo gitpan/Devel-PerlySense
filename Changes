@@ -3,6 +3,17 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0179
+------
+
+* Feature request from Joshua McMIchael: make flymake display its
+  errors in the minibuffer.
+
+  This is done automatically if the display isn't graphical, or if the
+  ps/flymake-prefer-errors-in-minibuffer variable is customized.
+
+
+
 0.0178
 ------
 

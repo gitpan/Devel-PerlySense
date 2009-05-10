@@ -173,6 +173,17 @@ more items than that, use completing read instead."
 
 
 
+(defcustom ps/flymake-prefer-errors-in-minibuffer nil
+  "Whether to display compilation error messages in the
+minibuffer instead of as a popup (if your display can't display
+popups, they'll always be displayed in the minibuffer).
+
+See the POD docs for how to enable flymake."
+  :type 'boolean
+  :group 'perly-sense)
+
+
+
 (defgroup perly-sense-faces nil
   "Colors."
   :link '(custom-group-link :tag "Font Lock Faces group" font-lock-faces)
