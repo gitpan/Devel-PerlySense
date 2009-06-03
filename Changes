@@ -3,6 +3,13 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0180
+------
+
+* Adjusted "Find with Ack" to work with Emacs 23 as well.
+
+
+
 0.0179
 ------
 

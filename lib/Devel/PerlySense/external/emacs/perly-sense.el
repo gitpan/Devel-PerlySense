@@ -676,11 +676,19 @@ If not, search for an empty string.
                             (setq word-only-flag "-w ")
                             word-at-point))
                         ""))
+          (escaped-search-term (shell-quote-argument search-term))
+          
+          ;; If the string is quoted, put the cursor just inside the
+          ;; quote, else at the start of the string
+          (quote-offset (if (string-match "^[\"']" escaped-search-term) 1 0))
+          
           (ack-base-command (format "ack --nogroup --nocolor --perl %s-Q -- " word-only-flag))
-          (ack-command (format "%s%s" ack-base-command (shell-quote-argument search-term)))
-          (grep-find-command (cons        ;; Two item list sets the initial position
-                              ack-command
-                              (+ 2 (length ack-base-command))))
+          (ack-command (format "%s%s" ack-base-command escaped-search-term))
+          (grep-find-command   ;; For Emacs <= 22
+           (cons               ;; Second item sets the initial position
+            ack-command (+ 1 quote-offset (length ack-base-command))))
+          (grep-host-defaults-alist  ;; For Emacs > 22, also set this
+           `((localhost (grep-find-command ,grep-find-command))))
           )
    (call-interactively 'grep-find))))
 
