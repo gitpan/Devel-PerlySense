@@ -108,6 +108,11 @@ region is active"
 
 
 
+;; Test::Class specific stuff
+(load "perly-sense-test-class" nil t)
+
+
+
 (defun regex-render-perl (regex sample)
   (with-temp-buffer
     (let*
@@ -423,6 +428,13 @@ See the POD docs for how to enable flymake."
 (defun ps/run-file ()
   "Run the current file"
   (interactive)
+
+  ;; Test::Class integration
+  
+  (setenv "TEST_METHOD"
+          (if ps/tc/current-method
+              (format "^%s$" ps/tc/current-method)
+            nil))
 
   ;;If it's the compilation buffer, recompile, else run file
   (if (string= (buffer-name) "*compilation*")

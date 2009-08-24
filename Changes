@@ -3,6 +3,14 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0181
+------
+
+* Support for running a single method in Test::Class. Mark a method
+  with C-o t m, then run the test class with C-o C-r as usual.
+
+
+
 0.0180
 ------
 

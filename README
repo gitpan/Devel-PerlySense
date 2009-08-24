@@ -659,6 +659,18 @@ GETTING STARTED WITH EMACS
     line in the current buffer, so be sure to only run this when the
     *compilation* buffer contains the run result of this buffer.
 
+   Run Single Test::Class Method
+    If you use Test::Class to write your tests, you may sometimes want to
+    run just a single test method.
+
+    Hit "C-o r m" to mark the current sub as the current test method, and
+    "C-o r m" again to unmark it. This will set the $TEST_METHOD environment
+    variable during program runs, so when you run this test class, only the
+    marked method will be run.
+
+    The current test method is indicated with a "Test::Class -->" next to
+    it.
+
    Go to Tests - Other Files
     "C-o g t o" -- In a test file, navigate to the source files that are
     covered by that test file.
