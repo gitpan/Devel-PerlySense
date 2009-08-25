@@ -15,12 +15,18 @@
   (let ((method-name (ps/get-nearby-sub)))
     (if method-name
         (ps/tc/toggle-current-method method-name)
-      (message "No test method found")
+      (message "No Test::Class method found")
       )))
 
 (defun ps/tc/toggle-current-method (method-name)
   (if (string-equal ps/tc/current-method method-name)
-      (setq method-name nil))
+      (progn
+        (setq method-name nil)
+        (message "Test::Class method: -none-")
+        )
+    (message "Test::Class method: %s"
+             (propertize method-name 'face 'font-lock-function-name-face))
+    )
   (setq ps/tc/current-method method-name)
   (ps/tc/redisplay-method method-name)
   )
@@ -57,11 +63,9 @@ was found."
         (progn
           (setq ps/tc/current-method-overlay (make-overlay sub-pos sub-pos))
           (overlay-put ps/tc/current-method-overlay 'test-class-method t)
-          (overlay-put ps/tc/current-method-overlay 'before-string "Test::Class --> ")
-          )
-      )
-    )
-  )
+          (overlay-put ps/tc/current-method-overlay 'before-string
+                       (propertize "Test::Class --> " 'face 'font-lock-comment-face))
+          ))))
 
 
 (global-set-key (format "%stm" ps/key-prefix) 'ps/tc/toggle-current-sub)
