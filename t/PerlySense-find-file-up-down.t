@@ -23,8 +23,8 @@ ok(my $oPs = Devel::PerlySense->new(), "new ok");
     my $dirData = "data/simple-lib";
     my $fileOrigin = "$dirData/lib/Win32/Word/Writer.pm";
     my $dirOrigin = dirname($fileOrigin);
-    my $nameModule = "Win32::Word::Writer::Table";
-    my $fileModuleTarget = catfile("Writer", "Table.pm");
+    my $nameModule = "Win32::Word::Writer::Table2";
+    my $fileModuleTarget = catfile("Writer", "Table2.pm");
 
 
     throws_ok( sub { $oPs->fileFindModule() }, qr/nameModule/, "fileFindModule dies ok with missing param");
@@ -38,7 +38,7 @@ ok(my $oPs = Devel::PerlySense->new(), "new ok");
 
 {
     my $dirData = "data/simple-lib";
-    my $fileOrigin = "$dirData/lib/Win32/Word/Writer/Table.pm";
+    my $fileOrigin = "$dirData/lib/Win32/Word/Writer/Table2.pm";
     my $dirOrigin = dirname($fileOrigin);
     my $nameModule = "Win32::Word::Writer";
     my $fileModuleTarget = catfile("..", "Writer.pm");

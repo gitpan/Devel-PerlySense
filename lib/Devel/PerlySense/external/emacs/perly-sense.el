@@ -429,36 +429,36 @@ See the POD docs for how to enable flymake."
   "Run the current file"
   (interactive)
 
-  ;; Test::Class integration
-  
-  (setenv "TEST_METHOD"
-          (if ps/tc/current-method
-              (format "^%s$" ps/tc/current-method)
-            nil))
-
   ;;If it's the compilation buffer, recompile, else run file
   (if (string= (buffer-name) "*compilation*")
       (progn
         (message "Recompile file...")
         (recompile)
         )
-    (progn
-      (message "Run File...")
-      (let* ((result-alist (ps/command-on-current-file-location "run_file"))
-             (dir-run-from (alist-value result-alist "dir_run_from"))
-             (command-run (alist-value result-alist "command_run"))
-             (type-source-file (alist-value result-alist "type_source_file"))
-             (message-string (alist-value result-alist "message")))
-        (if command-run
+    (message "Run File...")
+
+    (let* ((result-alist (ps/command-on-current-file-location "run_file"))
+           (dir-run-from (alist-value result-alist "dir_run_from"))
+           (command-run (alist-value result-alist "command_run"))
+           (type-source-file (alist-value result-alist "type_source_file"))
+           (message-string (alist-value result-alist "message")))
+      (if command-run
+          (progn
+            ;; Test::Class integration
+            (setenv "TEST_METHOD"
+                    (if ps/tc/current-method
+                        (format "^%s$" ps/tc/current-method)
+                      nil))
+              
             (ps/run-file-run-command
              ;;             (ps/run-file-get-command command-run type-source-file)
              command-run
              dir-run-from
              )
-          )
-        (if message-string
-            (message message-string)
-          )
+            )
+        )
+      (if message-string
+          (message message-string)
         )
       )
     )
@@ -527,7 +527,7 @@ See the POD docs for how to enable flymake."
      dir-debug-from
      (gud-common-init command-line 'gud-perldb-massage-args 'gud-perldb-marker-filter)
      (set (make-local-variable 'gud-minor-mode) 'perldb)
-     
+
      (gud-def gud-break  "b %l"         "\C-b" "Set breakpoint at current line.")
      (gud-def gud-remove "B %l"         "\C-d" "Remove breakpoint at current line")
      (gud-def gud-step   "s"            "\C-s" "Step one source line with display.")
@@ -689,11 +689,11 @@ If not, search for an empty string.
                             word-at-point))
                         ""))
           (escaped-search-term (shell-quote-argument search-term))
-          
+
           ;; If the string is quoted, put the cursor just inside the
           ;; quote, else at the start of the string
           (quote-offset (if (string-match "^[\"']" escaped-search-term) 1 0))
-          
+
           (ack-base-command (format "ack --nogroup --nocolor --perl %s-Q -- " word-only-flag))
           (ack-command (format "%s%s" ack-base-command escaped-search-term))
           (grep-find-command   ;; For Emacs <= 22
@@ -868,6 +868,25 @@ statement in the file, or nil if none was found."
           (search-forward-regexp ";")
           (point))
       nil
+      )
+    )
+  )
+
+
+
+;; Almost identical to recompile, remove duplication
+(defun ps/goto-run-buffer ()
+  "Go to the current *compilation* buffer, if any."
+  (interactive)
+  (let* ((compilation-buffer (get-buffer "*compilation*")))
+    (if compilation-buffer
+        (let* ((compilation-window (get-buffer-window compilation-buffer "visible")))
+          (progn
+            (if compilation-window (select-window compilation-window))
+            (switch-to-buffer "*compilation*")
+            )
+          )
+      (message "There is no *compilation* buffer to go to.")
       )
     )
   )
@@ -2154,6 +2173,7 @@ Return t if found, else nil."
 (global-set-key (format "%srr" ps/key-prefix) 'ps/rerun-file)
 (global-set-key (format "%srd" ps/key-prefix) 'ps/debug-file)
 
+(global-set-key (format "%sgr" ps/key-prefix) 'ps/goto-run-buffer)
 (global-set-key (format "%sge" ps/key-prefix) 'ps/compile-goto-error-file-line)
 (global-set-key (format "%sgto" ps/key-prefix) 'ps/goto-test-other-files)
 (global-set-key (format "%sgpo" ps/key-prefix) 'ps/goto-project-other-files)

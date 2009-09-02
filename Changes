@@ -3,6 +3,15 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0183
+------
+
+* New command: C-o g r -- Go to Run buffer.
+
+* Fixed Test::Class current method bug when re-running.
+
+
+
 0.0182
 ------
 

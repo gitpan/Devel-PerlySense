@@ -629,12 +629,15 @@ GETTING STARTED WITH EMACS
     buffer with "M-x rename-buffer".
 
    Re-run File
-    Invoke "C-o C-r" from within the *compilaton* buffer to re-run ("M-x
+    Invoke "C-o C-r" from within the *compilation* buffer to re-run ("M-x
     recompile") the file. Useful when you have skipped around the source
     fixing errors and the .t file isn't visible.
 
     "C-o r r" -- If not even the *compilation* buffer is visible, issue
     Re-Run File from anywhere to bring it up and re-run.
+
+   Go to Run-buffer
+    Invoke "C-o g r" to go to the *compilation* buffer.
 
    Edit Test Count
     "C-o e t c" -- Increase the test count number in the line resembling

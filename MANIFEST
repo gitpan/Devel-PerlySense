@@ -118,6 +118,7 @@ t/data/project/with-use/source/lib/modules/Game/Lawn.pm
 t/data/simple-lib/lib/Game/Event/Timed.pm
 t/data/simple-lib/lib/Win32/Word/Writer.pm
 t/data/simple-lib/lib/Win32/Word/Writer/Table.pm
+t/data/simple-lib/lib/Win32/Word/Writer/Table2.pm
 t/data/simple-lib/lib/Win32/Word/Writer/TableVisible.pm
 t/PerlySense-Bookmark-match.t
 t/PerlySense-BookmarkConfig.t
