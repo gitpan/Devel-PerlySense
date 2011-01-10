@@ -89,7 +89,7 @@ bookmark:
   -
     moniker: Todo
     rex:
-      - qr/\# \s* TODO \s* : \s* (.+?) \s*$/x
+      - "qr/\# \s* TODO \s* : \s* (.+?) \s*$/x"
 
 
 external:
@@ -128,7 +128,7 @@ external:
 #match is used.
 run_file:
   -
-    command: "prove -v ${INC} \"${SOURCE_FILE}\""
+    command: "prove --nocolor -v ${INC} \"${SOURCE_FILE}\""
     moniker: Test
     rex: \.t$
     run_from: source_root_directory

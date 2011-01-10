@@ -17,3 +17,4 @@ release.pl
 ^tar.bat
 ^pdoc
 .perldb
+^MYMETA.yml$

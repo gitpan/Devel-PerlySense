@@ -1,48 +1,19 @@
 ---
-name: Devel-PerlySense
-version: 0.0183
+abstract: 'Perl IDE backend with Emacs frontend'
 author:
   - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
-abstract: Perl IDE backend with Emacs frontend
-license: perl
-resources:
-  license: http://dev.perl.org/licenses/
-requires:
-  App::Ack: 0
-  Cache::Cache: 0
-  Carp: 0
-  Data::Dumper: 0
-  File::Basename: 0
-  File::Corresponding: 0
-  File::Find::Rule: 0
-  File::Slurp: 0
-  File::Spec: 3.25
-  File::chdir: 0
-  Getopt::Long: 0
-  Graph::Easy: 0.57
-  HTTP::Date: 0
-  List::MoreUtils: 0
-  Module::Pluggable: 3.5
-  PPI: 1.003
-  PPI::HTML: 0
-  Path::Class: 0.11
-  Perl::Critic: 0
-  Perl::Tidy: 0
-  Pod::Text: 0
-  Pod::Usage: 0
-  Spiffy: 0.2
-  Test::Differences: 0
-  Test::Exception: 0
-  Test::More: 0
-  Text::Table: 1.107
-  YAML::Tiny: 0
-  perl: v5.6.0
 configure_requires:
-  Module::Build: 0.340201
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3603'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Devel-PerlySense
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.0183
+    version: 0.0185
   Devel::PerlySense::Bookmark::Definition:
     file: lib/Devel/PerlySense/Bookmark/Definition.pm
     version: 0.01
@@ -109,7 +80,36 @@ provides:
   Devel::TimeThis:
     file: lib/Devel/TimeThis.pm
     version: 0.01
-generated_by: Module::Build version 0.340201
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+requires:
+  App::Ack: 0
+  Cache::Cache: 0
+  Carp: 0
+  Data::Dumper: 0
+  File::Basename: 0
+  File::Corresponding: 0
+  File::Find::Rule: 0
+  File::Slurp: 0
+  File::Spec: 3.25
+  File::chdir: 0
+  Getopt::Long: 0
+  Graph::Easy: 0.57
+  HTTP::Date: 0
+  List::MoreUtils: 0
+  Module::Pluggable: 3.5
+  PPI: 1.003
+  PPI::HTML: 0
+  Path::Class: 0.11
+  Perl::Critic: 0
+  Perl::Tidy: 0
+  Pod::Text: 0
+  Pod::Usage: 0
+  Spiffy: 0.2
+  Test::Differences: 0
+  Test::Exception: 0
+  Test::More: 0
+  Text::Table: 1.107
+  YAML::Tiny: 0
+  perl: v5.6.0
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.0185

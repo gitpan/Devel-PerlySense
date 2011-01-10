@@ -51,7 +51,7 @@ sub new(@) {
     my $self = $pkg->SUPER::new(@_);
     
     my $sourceConfig = $self->textConfigDefault;
-    my ($rhConfig) = YAML::Tiny::Load($sourceConfig);
+    my ($rhConfig) = eval { YAML::Tiny::Load($sourceConfig) };
     $rhConfig or die($YAML::Tiny::errstr);
 
     $self->rhConfig($rhConfig);

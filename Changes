@@ -3,6 +3,37 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0185
+------
+
+* Fixed bad YAML in default config file which breaks YAML::Tiny
+  1.46. Thanks to Thomas Kappler for finding this.
+
+  !!!NOTE!!! If you have existing .PerlySense/project.yml files, they
+  are broken. A scalar string with : followed by a space is illegal
+  and now needs to be quoted.
+
+  In the previous default config, the regex under "bookmark:" is
+  broken and the "rex:" should now be
+      - "qr/\# \s* TODO \s* : \s* (.+?) \s*$/x"
+
+  Remember: you need to find *all* your .PerlySense/project.yml files
+  and fix them:
+    ack -fa | ack PerlySenseProject/project.yml
+
+* Better error output when YAML::Tiny dies
+
+* Updated default config to use "prove --nocolor". Because it's 2011
+  now.
+
+
+0.0184
+------
+
+* No-op
+
+
+
 0.0183
 ------
 

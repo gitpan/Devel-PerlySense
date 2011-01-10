@@ -103,8 +103,8 @@ region is active"
 ;;;; Other modules
 
 ;; Regex Tool
-(require 'regex-tool)
-(require 'dropdown-list)
+(load "regex-tool" nil t)
+(load "dropdown-list" nil t)
 
 
 

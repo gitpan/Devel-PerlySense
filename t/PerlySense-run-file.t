@@ -125,7 +125,7 @@ diag("Run test file inside dir");
     is($rhRun->{type_source_file}, "Test", "    type_source_file");
     like(
         $rhRun->{command_run},
-        qr|prove -v "-I." "-Ilib" "t.Game-Lawn.t"|,
+        qr|prove --nocolor -v "-I." "-Ilib" "t.Game-Lawn.t"|,
         "    command_run",
     );
     like($rhRun->{dir_run_from}, qr|t.data.project.with-dir.source|, "    dir_run_from");
