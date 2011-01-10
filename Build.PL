@@ -5,7 +5,7 @@ use Module::Build;
 my $builder = Module::Build->new(
     module_name         => 'Devel::PerlySense',
     license             => 'perl',
-    dist_author         => 'Johan Lindström <johanl[ÄT]DarSerMan.com>',
+    dist_author         => 'Johan Lindstrom <johanl[no-spam-thank-you]DarSerMan.com>',
     dist_version_from   => 'lib/Devel/PerlySense.pm',
     requires => {
         'App::Ack'            => 0,

@@ -1,7 +1,7 @@
 ---
 abstract: 'Perl IDE backend with Emacs frontend'
 author:
-  - 'Johan Lindström <johanl[ÄT]DarSerMan.com>'
+  - 'Johan Lindstrom <johanl[no-spam-thank-you]DarSerMan.com>'
 configure_requires:
   Module::Build: 0.36
 generated_by: 'Module::Build version 0.3603'
@@ -13,7 +13,7 @@ name: Devel-PerlySense
 provides:
   Devel::PerlySense:
     file: lib/Devel/PerlySense.pm
-    version: 0.0185
+    version: 0.0186
   Devel::PerlySense::Bookmark::Definition:
     file: lib/Devel/PerlySense/Bookmark/Definition.pm
     version: 0.01
@@ -112,4 +112,4 @@ requires:
   perl: v5.6.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.0185
+version: 0.0186

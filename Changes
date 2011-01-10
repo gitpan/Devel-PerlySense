@@ -3,6 +3,13 @@ Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
 
+0.0186
+------
+
+* Removed non ascii char form Build.PL to avoid not-utf8 warnings.
+
+
+
 0.0185
 ------
 
@@ -27,6 +34,7 @@ Feature oriented Revision history for Devel-PerlySense
   now.
 
 
+  
 0.0184
 ------
 
