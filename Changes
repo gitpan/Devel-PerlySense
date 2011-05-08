@@ -2,6 +2,23 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
+0.0189 -- 2011-05-08 22:55:00 UTC
+
+Bug fix release. Thanks to John SJ Anderson for prodding me to get RT
+patches applied.
+
+* Bug #65259 - sub prototype causes failure in perl 5.12 in emacs on
+  mac. Thanks to VANAMBURG for the bug report and fix.
+
+* Bug #42827 - Flymake warnings not displayed with latest Perl::Critic
+  Thanks to Jan Tatarik for the bug report and fix.
+
+* Bug #61640 - perly-sense.el regexps
+  Thanks to Kevin Ryde for the bug report and John SJ Anderson for the
+  patch.
+
+
+
 0.0188 -- 2011-05-08 21:15:38 UTC
 
 * Dist::Zilla build files
@@ -39,7 +56,7 @@ Feature oriented Revision history for Devel-PerlySense
   now.
 
 
-  
+
 0.0184
 ------
 

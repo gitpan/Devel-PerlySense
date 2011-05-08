@@ -90,7 +90,7 @@ my %WriteMakefileArgs = (
     'PPI::Document' => '0',
     'PPI::Dumper' => '0',
     'Path::Class' => '0',
-    'Perl::Critic' => '0',
+    'Perl::Critic' => '1.105',
     'Pod::Text' => '0',
     'Pod::Usage' => '0',
     'Spiffy' => '0',
@@ -99,7 +99,7 @@ my %WriteMakefileArgs = (
     'Time::HiRes' => '0',
     'YAML::Tiny' => '0'
   },
-  'VERSION' => '0.0188',
+  'VERSION' => '0.0189',
   'test' => {
     'TESTS' => 't/*.t t/data/project/with-dir/source/t/*.t t/data/project/with-git/source/bogus/t/*.t t/data/project/with-perlysenseproject/source/bogus/t/*.t'
   }

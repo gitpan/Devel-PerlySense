@@ -80,7 +80,7 @@ requires:
   PPI::Document: 0
   PPI::Dumper: 0
   Path::Class: 0
-  Perl::Critic: 0
+  Perl::Critic: 1.105
   Pod::Text: 0
   Pod::Usage: 0
   Spiffy: 0
@@ -88,4 +88,4 @@ requires:
   Text::Table: 0
   Time::HiRes: 0
   YAML::Tiny: 0
-version: 0.0188
+version: 0.0189
