@@ -2,6 +2,11 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
+0.0187 -- 2011-05-08 21:06:39 UTC
+
+* Dist::Zilla build files
+
+
 
 0.0186
 ------

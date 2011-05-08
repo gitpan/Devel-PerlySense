@@ -1,115 +1,91 @@
 ---
-abstract: 'Perl IDE backend with Emacs frontend'
+abstract: "Perl IDE backend with Emacs frontend\r"
 author:
-  - 'Johan Lindstrom <johanl[no-spam-thank-you]DarSerMan.com>'
+  - 'Johan Lindstrom <johanl@cpan.org>'
+build_requires:
+  Class::MethodMaker: 0
+  Class::Moose::ExtendsQwList1: 0
+  Class::Moose::ExtendsQwList2: 0
+  Class::Moose::ExtendsScalar: 0
+  Class::Moose::RoleQwList1: 0
+  Class::Moose::RoleQwList2: 0
+  Class::Moose::RoleScalar: 0
+  Class::UseBaseBareList1: 0
+  Class::UseBaseBareList2: 0
+  Class::UseBaseQw1: 0
+  Class::UseBaseQw2: 0
+  Class::UseBaseScalar: 0
+  Exception::Class: 0
+  File::Spec: 0
+  File::Temp: 0
+  Game::Application: 0
+  Game::Controller: 0
+  Game::Direction: 0
+  Game::Event::Timed: 0
+  Game::Lawn: 0
+  Game::Location: 0
+  Game::Object: 0
+  Game::Object::Prize: 0
+  Game::Object::Wall: 0
+  Game::Object::Worm: 0
+  Game::Object::Worm::Bot: 0
+  Game::ObjectVisible: 0
+  Game::UI: 0
+  Game::UI::None: 0
+  Moose: 0
+  Test::Differences: 0
+  Test::Exception: 0
+  Test::More: 0
+  Win32::Console: 0
+  Win32::OLE: 0
+  Win32::OLE::Const: 0
+  Win32::Sound: 0
+  Win32::Word::Writer::Table: 0
+  Win32::Word::Writer::TableVisible: 0
 configure_requires:
-  Module::Build: 0.36
-generated_by: 'Module::Build version 0.3603'
+  ExtUtils::MakeMaker: 6.31
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.200001, CPAN::Meta::Converter version 2.110240'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: Devel-PerlySense
-provides:
-  Devel::PerlySense:
-    file: lib/Devel/PerlySense.pm
-    version: 0.0186
-  Devel::PerlySense::Bookmark::Definition:
-    file: lib/Devel/PerlySense/Bookmark/Definition.pm
-    version: 0.01
-  Devel::PerlySense::Bookmark::Match:
-    file: lib/Devel/PerlySense/Bookmark/Match.pm
-    version: 0.01
-  Devel::PerlySense::Bookmark::MatchResult:
-    file: lib/Devel/PerlySense/Bookmark/MatchResult.pm
-    version: 0.01
-  Devel::PerlySense::BookmarkConfig:
-    file: lib/Devel/PerlySense/BookmarkConfig.pm
-    version: 0.01
-  Devel::PerlySense::Class:
-    file: lib/Devel/PerlySense/Class.pm
-    version: 0.01
-  Devel::PerlySense::Config::Project:
-    file: lib/Devel/PerlySense/Config/Project.pm
-    version: 0.01
-  Devel::PerlySense::Config::Project::Default:
-    file: lib/Devel/PerlySense/Config/Project/Default.pm
-    version: 0.01
-  Devel::PerlySense::Document:
-    file: lib/Devel/PerlySense/Document.pm
-    version: 0.01
-  Devel::PerlySense::Document::Api:
-    file: lib/Devel/PerlySense/Document/Api.pm
-    version: 0.01
-  Devel::PerlySense::Document::Api::Method:
-    file: lib/Devel/PerlySense/Document/Api/Method.pm
-    version: 0.01
-  Devel::PerlySense::Document::Location:
-    file: lib/Devel/PerlySense/Document/Location.pm
-    version: 0.01
-  Devel::PerlySense::Document::Meta:
-    file: lib/Devel/PerlySense/Document/Meta.pm
-    version: 0.01
-  Devel::PerlySense::Editor:
-    file: lib/Devel/PerlySense/Editor.pm
-    version: 0.01
-  Devel::PerlySense::Editor::Emacs:
-    file: lib/Devel/PerlySense/Editor/Emacs.pm
-    version: 0.01
-  Devel::PerlySense::Editor::Vim:
-    file: lib/Devel/PerlySense/Editor/Vim.pm
-    version: 0.01
-  Devel::PerlySense::Home:
-    file: lib/Devel/PerlySense/Home.pm
-    version: 0.01
-  Devel::PerlySense::Plugin::Syntax::Moose:
-    file: lib/Devel/PerlySense/Plugin/Syntax/Moose.pm
-    version: 0.01
-  Devel::PerlySense::Project:
-    file: lib/Devel/PerlySense/Project.pm
-    version: 0.01
-  Devel::PerlySense::Project::Unknown:
-    file: lib/Devel/PerlySense/Project/Unknown.pm
-    version: 0.01
-  Devel::PerlySense::Util:
-    file: lib/Devel/PerlySense/Util.pm
-    version: 0.01
-  Devel::PerlySense::Util::Log:
-    file: lib/Devel/PerlySense/Util/Log.pm
-    version: 0.01
-  Devel::TimeThis:
-    file: lib/Devel/TimeThis.pm
-    version: 0.01
 requires:
-  App::Ack: 0
   Cache::Cache: 0
+  Cache::FileCache: 0
   Carp: 0
   Data::Dumper: 0
+  Devel::CoverX::Covered: 0
+  Devel::CoverX::Covered::Db: 0
+  Exporter: 0
   File::Basename: 0
   File::Corresponding: 0
+  File::Corresponding::Config::Find: 0
+  File::Find: 0
   File::Find::Rule: 0
+  File::Path: 0
   File::Slurp: 0
-  File::Spec: 3.25
+  File::Spec::Functions: 0
   File::chdir: 0
   Getopt::Long: 0
-  Graph::Easy: 0.57
+  Graph::Easy: 0
   HTTP::Date: 0
+  IO::String: 0
   List::MoreUtils: 0
-  Module::Pluggable: 3.5
-  PPI: 1.003
-  PPI::HTML: 0
-  Path::Class: 0.11
+  List::Util: 0
+  Module::Pluggable: 0
+  POSIX: 0
+  PPI: 0
+  PPI::Document: 0
+  PPI::Dumper: 0
+  Path::Class: 0
   Perl::Critic: 0
-  Perl::Tidy: 0
   Pod::Text: 0
   Pod::Usage: 0
-  Spiffy: 0.2
-  Test::Differences: 0
-  Test::Exception: 0
-  Test::More: 0
-  Text::Table: 1.107
+  Spiffy: 0
+  Storable: 0
+  Text::Table: 0
+  Time::HiRes: 0
   YAML::Tiny: 0
-  perl: v5.6.0
-resources:
-  license: http://dev.perl.org/licenses/
-version: 0.0186
+version: 0.0187
