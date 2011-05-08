@@ -88,4 +88,4 @@ requires:
   Text::Table: 0
   Time::HiRes: 0
   YAML::Tiny: 0
-version: 0.0187
+version: 0.0188

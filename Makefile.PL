@@ -99,7 +99,7 @@ my %WriteMakefileArgs = (
     'Time::HiRes' => '0',
     'YAML::Tiny' => '0'
   },
-  'VERSION' => '0.0187',
+  'VERSION' => '0.0188',
   'test' => {
     'TESTS' => 't/*.t t/data/project/with-dir/source/t/*.t t/data/project/with-git/source/bogus/t/*.t t/data/project/with-perlysenseproject/source/bogus/t/*.t'
   }
