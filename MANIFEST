@@ -72,8 +72,6 @@ lib/Devel/PerlySense/external/emacs/perly-sense.el
 lib/Devel/PerlySense/external/emacs/regex-tool.el
 lib/Devel/PerlySense/external/emacs/shell-command-pool.el
 lib/Devel/TimeThis.pm
-reinstall.sh
-release.pl
 t/00-load.t
 t/PerlySense-Bookmark-match.t
 t/PerlySense-BookmarkConfig.t
