@@ -24,6 +24,7 @@ requires:
   Cache::Cache: 0
   Cache::FileCache: 0
   Carp: 0
+  Cwd: 0
   Data::Dumper: 0
   Exporter: 0
   File::Basename: 0
@@ -54,4 +55,4 @@ requires:
   Text::Table: 0
   Time::HiRes: 0
   YAML::Tiny: 0
-version: 0.0190
+version: 0.0191

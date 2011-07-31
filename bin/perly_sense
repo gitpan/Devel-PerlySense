@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 $|++;
-use lib q|c:/Dokument/Project/Dev/CPAN/Devel-PerlySense/trunk/source/lib|;
-use lib "c:/Dokument/Project/Dev/CPAN/Devel-CoverX-Covered/trunk/source/lib";
+use lib q|/Users/johanl/Documents/Projects/Dev/CPAN2/Devel-PerlySense/source/lib|;
+use lib "/Users/johanl/Documents/Projects/Dev/CPAN2/Devel-CoverX-Covered/trunk/source/lib";
 
 use strict;
 
@@ -24,6 +24,7 @@ use Devel::PerlySense::Editor::Emacs;
 use Devel::PerlySense::Editor::Vim;
 use Time::HiRes qw/time/;
 use YAML::Tiny;
+use Cwd;
 
 use Data::Dumper;
 use Devel::TimeThis;
@@ -71,7 +72,7 @@ sub main_perly_sense {
 
     my ($dirOrigin, $fileOrigin, $module, $dir, $file, $row, $col, $sub, $nameClass, $nameMethod, $clearCache, $widthDisplay, $typeIo);
     my @aShow;
-    debug("ARGV: (" . join(" ", map { "|$_|" } ("perly_sense",  @ARGV)) . ")");
+    debug("CWD: (" . getcwd() . "), ARGV: (" . join(" ", map { "|$_|" } ("perly_sense",  @ARGV)) . ")");
 
     GetOptions(
         "module:s"        => \$module,

@@ -34,6 +34,7 @@ my %WriteMakefileArgs = (
     'Cache::Cache' => '0',
     'Cache::FileCache' => '0',
     'Carp' => '0',
+    'Cwd' => '0',
     'Data::Dumper' => '0',
     'Exporter' => '0',
     'File::Basename' => '0',
@@ -65,7 +66,7 @@ my %WriteMakefileArgs = (
     'Time::HiRes' => '0',
     'YAML::Tiny' => '0'
   },
-  'VERSION' => '0.0190',
+  'VERSION' => '0.0191',
   'test' => {
     'TESTS' => 't/*.t t/data/project/with-dir/source/t/*.t t/data/project/with-git/source/bogus/t/*.t t/data/project/with-perlysenseproject/source/bogus/t/*.t'
   }
