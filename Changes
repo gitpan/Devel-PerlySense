@@ -2,6 +2,15 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
+0.0192 -- 2012-05-20 16:18:22 UTC
+
+* #70203: Missing close paren in emacs lisp
+  _Finally_ fixed pathetic elisp syntax error w/ missing closing paren.
+
+  Thanks to SPACEBAT and Sebastian Willert for reporting
+
+
+
 0.0191 -- 2011-07-31 21:07:42 UTC
 
 * Config project/inc_dir now used not only to set @INC when running
