@@ -10,6 +10,9 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Util::Log;
+{
+  $Devel::PerlySense::Util::Log::VERSION = '0.0194';
+}
 use base "Exporter";
 
 our @EXPORT = (
@@ -17,7 +20,6 @@ our @EXPORT = (
        debug
        /);
 
-our $VERSION = '0.01';
 
 
 

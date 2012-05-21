@@ -19,7 +19,9 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Document::Api::Method;
-our $VERSION = '0.01';
+{
+  $Devel::PerlySense::Document::Api::Method::VERSION = '0.0194';
+}
 
 
 

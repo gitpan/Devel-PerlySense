@@ -18,8 +18,10 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Config::Project::Default;
+{
+  $Devel::PerlySense::Config::Project::Default::VERSION = '0.0194';
+}
 use base "Devel::PerlySense::Config::Project";
-our $VERSION = '0.01';
 
 
 

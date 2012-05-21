@@ -18,7 +18,9 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Home;
-our $VERSION = '0.01';
+{
+  $Devel::PerlySense::Home::VERSION = '0.0194';
+}
 
 
 

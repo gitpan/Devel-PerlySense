@@ -15,7 +15,9 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Editor;
-our $VERSION = '0.01';
+{
+  $Devel::PerlySense::Editor::VERSION = '0.0194';
+}
 
 
 
