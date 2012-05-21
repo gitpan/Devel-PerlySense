@@ -19,7 +19,7 @@ use warnings;
 
 package Devel::PerlySense::Home;
 {
-  $Devel::PerlySense::Home::VERSION = '0.0194';
+  $Devel::PerlySense::Home::VERSION = '0.0195';
 }
 
 
