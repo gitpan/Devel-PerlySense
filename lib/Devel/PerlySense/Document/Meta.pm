@@ -14,7 +14,7 @@ use warnings;
 
 package Devel::PerlySense::Document::Meta;
 {
-  $Devel::PerlySense::Document::Meta::VERSION = '0.0195';
+  $Devel::PerlySense::Document::Meta::VERSION = '0.0196';
 }
 
 
@@ -541,6 +541,7 @@ sub parsePod {
             my $podSection = "";
             my $level = 0;
             for my $heading (@$raPodHeadingCurrent) {
+                defined($heading) or $heading = ""; # Silence undef warning, is this the right thing to do?
                 ($level < $headingLevel - 1) || ($headingLevel == 0) and $podSection .= "$heading\n\n";
                 $level++;
             }

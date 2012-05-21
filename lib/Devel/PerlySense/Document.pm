@@ -33,7 +33,7 @@ use warnings;
 
 package Devel::PerlySense::Document;
 {
-  $Devel::PerlySense::Document::VERSION = '0.0195';
+  $Devel::PerlySense::Document::VERSION = '0.0196';
 }
 
 

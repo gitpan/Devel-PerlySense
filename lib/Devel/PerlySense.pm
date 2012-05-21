@@ -1603,7 +1603,7 @@ use warnings;
 
 package Devel::PerlySense;
 {
-  $Devel::PerlySense::VERSION = '0.0195';
+  $Devel::PerlySense::VERSION = '0.0196';
 }
 
 

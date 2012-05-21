@@ -13,7 +13,7 @@
 
 (require 'pc-select)  ;; next-line-nomark
 (require 'gud)        ;; perldb
-
+(require 'grep)       ;; grep-find (or rather grep-host-defaults-alist)
 
 
 
@@ -449,7 +449,7 @@ See the POD docs for how to enable flymake."
                     (if ps/tc/current-method
                         (format "^%s$" ps/tc/current-method)
                       nil))
-              
+
             (ps/run-file-run-command
              ;;             (ps/run-file-get-command command-run type-source-file)
              command-run
@@ -593,7 +593,7 @@ calling command."
          (doc-type       (alist-value result-alist "doc_type"))
          (text           (alist-value result-alist "text"))
          )
-    (if (not (string= text ""))
+    (if (not (or (not text) (string= text "")))
         (ps/display-doc-message-or-buffer doc-type name text)
       (message "Nothing found")
       )
@@ -655,16 +655,22 @@ project was found"
       project-dir)))
 
 
-
 (defmacro ps/with-project-dir (&rest body)
   "Execute the forms in BODY with the current directory
 temporarily set to the project dir of the current buffer.
 
 The value returned is the value of the last form in BODY."
+  (let ((dir
+         (or
+          (ps/project-dir)
+          (progn
+            (message "Could not identify a Project Directory, using current directory instead.")
+            default-directory
+            ))))
     `(progn
        (ps/with-default-directory
-        ,(ps/project-dir)
-        ,@body)))
+        ,dir
+        ,@body))))
 
 
 
