@@ -13,8 +13,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Document::Meta;
-{
-  $Devel::PerlySense::Document::Meta::VERSION = '0.0196';
+BEGIN {
+  $Devel::PerlySense::Document::Meta::VERSION = '0.0197';
 }
 
 

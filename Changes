@@ -2,7 +2,7 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
-0.0196 -- 2012-05-21 20:58:40 UTC
+0.0197 -- 2012-05-29 22:39:02 UTC
 
 * Fixed problem during startup where C-o f a won't work until the
   "grep" package is loaded (it's autoloaded during normal interactive
@@ -11,6 +11,23 @@ Feature oriented Revision history for Devel-PerlySense
 * Changed commands that run from the Project Directory so that they
   don't blow up if there is no Project Directory. Instead just run
   from the current directory.
+
+* Add convenience key bindings for "Find with Ack" -- "C-o f a".
+
+  When editing the ack command you can use the following keys to set options
+  "C-c w" toggle  -w
+  "C-c q" toggle  -Q
+  "C-c a" use    --all
+  "C-c p" use    --perl
+  "C-c s" use    --sql
+
+* Feature: Run File with Alternate Command using "C-u C-o C-r".  You
+  need to configure the Alternate Command to do somethign useful in
+  the PerlySenseProject config file.
+
+* Feature: Debug File with Alternate Command using "C-u C-o r d".  You
+  need to configure the Alternate Command to do somethign useful in
+  the PerlySenseProject config file.
 
 
 

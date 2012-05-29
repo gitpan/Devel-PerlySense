@@ -15,8 +15,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Bookmark::Definition;
-{
-  $Devel::PerlySense::Bookmark::Definition::VERSION = '0.0196';
+BEGIN {
+  $Devel::PerlySense::Bookmark::Definition::VERSION = '0.0197';
 }
 
 

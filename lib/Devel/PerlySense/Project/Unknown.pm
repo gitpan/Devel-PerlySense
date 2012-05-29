@@ -18,8 +18,8 @@ A Project::Unknown indicates the lack of a project being defined.
 
 
 package Devel::PerlySense::Project::Unknown;
-{
-  $Devel::PerlySense::Project::Unknown::VERSION = '0.0196';
+BEGIN {
+  $Devel::PerlySense::Project::Unknown::VERSION = '0.0197';
 }
 use base "Devel::PerlySense::Project";
 

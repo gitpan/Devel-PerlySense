@@ -425,9 +425,9 @@ See the POD docs for how to enable flymake."
 
 
 
-(defun ps/run-file ()
+(defun ps/run-file (&optional use-alternate-command)
   "Run the current file"
-  (interactive)
+  (interactive "P")
 
   ;;If it's the compilation buffer, recompile, else run file
   (if (string= (buffer-name) "*compilation*")
@@ -437,7 +437,11 @@ See the POD docs for how to enable flymake."
         )
     (message "Run File...")
 
-    (let* ((result-alist (ps/command-on-current-file-location "run_file"))
+    (let* ((alternate-command-option
+            (if use-alternate-command "--use_alternate_command" ""))
+           (result-alist (ps/command-on-current-file-location
+                          "run_file"
+                          alternate-command-option))
            (dir-run-from (alist-value result-alist "dir_run_from"))
            (command-run (alist-value result-alist "command_run"))
            (type-source-file (alist-value result-alist "type_source_file"))
@@ -466,14 +470,18 @@ See the POD docs for how to enable flymake."
 
 
 
-(defun ps/debug-file ()
+(defun ps/debug-file (&optional use-alternate-command)
   "Debug the current file"
-  (interactive)
+  (interactive "P")
 
   (if (not (buffer-file-name))
       (message "No file to debug")
     (message "Debug File...")
-    (let* ((result-alist (ps/command-on-current-file-location "debug_file"))
+    (let* ((alternate-command-option
+            (if use-alternate-command "--use_alternate_command" ""))
+           (result-alist (ps/command-on-current-file-location
+                          "debug_file"
+                          alternate-command-option))
            (dir-debug-from (alist-value result-alist "dir_debug_from"))
            (command-debug (alist-value result-alist "command_debug"))
            (message-string (alist-value result-alist "message")))
@@ -542,9 +550,6 @@ See the POD docs for how to enable flymake."
      (setq comint-prompt-regexp "^  DB<+[0-9]+>+ ")
      (setq paragraph-start comint-prompt-regexp)
      (run-hooks 'perldb-mode-hook))))
-
-
-
 
 (defun ps/gud-query-cmdline (command)
   (let* ((minor-mode 'perldb)
@@ -672,7 +677,41 @@ The value returned is the value of the last form in BODY."
         ,dir
         ,@body))))
 
+(defun ps/minibuffer-ack-option-filetype (new-type)
+  (save-excursion
+    (beginning-of-line)
+    (if (re-search-forward "\\(--nocolor \\)\\(--[a-z]+\\)" nil t)
+        (replace-match (format "\\1--%s" new-type) nil nil)
+      (message "nope"))
+    )
+  )
+(defun ps/minibuffer-ack-option-all  () (interactive) (ps/minibuffer-ack-option-filetype "all"))
+(defun ps/minibuffer-ack-option-perl () (interactive) (ps/minibuffer-ack-option-filetype "perl"))
+(defun ps/minibuffer-ack-option-sql  () (interactive) (ps/minibuffer-ack-option-filetype "sql"))
 
+(defun ps/minibuffer-ack-option-toggle (option)
+  (save-excursion
+    (beginning-of-line)
+    (if (re-search-forward (format " %s " option) nil t) ;; Found one, remove it
+        (replace-match " " nil nil)
+      ;; Didn't find one, add it
+      (beginning-of-line)
+      (if (re-search-forward (format " -- " option) nil t)
+          (replace-match (format " %s -- " option) nil nil)
+        )
+      )
+    )
+  )
+(defun ps/minibuffer-ack-option-toggle-word  () (interactive) (ps/minibuffer-ack-option-toggle "-w"))
+(defun ps/minibuffer-ack-option-toggle-quote () (interactive) (ps/minibuffer-ack-option-toggle "-Q"))
+
+;; This key map is used inside grep-find
+(define-key minibuffer-local-shell-command-map (kbd "C-c a") 'ps/minibuffer-ack-option-all)
+(define-key minibuffer-local-shell-command-map (kbd "C-c p") 'ps/minibuffer-ack-option-perl)
+(define-key minibuffer-local-shell-command-map (kbd "C-c s") 'ps/minibuffer-ack-option-sql)
+
+(define-key minibuffer-local-shell-command-map (kbd "C-c w") 'ps/minibuffer-ack-option-toggle-word)
+(define-key minibuffer-local-shell-command-map (kbd "C-c q") 'ps/minibuffer-ack-option-toggle-quote)
 
 (defun ps/find-project-ack-thing-at-point ()
   "Run ack from the project dir. Default to a sensible ack command line.
