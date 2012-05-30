@@ -174,7 +174,6 @@ t/data/project-lib/Game/UI/None.pm
 t/data/project/with-dir/source/lib/Game/Lawn.pm
 t/data/project/with-dir/source/t/Game-Lawn.t
 t/data/project/with-git/exists.txt
-t/data/project/with-git/source/.git/exists.txt
 t/data/project/with-git/source/bogus/exists.txt
 t/data/project/with-git/source/bogus/t/Game-Lawn.t
 t/data/project/with-git/source/exists.txt

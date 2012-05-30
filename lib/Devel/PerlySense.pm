@@ -106,6 +106,10 @@ Compilation mode and the settings appropriate for the source type
 (Test, Module, etc.). Highlight errors and jump to source with C-c
 C-c.
 
+B<Edit - Add Use Statement> -- C<C-o e a u> -- Add a 'use Module'
+statement to the 'use Module' section at the top. Default Module name
+is module at point.
+
 B<Edit - Move Use Statement> -- C<C-o e m u> -- Move the 'use Module'
 statement at point to the 'use Module' section at the top.
 
@@ -451,7 +455,10 @@ globally with C-x C-SPC, or locally with C-u C-SPC.
 =head3 Go to Module
 
 C<C-o g m> -- Go to Module at point. Useful if "Smart go to" can't
-identify what's at point.
+identify exactly what's at point.
+
+Default is the selected text, or the
+Module at point.
 
 
 =head3 Go to Base Class
@@ -581,11 +588,11 @@ you'll get to edit the command line with a sensible default chosen from:
 
 When editing the ack command you can use the following keys to set options
 
-  "C-c w" toggle  -w
-  "C-c q" toggle  -Q
-  "C-c a" use    --all
-  "C-c p" use    --perl
-  "C-c s" use    --sql
+  "C-o w" toggle  -w
+  "C-o q" toggle  -Q
+  "C-o a" use    --all
+  "C-o p" use    --perl
+  "C-o s" use    --sql
 
 For details, refer to the L<ack> documentation (the program was
 installed as a dependency of PerlySense).
@@ -910,7 +917,7 @@ Note that if you have spaces in your file names, this might not work
 (it's a perldb thing).
 
 The debugger is started according to the file source type, which is
-determined by the file name (see the config file). 
+determined by the file name (see the config file).
 
 You can also use C<C-u C-o r d> to Debug with an Alternate Command,
 just like with Run File.
@@ -1153,15 +1160,32 @@ I<that particular subroutine>.
 =head2 Editing Code
 
 
+=head3 Edit Add 'use Module' Statement
+
+C<C-o e a u> -- Set mark and add a 'use My::Module;' statement to the
+end of the 'use Module' section at the top of the file.
+
+The default module is the selected text, or the module at point (point
+may be on a method call of the module).
+
+This is typically useful when you realize you're using a module
+already, but without a use-statement. But you don't want to leave
+where you are just to fiddle with adding it.
+
+So hit C<C-o e a u> to add it, see that it got added at a good place
+and hit C-u C-SPC to return to where you were, and continue doing what
+you where doing.
+
+
+
 =head3 Edit Move 'use Module' Statement
 
 C<C-o e m u> -- If point is on a line with a single 'use Module'
 statement, set mark and move that statement to the end of the 'use
 Module' section at the top of the file.
 
-This is typically useful when you realize you need a module,
-e.g. Data::Dumper, in the middle of the file, but you don't want to
-leave where you are just to fiddle with adding it.
+This is typically useful for when you encounter a stray 'use Module'
+in the middle of the file.
 
 So type the 'use Module' statement, hit C<C-o e m u> to move it, see
 that it got moved to a good place and hit C-u C-SPC to return to where
@@ -1625,8 +1649,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense;
-BEGIN {
-  $Devel::PerlySense::VERSION = '0.0197';
+{
+  $Devel::PerlySense::VERSION = '0.0198';
 }
 
 
@@ -2367,7 +2391,7 @@ sub fileFindModule {
 
     # TODO: Move this into fileFindLookingInInc and pass in the dir
     $self->setFindProject(dir => $dirOrigin);
-    
+
 #my $tt = Devel::TimeThis->new("fileFindModule");
     my $fileModuleBase = $self->fileFromModule($nameModule);
     $dirOrigin = dir($dirOrigin)->absolute;

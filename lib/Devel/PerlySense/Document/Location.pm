@@ -22,8 +22,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Document::Location;
-BEGIN {
-  $Devel::PerlySense::Document::Location::VERSION = '0.0197';
+{
+  $Devel::PerlySense::Document::Location::VERSION = '0.0198';
 }
 
 

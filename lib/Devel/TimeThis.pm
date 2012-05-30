@@ -22,8 +22,8 @@ use strict;
 use warnings;
 
 package Devel::TimeThis;
-BEGIN {
-  $Devel::TimeThis::VERSION = '0.0197';
+{
+  $Devel::TimeThis::VERSION = '0.0198';
 }
 
 

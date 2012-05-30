@@ -14,6 +14,7 @@
 (require 'pc-select)  ;; next-line-nomark
 (require 'gud)        ;; perldb
 (require 'grep)       ;; grep-find (or rather grep-host-defaults-alist)
+(require 'thingatpt)  ;; thing-at-point, etc.
 
 
 
@@ -52,6 +53,40 @@ The value returned is the value of the last form in BODY."
        response
        )
      ))
+
+
+
+
+
+;; Nicked from http://blog.jrock.us/posts/Learning%20Emacs%20Lisp%20has%20paid%20off.pod
+;; Thanks to Jonathan Rockway!
+(defun ps/bounds-of-module-at-point ()
+  "Determine where a module name starts for (thing-at-point 'perl-module)"
+  (save-excursion
+    (skip-chars-backward "[:alpha:]:\\->")  ; skip to F in Foo::Bar->
+    (if (looking-at "[[:alpha:]:]+")        ; then get Foo::Bar
+          (cons (point) (match-end 0))
+      nil)))
+
+;; allow (thing-at-point 'perl-module)
+(put 'perl-module 'bounds-of-thing-at-point 'ps/bounds-of-module-at-point)
+
+(defun ps/transient-region-as-string ()
+  "Return the text of the currently selected text (if
+transient-mark-mode is on) or nil if there is none"
+  (if (and mark-active transient-mark-mode)
+      (buffer-substring-no-properties (region-beginning) (region-end))
+    nil))
+
+(defun ps/perl-module-at-point ()
+  "Return the text of the currently selected text (if
+transient-mark-mode is on), or the Perl module at point, or nil
+if there is none"
+  (or
+   (ps/transient-region-as-string)
+   (thing-at-point 'perl-module)))
+
+
 
 
 
@@ -333,7 +368,9 @@ See the POD docs for how to enable flymake."
 (defun ps/find-source-for-module-at-point ()
   "Find the source file for the module at point."
   (interactive)
-  (let ((module (cperl-word-at-point)))
+  (let ((module (or
+                 (ps/perl-module-at-point)
+                 (read-from-minibuffer "Find source file for module: "))))
     (if module
         (progn
           (message "Going to module %s..." module)
@@ -706,12 +743,12 @@ The value returned is the value of the last form in BODY."
 (defun ps/minibuffer-ack-option-toggle-quote () (interactive) (ps/minibuffer-ack-option-toggle "-Q"))
 
 ;; This key map is used inside grep-find
-(define-key minibuffer-local-shell-command-map (kbd "C-c a") 'ps/minibuffer-ack-option-all)
-(define-key minibuffer-local-shell-command-map (kbd "C-c p") 'ps/minibuffer-ack-option-perl)
-(define-key minibuffer-local-shell-command-map (kbd "C-c s") 'ps/minibuffer-ack-option-sql)
+(define-key minibuffer-local-shell-command-map (format "%sa" ps/key-prefix) 'ps/minibuffer-ack-option-all)
+(define-key minibuffer-local-shell-command-map (format "%sp" ps/key-prefix) 'ps/minibuffer-ack-option-perl)
+(define-key minibuffer-local-shell-command-map (format "%ss" ps/key-prefix) 'ps/minibuffer-ack-option-sql)
 
-(define-key minibuffer-local-shell-command-map (kbd "C-c w") 'ps/minibuffer-ack-option-toggle-word)
-(define-key minibuffer-local-shell-command-map (kbd "C-c q") 'ps/minibuffer-ack-option-toggle-quote)
+(define-key minibuffer-local-shell-command-map (format "%sw" ps/key-prefix) 'ps/minibuffer-ack-option-toggle-word)
+(define-key minibuffer-local-shell-command-map (format "%sq" ps/key-prefix) 'ps/minibuffer-ack-option-toggle-quote)
 
 (defun ps/find-project-ack-thing-at-point ()
   "Run ack from the project dir. Default to a sensible ack command line.
@@ -1118,6 +1155,38 @@ Module' section at the top of the file."
   )
 
 
+(defun ps/edit-add-use-statement ()
+  "Add a 'use My::Module;' statement to the end of the 'use
+ Module' section at the top of the file.
+
+The default module name is any module name at point.
+"
+  (interactive)
+  (let ((message
+         (catch 'message
+           (let* ((module-name (or
+                                (ps/perl-module-at-point)
+                                (read-from-minibuffer "use Module: ")))
+                  (use-position (or
+                                 (ps/find-use-module-section-position)
+                                 (throw 'message "No 'use Module' section found, nowhere to put the killed use statement."))))
+             (push-mark)
+             (goto-char use-position)
+             (newline-and-indent)
+             (insert (format "use %s;" module-name))
+             (beginning-of-line)
+             (lisp-indent-line)
+             (format "Added 'use %s;'. Hit C-u C-m to return." module-name)
+             )
+           )
+         ))
+    (if message (message "%s" message))
+    )
+  )
+
+
+
+
 
 ;; Thanks to Jonathan Rockway at
 ;; http://blog.jrock.us/articles/Increment%20test%20counter.pod
@@ -1450,6 +1519,7 @@ none was chosen."
 
 
 
+;; Not used
 (defun ps/choose-class-alist-from-class-list-with-completing-read (what-text class-list)
   "Let the user choose a class-alist from the lass-list of Class
 definitions using completing read.
@@ -2200,6 +2270,7 @@ Return t if found, else nil."
 
 
 (global-set-key (format "%semu" ps/key-prefix) 'ps/edit-move-use-statement)
+(global-set-key (format "%seau" ps/key-prefix) 'ps/edit-add-use-statement)
 (global-set-key (format "%setc" ps/key-prefix) 'ps/edit-test-count)
 
 (global-set-key (format "%sat" ps/key-prefix) 'ps/assist-sync-test-count)
