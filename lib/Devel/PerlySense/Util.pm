@@ -11,7 +11,7 @@ use warnings;
 
 package Devel::PerlySense::Util;
 {
-  $Devel::PerlySense::Util::VERSION = '0.0198';
+  $Devel::PerlySense::Util::VERSION = '0.0199';
 }
 use base "Exporter";
 

@@ -16,7 +16,7 @@ use warnings;
 
 package Devel::PerlySense::Editor::Vim;
 {
-  $Devel::PerlySense::Editor::Vim::VERSION = '0.0198';
+  $Devel::PerlySense::Editor::Vim::VERSION = '0.0199';
 }
 use base "Devel::PerlySense::Editor";
 

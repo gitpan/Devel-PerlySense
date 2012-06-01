@@ -19,7 +19,7 @@ use warnings;
 
 package Devel::PerlySense::Document::Api;
 {
-  $Devel::PerlySense::Document::Api::VERSION = '0.0198';
+  $Devel::PerlySense::Document::Api::VERSION = '0.0199';
 }
 
 

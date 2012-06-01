@@ -14,7 +14,7 @@ use warnings;
 
 package Devel::PerlySense::Document::Meta;
 {
-  $Devel::PerlySense::Document::Meta::VERSION = '0.0198';
+  $Devel::PerlySense::Document::Meta::VERSION = '0.0199';
 }
 
 
