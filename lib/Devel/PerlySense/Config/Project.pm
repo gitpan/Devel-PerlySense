@@ -22,7 +22,7 @@ use warnings;
 
 package Devel::PerlySense::Config::Project;
 {
-  $Devel::PerlySense::Config::Project::VERSION = '0.0199';
+  $Devel::PerlySense::Config::Project::VERSION = '0.0200';
 }
 
 

@@ -18,7 +18,7 @@ use warnings;
 
 package Devel::PerlySense::Bookmark::Match;
 {
-  $Devel::PerlySense::Bookmark::Match::VERSION = '0.0199';
+  $Devel::PerlySense::Bookmark::Match::VERSION = '0.0200';
 }
 
 

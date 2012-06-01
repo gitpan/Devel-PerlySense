@@ -2,7 +2,12 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
-0.0199 -- 2012-06-01 11:29:16 UTC
+0.0200 -- 2012-06-01 11:37:30 UTC
+
+* Test release
+
+
+0.0199 -- whenever
 
 * Feature: Added missing -i toggle for the ack command
 
