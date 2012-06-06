@@ -187,6 +187,7 @@ t/data/simple-lib/lib/Win32/Word/Writer.pm
 t/data/simple-lib/lib/Win32/Word/Writer/Table.pm
 t/data/simple-lib/lib/Win32/Word/Writer/Table2.pm
 t/data/simple-lib/lib/Win32/Word/Writer/TableVisible.pm
+t/data/simple-lib/lib/Word/Writer.pm
 t/pod-coverage.t
 t/release-pod-syntax.t
 weaver.ini

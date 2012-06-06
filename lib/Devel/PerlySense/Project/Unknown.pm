@@ -19,7 +19,7 @@ A Project::Unknown indicates the lack of a project being defined.
 
 package Devel::PerlySense::Project::Unknown;
 {
-  $Devel::PerlySense::Project::Unknown::VERSION = '0.0200';
+  $Devel::PerlySense::Project::Unknown::VERSION = '0.0201';
 }
 use base "Devel::PerlySense::Project";
 
