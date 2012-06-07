@@ -2,6 +2,13 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
+0.0202 -- 2012-06-07 20:09:55 UTC
+
+* Fixed deep recursion bug when a Module claims to be a base class to
+  itself (still has to deal with larger circualar references)
+
+
+
 0.0201 -- 2012-06-06 21:32:57 UTC
 
 * Fixed deep recursion bug when finding a Module file, where
@@ -12,6 +19,7 @@ Feature oriented Revision history for Devel-PerlySense
 0.0200 -- 2012-06-01 11:37:30 UTC
 
 * Test release
+
 
 
 0.0199 -- whenever

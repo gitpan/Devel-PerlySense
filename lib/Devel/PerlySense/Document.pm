@@ -33,7 +33,7 @@ use warnings;
 
 package Devel::PerlySense::Document;
 {
-  $Devel::PerlySense::Document::VERSION = '0.0201';
+  $Devel::PerlySense::Document::VERSION = '0.0202';
 }
 
 
@@ -844,6 +844,10 @@ sub determineLikelyApi0 {
             nameModule => $nameBase,
             dirOrigin => dirname($self->file),
         ) or next;
+
+        debug("($nameModule) looking in base class ($nameBase)");
+        $nameModule eq $nameBase and next;
+        ###TODO: look for longer recursive chains
 
         $oDocumentBase->determineLikelyApi(nameModule => $nameBase);
 
