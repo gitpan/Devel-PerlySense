@@ -21,8 +21,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Config::Project;
-{
-  $Devel::PerlySense::Config::Project::VERSION = '0.0202';
+BEGIN {
+  $Devel::PerlySense::Config::Project::VERSION = '0.0203';
 }
 
 

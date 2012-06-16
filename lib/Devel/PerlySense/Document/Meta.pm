@@ -13,8 +13,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Document::Meta;
-{
-  $Devel::PerlySense::Document::Meta::VERSION = '0.0202';
+BEGIN {
+  $Devel::PerlySense::Document::Meta::VERSION = '0.0203';
 }
 
 
@@ -307,7 +307,7 @@ sub parse {
 
                 # use base
                 if($pkgNode eq "PPI::Statement::Include") {
-                    if($oNode =~ /^ use \s+ base \s+ (?:qw)? \s* (.+);$/xs) {
+                    if($oNode =~ /^ use \s+ (?:base|parent) \s+ (?:qw)? \s* (.+);$/xs) {
                         my $modules = $1;
                         for my $module (grep { $_ ne "qw" } $modules =~ /([\w:]+)/gs) {
                             $hNameModuleBase{$module}++ ;

@@ -10,8 +10,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Util::Log;
-{
-  $Devel::PerlySense::Util::Log::VERSION = '0.0202';
+BEGIN {
+  $Devel::PerlySense::Util::Log::VERSION = '0.0203';
 }
 use base "Exporter";
 

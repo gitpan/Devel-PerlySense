@@ -18,8 +18,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Document::Api;
-{
-  $Devel::PerlySense::Document::Api::VERSION = '0.0202';
+BEGIN {
+  $Devel::PerlySense::Document::Api::VERSION = '0.0203';
 }
 
 

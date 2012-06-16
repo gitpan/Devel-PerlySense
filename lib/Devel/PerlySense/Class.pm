@@ -20,8 +20,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Class;
-{
-  $Devel::PerlySense::Class::VERSION = '0.0202';
+BEGIN {
+  $Devel::PerlySense::Class::VERSION = '0.0203';
 }
 
 

@@ -32,8 +32,8 @@ use strict;
 use warnings;
 
 package Devel::PerlySense::Document;
-{
-  $Devel::PerlySense::Document::VERSION = '0.0202';
+BEGIN {
+  $Devel::PerlySense::Document::VERSION = '0.0203';
 }
 
 
