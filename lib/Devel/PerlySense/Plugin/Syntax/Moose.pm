@@ -73,7 +73,7 @@ use warnings;
 
 package Devel::PerlySense::Plugin::Syntax::Moose;
 BEGIN {
-  $Devel::PerlySense::Plugin::Syntax::Moose::VERSION = '0.0203';
+  $Devel::PerlySense::Plugin::Syntax::Moose::VERSION = '0.0204';
 }
 
 

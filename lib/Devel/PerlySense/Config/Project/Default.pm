@@ -19,7 +19,7 @@ use warnings;
 
 package Devel::PerlySense::Config::Project::Default;
 BEGIN {
-  $Devel::PerlySense::Config::Project::Default::VERSION = '0.0203';
+  $Devel::PerlySense::Config::Project::Default::VERSION = '0.0204';
 }
 use base "Devel::PerlySense::Config::Project";
 
