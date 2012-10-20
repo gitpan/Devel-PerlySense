@@ -20,7 +20,7 @@ use warnings;
 
 package Devel::PerlySense::Document::Api::Method;
 BEGIN {
-  $Devel::PerlySense::Document::Api::Method::VERSION = '0.0204';
+  $Devel::PerlySense::Document::Api::Method::VERSION = '0.0205'; # TRIAL
 }
 
 

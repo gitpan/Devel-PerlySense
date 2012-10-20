@@ -20,7 +20,7 @@ use warnings;
 
 package Devel::PerlySense::BookmarkConfig;
 BEGIN {
-  $Devel::PerlySense::BookmarkConfig::VERSION = '0.0204';
+  $Devel::PerlySense::BookmarkConfig::VERSION = '0.0205'; # TRIAL
 }
 
 

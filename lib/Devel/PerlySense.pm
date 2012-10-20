@@ -1660,7 +1660,7 @@ use warnings;
 
 package Devel::PerlySense;
 BEGIN {
-  $Devel::PerlySense::VERSION = '0.0204';
+  $Devel::PerlySense::VERSION = '0.0205'; # TRIAL
 }
 
 
@@ -1755,6 +1755,20 @@ just don't go there!
 =cut
 sub rhConfig {
     return $self->oProject->rhConfig;
+}
+
+
+
+
+
+=head2 VERSION
+
+The $VERSION of this module.
+
+=cut
+sub VERSION {
+    # This variable is created by Dist::Zilla during release
+    return $Devel::PerlySense::VERSION || "0.0001DEV";
 }
 
 
@@ -2885,10 +2899,6 @@ sub cacheKeyTotal {
 
     return($keyTotal);
 }
-
-
-
-
 
 1;
 
