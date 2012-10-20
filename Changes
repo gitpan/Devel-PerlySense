@@ -2,7 +2,7 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
-0.0205 -- 2012-10-20 17:13:43 UTC
+0.0206 -- 2012-10-20 17:23:47 UTC
 
 * Bug #79817: "Go to Module" fails on numeric characters.
   Thanks to Mark A. Flacy for report and solution.

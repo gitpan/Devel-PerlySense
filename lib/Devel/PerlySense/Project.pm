@@ -24,7 +24,7 @@ use warnings;
 
 package Devel::PerlySense::Project;
 BEGIN {
-  $Devel::PerlySense::Project::VERSION = '0.0205'; # TRIAL
+  $Devel::PerlySense::Project::VERSION = '0.0206';
 }
 
 

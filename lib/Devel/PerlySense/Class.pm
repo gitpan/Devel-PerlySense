@@ -21,7 +21,7 @@ use warnings;
 
 package Devel::PerlySense::Class;
 BEGIN {
-  $Devel::PerlySense::Class::VERSION = '0.0205'; # TRIAL
+  $Devel::PerlySense::Class::VERSION = '0.0206';
 }
 
 
