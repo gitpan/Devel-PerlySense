@@ -23,7 +23,7 @@ use warnings;
 
 package Devel::TimeThis;
 BEGIN {
-  $Devel::TimeThis::VERSION = '0.0206';
+  $Devel::TimeThis::VERSION = '0.0207';
 }
 
 

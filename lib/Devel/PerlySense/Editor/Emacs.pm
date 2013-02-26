@@ -16,7 +16,7 @@ use warnings;
 
 package Devel::PerlySense::Editor::Emacs;
 BEGIN {
-  $Devel::PerlySense::Editor::Emacs::VERSION = '0.0206';
+  $Devel::PerlySense::Editor::Emacs::VERSION = '0.0207';
 }
 use base "Devel::PerlySense::Editor";
 

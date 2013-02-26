@@ -1,11 +1,11 @@
 
 
 This archive contains the distribution Devel-PerlySense,
-version 0.0206:
+version 0.0207:
 
   Perl IDE backend with Emacs frontend
 
-This software is copyright (c) 2012 by Johan Lindstrom.
+This software is copyright (c) 2013 by Johan Lindstrom.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
