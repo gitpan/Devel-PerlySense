@@ -1232,7 +1232,7 @@ earliest usage.
     my $critic = $flymake->{critic};
 
 Before the edit, the C<mark> was pushed at the location where you
-started, so you can hit C<C-u SPC> to jump back.
+started, so you can hit C<C-u C-SPC> to jump back.
 
 After the edit, the point is left at the new variable declaration so
 you can ensure that it is in a reasonable location. It's not unusual
@@ -1667,6 +1667,8 @@ L<http://vimdoc.sourceforge.net/htmldoc/eval.html#Dictionaries> - Vim native dat
 
 
 
+=encoding utf8
+
 =head1 AUTHOR
 
 Johan Lindström, C<< <johanl buzzwordninja.com> >>
@@ -1734,10 +1736,11 @@ under the same terms as Perl itself.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense;
-BEGIN {
-  $Devel::PerlySense::VERSION = '0.0207';
+{
+  $Devel::PerlySense::VERSION = '0.0208';
 }
 
 

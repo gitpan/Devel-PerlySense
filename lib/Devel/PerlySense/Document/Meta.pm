@@ -11,10 +11,11 @@ during a parse
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Document::Meta;
-BEGIN {
-  $Devel::PerlySense::Document::Meta::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Document::Meta::VERSION = '0.0208';
 }
 
 
@@ -629,6 +630,8 @@ sub oLocationSub {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

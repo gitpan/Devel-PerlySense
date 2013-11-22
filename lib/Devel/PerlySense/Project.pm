@@ -21,10 +21,11 @@ A Project has configuration settings.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Project;
-BEGIN {
-  $Devel::PerlySense::Project::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Project::VERSION = '0.0208';
 }
 
 
@@ -533,6 +534,7 @@ Return 1 or die on errors (but that will look like the result of a
 failed flymake run).
 
 =cut
+
 sub flymakeFile {
     my ($file) = Devel::PerlySense::Util::aNamedArg(["file"], @_);
 
@@ -655,6 +657,8 @@ sub raFileTestOther {
     $file =~ m|\.pm$| and $method = "test_files_covering";     # If a module, it's source
     $file =~ m|/t/|   and $method = "source_files_covered_by"; # If it's in /t/, it's a test
     $file =~ m|\.t$|  and $method = "source_files_covered_by"; # If it's a .t file, it's a test
+    ### TODO: config with list of lib dirs and list of test dirs
+    debug("raFileTestOther with method ($method)");
 
     my $fileRelative = file($file)->relative( $self->dirProject );
     my $raFileTestOther = [ $db->$method($fileRelative, $sub) ];
@@ -716,6 +720,8 @@ sub raFileProjectOther {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

@@ -13,10 +13,11 @@ Devel::PerlySense::Bookmark::Definition - A Bookmark definition
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Bookmark::Definition;
-BEGIN {
-  $Devel::PerlySense::Bookmark::Definition::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Bookmark::Definition::VERSION = '0.0208';
 }
 
 
@@ -180,6 +181,8 @@ sub aMatch {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

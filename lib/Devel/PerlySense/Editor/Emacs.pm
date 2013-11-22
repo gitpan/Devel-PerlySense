@@ -13,10 +13,11 @@ Devel::PerlySense::Editor::Emacs - Integration with Emacs
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Editor::Emacs;
-BEGIN {
-  $Devel::PerlySense::Editor::Emacs::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Editor::Emacs::VERSION = '0.0208';
 }
 use base "Devel::PerlySense::Editor";
 
@@ -125,6 +126,8 @@ sub escapeValue {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

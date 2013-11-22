@@ -16,10 +16,11 @@ _may_ support).
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Document::Api;
-BEGIN {
-  $Devel::PerlySense::Document::Api::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Document::Api::VERSION = '0.0208';
 }
 
 
@@ -376,6 +377,8 @@ sub percentConsistsOf {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

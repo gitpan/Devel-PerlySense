@@ -51,9 +51,9 @@
 ;;
 ;;
 ;; Suggested key bindings, forwards compatible with future
-;; refactorings and other features (like "Toggle Highlight"):
-;;    (global-set-key (kbd "\C-c r e v") 'lr-extract-variable)
-;;    (global-set-key (kbd "\C-c r h r") 'lr-remove-highlights)
+;; refactorings and other features:
+;;    (global-set-key (kbd "\C-c e e v") 'lr-extract-variable)
+;;    (global-set-key (kbd "\C-c e h r") 'lr-remove-highlights)
 ;;
 ;;
 
@@ -107,10 +107,7 @@
   ;; if possible, find previous statement terminator ; or closing block }
   (when (search-backward-regexp "[;}]" nil t)
       (forward-line)
-      (while (and
-              (looking-at "\n")
-              (not (eobp)))
-        (forward-line))
+      ;; TODO: skip forward over empty lines
       )
   )
 
@@ -212,20 +209,21 @@ Both replacements and the declaration are highlighted."
   (save-excursion
     (goto-char (point-min))
     (while
-        (let* (
-               (begin (text-property-any (point) (point-max) 'category category))
-               (safe-begin (or begin (point-max)))
-               (end (or ;; End of section, or end of buffer
-                     (text-property-not-all safe-begin (point-max) 'category category)
-                     (point-max)))
-               )
-          (if (and begin (not (eq begin (point-max))))
-              (progn
-                (funcall do-fn begin end)
-                (goto-char (+ 1 end))
-                )
-            nil
-            ))
+        (progn ;; JPL not needed
+          (let* (
+                 (begin (text-property-any (point) (point-max) 'category category))
+                 (safe-begin (or begin (point-max)))
+                 (end (or ;; End of section, or end of buffer
+                       (text-property-not-all safe-begin (point-max) 'category category)
+                       (point-max)))
+                 )
+            (if (and begin (not (eq begin (point-max))))
+                (progn
+                  (funcall do-fn begin end)
+                  (goto-char (+ 1 end))
+                  )
+              nil
+              )))
       )
     ))
 

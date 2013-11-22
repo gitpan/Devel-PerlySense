@@ -2,6 +2,18 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
+0.0208 -- 2013-11-22 18:20:03 UTC
+
+* When acking for sub/method declarations, also look for Moose has declarations
+  (This is a quickie which doesn't account for quoting etc.)
+
+* Improve the regex for files in error message for "C-o g e" to
+  include "-".
+
+* Fix failing test because the inheritance diagram is non-deterministic.
+
+
+
 0.0207 -- 2013-02-26 23:09:26 UTC
 
 * Feature: Refactoring - Extract Variable -- "C-o e e v". This uses

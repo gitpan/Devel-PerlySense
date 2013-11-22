@@ -8,10 +8,11 @@ Devel::PerlySense::Util::Log - Log routines
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Util::Log;
-BEGIN {
-  $Devel::PerlySense::Util::Log::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Util::Log::VERSION = '0.0208';
 }
 use base "Exporter";
 
@@ -94,6 +95,8 @@ sub _textTailDebug {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

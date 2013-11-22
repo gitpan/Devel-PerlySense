@@ -14,10 +14,11 @@ A Bookmark definition, and a list of matching Bookmark::Match objects
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Bookmark::MatchResult;
-BEGIN {
-  $Devel::PerlySense::Bookmark::MatchResult::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Bookmark::MatchResult::VERSION = '0.0208';
 }
 
 
@@ -166,6 +167,8 @@ sub aMatch {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

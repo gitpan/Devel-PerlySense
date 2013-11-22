@@ -19,10 +19,11 @@ Configuration can be Project level, stored in .../.PerlySense/project.cfg
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Config::Project;
-BEGIN {
-  $Devel::PerlySense::Config::Project::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Config::Project::VERSION = '0.0208';
 }
 
 
@@ -420,6 +421,8 @@ sub createFileCriticDefault {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

@@ -13,10 +13,11 @@ Devel::PerlySense::Editor - Integration with editors
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Editor;
-BEGIN {
-  $Devel::PerlySense::Editor::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Editor::VERSION = '0.0208';
 }
 
 
@@ -645,6 +646,8 @@ sub stripTrailingWhitespace {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

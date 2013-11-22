@@ -20,10 +20,11 @@ optional properties.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Document::Location;
-BEGIN {
-  $Devel::PerlySense::Document::Location::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Document::Location::VERSION = '0.0208';
 }
 
 
@@ -160,6 +161,8 @@ sub rhInfo {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

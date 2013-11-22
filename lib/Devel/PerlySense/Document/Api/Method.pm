@@ -17,10 +17,11 @@ The Method has a documentation string and possibly POD.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Document::Api::Method;
-BEGIN {
-  $Devel::PerlySense::Document::Api::Method::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Document::Api::Method::VERSION = '0.0208';
 }
 
 
@@ -172,6 +173,8 @@ sub signatureCall {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

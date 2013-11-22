@@ -20,10 +20,11 @@ scope
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::TimeThis;
-BEGIN {
-  $Devel::TimeThis::VERSION = '0.0207';
+{
+  $Devel::TimeThis::VERSION = '0.0208';
 }
 
 
@@ -127,6 +128,8 @@ sub END {
 
 __END__
 
+
+=encoding utf8
 
 =head1 AUTHOR
 

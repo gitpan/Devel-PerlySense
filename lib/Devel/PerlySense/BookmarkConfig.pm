@@ -17,10 +17,11 @@ objects that results in.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::BookmarkConfig;
-BEGIN {
-  $Devel::PerlySense::BookmarkConfig::VERSION = '0.0207';
+{
+  $Devel::PerlySense::BookmarkConfig::VERSION = '0.0208';
 }
 
 
@@ -132,6 +133,8 @@ sub aMatchResult {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

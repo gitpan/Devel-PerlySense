@@ -15,10 +15,11 @@ that caused it to match.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Bookmark::Match;
-BEGIN {
-  $Devel::PerlySense::Bookmark::Match::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Bookmark::Match::VERSION = '0.0208';
 }
 
 
@@ -120,6 +121,8 @@ sub new {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

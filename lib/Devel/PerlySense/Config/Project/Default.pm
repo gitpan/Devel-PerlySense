@@ -16,10 +16,11 @@ This is the default config for a project, used whenever a proper
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Config::Project::Default;
-BEGIN {
-  $Devel::PerlySense::Config::Project::Default::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Config::Project::Default::VERSION = '0.0208';
 }
 use base "Devel::PerlySense::Config::Project";
 
@@ -72,6 +73,8 @@ sub new(@) {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

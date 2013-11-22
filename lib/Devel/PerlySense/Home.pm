@@ -16,10 +16,11 @@ etc. are kept.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Home;
-BEGIN {
-  $Devel::PerlySense::Home::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Home::VERSION = '0.0208';
 }
 
 
@@ -133,6 +134,8 @@ sub dirHomeLog {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

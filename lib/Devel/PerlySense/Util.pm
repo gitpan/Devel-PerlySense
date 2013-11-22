@@ -8,10 +8,11 @@ Devel::PerlySense::Util - Utility routines
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Util;
-BEGIN {
-  $Devel::PerlySense::Util::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Util::VERSION = '0.0208';
 }
 use base "Exporter";
 
@@ -163,6 +164,8 @@ sub textRenderTemplate {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

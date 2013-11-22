@@ -30,10 +30,11 @@ no good way to expire obsolete files.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Document;
-BEGIN {
-  $Devel::PerlySense::Document::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Document::VERSION = '0.0208';
 }
 
 
@@ -1170,6 +1171,8 @@ sub cacheGet {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 

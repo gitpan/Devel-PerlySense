@@ -70,10 +70,11 @@ object. That should be fixed.
 
 use strict;
 use warnings;
+use utf8;
 
 package Devel::PerlySense::Plugin::Syntax::Moose;
-BEGIN {
-  $Devel::PerlySense::Plugin::Syntax::Moose::VERSION = '0.0207';
+{
+  $Devel::PerlySense::Plugin::Syntax::Moose::VERSION = '0.0208';
 }
 
 
@@ -306,6 +307,8 @@ sub parse {
 
 
 __END__
+
+=encoding utf8
 
 =head1 AUTHOR
 
