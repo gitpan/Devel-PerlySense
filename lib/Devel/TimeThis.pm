@@ -24,7 +24,7 @@ use utf8;
 
 package Devel::TimeThis;
 {
-  $Devel::TimeThis::VERSION = '0.0208';
+  $Devel::TimeThis::VERSION = '0.0209';
 }
 
 

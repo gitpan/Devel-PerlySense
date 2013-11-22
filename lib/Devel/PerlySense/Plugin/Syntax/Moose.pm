@@ -74,7 +74,7 @@ use utf8;
 
 package Devel::PerlySense::Plugin::Syntax::Moose;
 {
-  $Devel::PerlySense::Plugin::Syntax::Moose::VERSION = '0.0208';
+  $Devel::PerlySense::Plugin::Syntax::Moose::VERSION = '0.0209';
 }
 
 

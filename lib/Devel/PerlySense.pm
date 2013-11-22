@@ -1740,7 +1740,7 @@ use utf8;
 
 package Devel::PerlySense;
 {
-  $Devel::PerlySense::VERSION = '0.0208';
+  $Devel::PerlySense::VERSION = '0.0209';
 }
 
 

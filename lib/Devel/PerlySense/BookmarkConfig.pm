@@ -21,7 +21,7 @@ use utf8;
 
 package Devel::PerlySense::BookmarkConfig;
 {
-  $Devel::PerlySense::BookmarkConfig::VERSION = '0.0208';
+  $Devel::PerlySense::BookmarkConfig::VERSION = '0.0209';
 }
 
 

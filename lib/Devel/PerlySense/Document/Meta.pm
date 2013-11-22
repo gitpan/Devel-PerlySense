@@ -15,7 +15,7 @@ use utf8;
 
 package Devel::PerlySense::Document::Meta;
 {
-  $Devel::PerlySense::Document::Meta::VERSION = '0.0208';
+  $Devel::PerlySense::Document::Meta::VERSION = '0.0209';
 }
 
 

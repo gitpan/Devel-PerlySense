@@ -19,7 +19,7 @@ use utf8;
 
 package Devel::PerlySense::Bookmark::Match;
 {
-  $Devel::PerlySense::Bookmark::Match::VERSION = '0.0208';
+  $Devel::PerlySense::Bookmark::Match::VERSION = '0.0209';
 }
 
 
