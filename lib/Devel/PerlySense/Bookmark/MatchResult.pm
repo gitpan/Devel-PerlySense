@@ -18,7 +18,7 @@ use utf8;
 
 package Devel::PerlySense::Bookmark::MatchResult;
 {
-  $Devel::PerlySense::Bookmark::MatchResult::VERSION = '0.0210';
+  $Devel::PerlySense::Bookmark::MatchResult::VERSION = '0.0211';
 }
 
 

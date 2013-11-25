@@ -108,12 +108,17 @@ Compilation mode and the settings appropriate for the source type
 (Test, Module, etc.). Highlight errors and jump to source with C-c
 C-c.
 
+B<Edit - Copy Package Name> -- C<C-o e c p> -- Copy the current package name.
+
 B<Edit - Add Use Statement> -- C<C-o e a u> -- Add a 'use Module'
 statement to the 'use Module' section at the top. Default Module name
 is module at point.
 
 B<Edit - Move Use Statement> -- C<C-o e m u> -- Move the 'use Module'
 statement at point to the 'use Module' section at the top.
+
+B<Extract Variable> - C<C-o e e v> -- Do the refactoring Extract
+Variable of the active region.
 
 B<Edit Test Count> -- C<C-o e t c> -- Increase the test count
 (e.g. "tests => 43")
@@ -1174,6 +1179,13 @@ Editing code includes both smaller editing tasks and refactorings to
 restucture the code.
 
 
+=head3 Edit - Copy Package Name
+
+C<C-o e c p> -- Copy the current package statement name to the
+clipboard (kill-ring) and display it in the echo area.
+
+
+
 =head3 Edit - Add 'use Module' Statement
 
 C<C-o e a u> -- Set mark and add a 'use My::Module;' statement to the
@@ -1741,7 +1753,7 @@ use utf8;
 
 package Devel::PerlySense;
 {
-  $Devel::PerlySense::VERSION = '0.0210';
+  $Devel::PerlySense::VERSION = '0.0211';
 }
 
 

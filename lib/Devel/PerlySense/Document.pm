@@ -34,7 +34,7 @@ use utf8;
 
 package Devel::PerlySense::Document;
 {
-  $Devel::PerlySense::Document::VERSION = '0.0210';
+  $Devel::PerlySense::Document::VERSION = '0.0211';
 }
 
 

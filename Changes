@@ -2,6 +2,14 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
+0.0211 -- 2013-11-25 19:21:46 UTC
+
+* Feature: Edit - Copy Package Name -- "C-o e c p". Copy the current
+  package statement name to the clipboard (kill-ring) and display it
+  in the echo area.
+
+
+
 0.0210 -- 2013-11-25 15:47:30 UTC
 
 * In ack 2.0, the option --all is replaced with --known-types.

@@ -58,7 +58,6 @@ my %WriteMakefileArgs = (
     "Time::HiRes" => 0,
     "YAML::Tiny" => 0,
     "base" => 0,
-    "lib" => 0,
     "strict" => 0,
     "utf8" => 0,
     "warnings" => 0
@@ -72,7 +71,7 @@ my %WriteMakefileArgs = (
     "Test::Exception" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.0210",
+  "VERSION" => "0.0211",
   "test" => {
     "TESTS" => "t/*.t t/data/project/with-dir/source/t/*.t t/data/project/with-git/source/bogus/t/*.t t/data/project/with-perlysenseproject/source/bogus/t/*.t"
   }

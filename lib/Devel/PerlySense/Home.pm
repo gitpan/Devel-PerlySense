@@ -20,7 +20,7 @@ use utf8;
 
 package Devel::PerlySense::Home;
 {
-  $Devel::PerlySense::Home::VERSION = '0.0210';
+  $Devel::PerlySense::Home::VERSION = '0.0211';
 }
 
 

@@ -21,7 +21,7 @@ use utf8;
 
 package Devel::PerlySense::Document::Api::Method;
 {
-  $Devel::PerlySense::Document::Api::Method::VERSION = '0.0210';
+  $Devel::PerlySense::Document::Api::Method::VERSION = '0.0211';
 }
 
 

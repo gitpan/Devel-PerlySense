@@ -17,7 +17,7 @@ use utf8;
 
 package Devel::PerlySense::Editor::Vim;
 {
-  $Devel::PerlySense::Editor::Vim::VERSION = '0.0210';
+  $Devel::PerlySense::Editor::Vim::VERSION = '0.0211';
 }
 use base "Devel::PerlySense::Editor";
 
