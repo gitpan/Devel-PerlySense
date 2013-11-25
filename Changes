@@ -2,6 +2,18 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
+0.0210 -- 2013-11-25 15:47:30 UTC
+
+* In ack 2.0, the option --all is replaced with --known-types.
+
+  So in "Find with Ack" (C-o f a), while editing the search string in
+  the minibuffer, the current shortcut (C-o a) to toggle "--all" is
+  now useless if you use the later version of ack.
+
+  New shortcut "C-o k" to toggle the option "--known-types".
+
+
+
 0.0209 -- 2013-11-22 21:34:48 UTC
 
 * Upgrade lang-refactor-perl to 0.1.5 with proper word boundary

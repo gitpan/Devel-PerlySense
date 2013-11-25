@@ -12,7 +12,7 @@ use utf8;
 
 package Devel::PerlySense::Util;
 {
-  $Devel::PerlySense::Util::VERSION = '0.0209';
+  $Devel::PerlySense::Util::VERSION = '0.0210';
 }
 use base "Exporter";
 

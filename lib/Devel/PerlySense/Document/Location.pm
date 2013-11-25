@@ -24,7 +24,7 @@ use utf8;
 
 package Devel::PerlySense::Document::Location;
 {
-  $Devel::PerlySense::Document::Location::VERSION = '0.0209';
+  $Devel::PerlySense::Document::Location::VERSION = '0.0210';
 }
 
 
