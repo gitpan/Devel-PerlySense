@@ -2,7 +2,7 @@
 Feature oriented Revision history for Devel-PerlySense
 ======================================================
 
-0.0212 -- 2014-10-12 14:32:37 UTC
+0.0213 -- 2014-10-12 14:42:24 UTC
 
 * Feature: Run File under Devel::CoverX::Covered -- C-o r c. This is
   the same as Run File, but collect test coverage information using

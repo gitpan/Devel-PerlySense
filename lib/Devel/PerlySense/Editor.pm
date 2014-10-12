@@ -16,7 +16,7 @@ use warnings;
 use utf8;
 
 package Devel::PerlySense::Editor;
-$Devel::PerlySense::Editor::VERSION = '0.0212';
+$Devel::PerlySense::Editor::VERSION = '0.0213';
 
 
 

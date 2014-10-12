@@ -1235,13 +1235,39 @@ If a Magit buffer is found, magit-refresh it before returning it.
         (let (
               ( package-name (match-string 1) )
               )
-          (prin1 (match-string 1))
           (kill-new package-name)
           (message "Copied package name '%s'" package-name)
           )
       (error "No package found")
       )
     )
+  )
+
+(defun ps/edit-copy-sub-name ()
+  "Copy (put in the kill-ring) the name of the current sub, and
+display it in the echo area"
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (beginning-of-defun)
+    (if (search-forward-regexp "\\bsub +\\([a-zA-Z0-9_]+\\)" nil t)
+        (let (
+              ( sub-name (match-string 1) )
+              )
+          (kill-new sub-name)
+          (message "Copied sub name '%s'" sub-name)
+          )
+      (error "No sub found")
+      )
+    )
+  )
+
+(defun ps/edit-copy-file-name ()
+  "Copy (put in the kill-ring) the name of the current file, and
+display it in the echo area"
+  (interactive)
+  (kill-new (buffer-file-name))
+  (message "Copied file name '%s'" (buffer-file-name))
   )
 
 
@@ -2399,6 +2425,8 @@ Return t if found, else nil."
 
 
 (global-set-key (format "%secp" ps/key-prefix) 'ps/edit-copy-package-name)
+(global-set-key (format "%secs" ps/key-prefix) 'ps/edit-copy-sub-name)
+(global-set-key (format "%secf" ps/key-prefix) 'ps/edit-copy-file-name)
 (global-set-key (format "%semu" ps/key-prefix) 'ps/edit-move-use-statement)
 (global-set-key (format "%seau" ps/key-prefix) 'ps/edit-add-use-statement)
 (global-set-key (format "%setc" ps/key-prefix) 'ps/edit-test-count)

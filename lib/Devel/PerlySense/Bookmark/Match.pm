@@ -18,7 +18,7 @@ use warnings;
 use utf8;
 
 package Devel::PerlySense::Bookmark::Match;
-$Devel::PerlySense::Bookmark::Match::VERSION = '0.0212';
+$Devel::PerlySense::Bookmark::Match::VERSION = '0.0213';
 
 
 

@@ -24,7 +24,7 @@ use warnings;
 use utf8;
 
 package Devel::PerlySense::Project;
-$Devel::PerlySense::Project::VERSION = '0.0212';
+$Devel::PerlySense::Project::VERSION = '0.0213';
 
 
 use Spiffy -Base;
