@@ -1,5 +1,5 @@
 ---
-abstract: "Perl IDE backend with Emacs frontend\r"
+abstract: 'Perl IDE backend with Emacs frontend '
 author:
   - 'Johan Lindstrom <johanl@cpan.org>'
 build_requires:
@@ -11,9 +11,9 @@ build_requires:
   Test::Exception: 0
   Test::More: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.30
+  ExtUtils::MakeMaker: 0
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.130880'
+generated_by: 'Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.133380'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -56,7 +56,8 @@ requires:
   Time::HiRes: 0
   YAML::Tiny: 0
   base: 0
+  lib: 0
   strict: 0
   utf8: 0
   warnings: 0
-version: 0.0211
+version: 0.0212

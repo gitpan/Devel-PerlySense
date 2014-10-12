@@ -18,9 +18,7 @@ A Project::Unknown indicates the lack of a project being defined.
 
 
 package Devel::PerlySense::Project::Unknown;
-{
-  $Devel::PerlySense::Project::Unknown::VERSION = '0.0211';
-}
+$Devel::PerlySense::Project::Unknown::VERSION = '0.0212';
 use base "Devel::PerlySense::Project";
 
 
@@ -67,7 +65,7 @@ __END__
 
 =head1 AUTHOR
 
-Johan Lindström, C<< <johanl[ÄT]DarSerMan.com> >>
+Johan Lindstrom, C<< <johanl@cpan.org> >>
 
 =head1 BUGS
 
@@ -81,7 +79,7 @@ your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2005 Johan Lindström, All Rights Reserved.
+Copyright 2005 Johan Lindstrom, All Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

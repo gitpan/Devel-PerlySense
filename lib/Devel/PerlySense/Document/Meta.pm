@@ -14,10 +14,7 @@ use warnings;
 use utf8;
 
 package Devel::PerlySense::Document::Meta;
-{
-  $Devel::PerlySense::Document::Meta::VERSION = '0.0211';
-}
-
+$Devel::PerlySense::Document::Meta::VERSION = '0.0212';
 
 
 
@@ -635,7 +632,7 @@ __END__
 
 =head1 AUTHOR
 
-Johan Lindström, C<< <johanl[ÄT]DarSerMan.com> >>
+Johan Lindstrom, C<< <johanl@cpan.org> >>
 
 =head1 BUGS
 
@@ -649,7 +646,7 @@ your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2005 Johan Lindström, All Rights Reserved.
+Copyright 2005 Johan Lindstrom, All Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
